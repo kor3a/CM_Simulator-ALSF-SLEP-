@@ -658,6 +658,7 @@ public partial class MainViewModel : ViewModelBase
 
     public bool portHealthy = true;
     public bool commFault = false;
+    private bool _initialScanComplete = false;
 
     Dictionary<byte, int> dict = new Dictionary<byte, int>()
     {
@@ -952,6 +953,10 @@ public partial class MainViewModel : ViewModelBase
 
     public void CheckAndStartSequentialFlash()
     {
+        // Only run after initial scan is complete
+        if (!_initialScanComplete)
+            return;
+
         // Start flash if any ICC is ON and flash is not already running
         if (AnyIccOn() && !IsSequentialFlashRunning())
         {
@@ -1051,6 +1056,7 @@ public partial class MainViewModel : ViewModelBase
     {
         var lastPortCheck = DateTime.UtcNow;
         portHealthy = true;
+        _initialScanComplete = false;
 
         try
         {
@@ -1089,6 +1095,8 @@ public partial class MainViewModel : ViewModelBase
             }
 
             enableButtons();
+            _initialScanComplete = true;
+            CheckAndStartSequentialFlash();
 
             while (true)
             {
@@ -1275,6 +1283,7 @@ public partial class MainViewModel : ViewModelBase
 
         // Stop sequential flash on disconnect
         StopSequentialFlash();
+        _initialScanComplete = false;
 
         try
         {
@@ -15611,6 +15620,7 @@ public partial class MainViewModel : ViewModelBase
             Sp.DataReceived -= SerialDataReceivedEventHandler; // Unhook event handler
             Sp.Close();
             _homePage.LogText = "Disconnected";
+            _initialScanComplete = false;
 
         }
         popupWindow.Close();
