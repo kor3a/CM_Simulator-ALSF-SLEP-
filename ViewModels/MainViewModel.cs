@@ -659,6 +659,8 @@ public partial class MainViewModel : ViewModelBase
     public bool portHealthy = true;
     public bool commFault = false;
     private bool _initialScanComplete = false;
+    private int _expectedConfigResponses = 0;
+    private int _processedConfigResponses = 0;
 
     Dictionary<byte, int> dict = new Dictionary<byte, int>()
     {
@@ -1057,6 +1059,8 @@ public partial class MainViewModel : ViewModelBase
         var lastPortCheck = DateTime.UtcNow;
         portHealthy = true;
         _initialScanComplete = false;
+        _expectedConfigResponses = 0;
+        _processedConfigResponses = 0;
 
         try
         {
@@ -1073,7 +1077,11 @@ public partial class MainViewModel : ViewModelBase
                 int destString = dict[address];
 
                 bool received = await WaitForResponseAsync(address, 1000);
-                if (!received)
+                if (received)
+                {
+                    _expectedConfigResponses++;
+                }
+                else
                 {
                     Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.LogText += $"Timeout waiting for response from ICC {destString}\n");
                 }
@@ -1096,7 +1104,12 @@ public partial class MainViewModel : ViewModelBase
 
             enableButtons();
             _initialScanComplete = true;
-            CheckAndStartSequentialFlash();
+
+            // If no responses expected, call CheckAndStartSequentialFlash immediately
+            if (_expectedConfigResponses == 0)
+            {
+                CheckAndStartSequentialFlash();
+            }
 
             while (true)
             {
@@ -1284,6 +1297,8 @@ public partial class MainViewModel : ViewModelBase
         // Stop sequential flash on disconnect
         StopSequentialFlash();
         _initialScanComplete = false;
+        _expectedConfigResponses = 0;
+        _processedConfigResponses = 0;
 
         try
         {
@@ -6675,6 +6690,17 @@ public partial class MainViewModel : ViewModelBase
                         default:
                             _homePage.ConfigButton = new SolidColorBrush(Colors.Red);
                             break;
+                    }
+
+                    // Track CONFIG_RESPONSE processing for initial scan
+                    if (_initialScanComplete && _processedConfigResponses < _expectedConfigResponses)
+                    {
+                        _processedConfigResponses++;
+                        if (_processedConfigResponses == _expectedConfigResponses)
+                        {
+                            // All CONFIG_RESPONSE messages processed, start sequential flash
+                            CheckAndStartSequentialFlash();
+                        }
                     }
                     break;
                 case byte n when n == ACK: // 0x78
@@ -15621,6 +15647,8 @@ public partial class MainViewModel : ViewModelBase
             Sp.Close();
             _homePage.LogText = "Disconnected";
             _initialScanComplete = false;
+            _expectedConfigResponses = 0;
+            _processedConfigResponses = 0;
 
         }
         popupWindow.Close();
