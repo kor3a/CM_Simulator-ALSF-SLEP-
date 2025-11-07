@@ -659,8 +659,8 @@ public partial class MainViewModel : ViewModelBase
     public bool portHealthy = true;
     public bool commFault = false;
     private bool _initialScanComplete = false;
-    private int _expectedConfigResponses = 0;
-    private int _processedConfigResponses = 0;
+    private int _expectedShortDataResponses = 0;
+    private int _processedShortDataResponses = 0;
 
     Dictionary<byte, int> dict = new Dictionary<byte, int>()
     {
@@ -1059,8 +1059,8 @@ public partial class MainViewModel : ViewModelBase
         var lastPortCheck = DateTime.UtcNow;
         portHealthy = true;
         _initialScanComplete = false;
-        _expectedConfigResponses = 0;
-        _processedConfigResponses = 0;
+        _expectedShortDataResponses = 0;
+        _processedShortDataResponses = 0;
 
         try
         {
@@ -1079,7 +1079,7 @@ public partial class MainViewModel : ViewModelBase
                 bool received = await WaitForResponseAsync(address, 1000);
                 if (received)
                 {
-                    _expectedConfigResponses++;
+                    _expectedShortDataResponses++;
                 }
                 else
                 {
@@ -1106,7 +1106,7 @@ public partial class MainViewModel : ViewModelBase
             _initialScanComplete = true;
 
             // If no responses expected, call CheckAndStartSequentialFlash immediately
-            if (_expectedConfigResponses == 0)
+            if (_expectedShortDataResponses == 0)
             {
                 CheckAndStartSequentialFlash();
             }
@@ -1297,8 +1297,8 @@ public partial class MainViewModel : ViewModelBase
         // Stop sequential flash on disconnect
         StopSequentialFlash();
         _initialScanComplete = false;
-        _expectedConfigResponses = 0;
-        _processedConfigResponses = 0;
+        _expectedShortDataResponses = 0;
+        _processedShortDataResponses = 0;
 
         try
         {
@@ -6619,6 +6619,17 @@ public partial class MainViewModel : ViewModelBase
                             _homePage.ShortButton = new SolidColorBrush(Colors.Red);
                             break;
                     }
+
+                    // Track SHORT_DATA_RESPONSE processing for initial scan
+                    if (_initialScanComplete && _processedShortDataResponses < _expectedShortDataResponses)
+                    {
+                        _processedShortDataResponses++;
+                        if (_processedShortDataResponses == _expectedShortDataResponses)
+                        {
+                            // All SHORT_DATA_RESPONSE messages processed, start sequential flash
+                            CheckAndStartSequentialFlash();
+                        }
+                    }
                     break;
                 case byte n when n == CONFIG_RESPONSE: // 0x47
                     _homePage.LogText += "CONFIG_RESPONSE (Message ID: 0x47)\n";
@@ -6690,17 +6701,6 @@ public partial class MainViewModel : ViewModelBase
                         default:
                             _homePage.ConfigButton = new SolidColorBrush(Colors.Red);
                             break;
-                    }
-
-                    // Track CONFIG_RESPONSE processing for initial scan
-                    if (_initialScanComplete && _processedConfigResponses < _expectedConfigResponses)
-                    {
-                        _processedConfigResponses++;
-                        if (_processedConfigResponses == _expectedConfigResponses)
-                        {
-                            // All CONFIG_RESPONSE messages processed, start sequential flash
-                            CheckAndStartSequentialFlash();
-                        }
                     }
                     break;
                 case byte n when n == ACK: // 0x78
@@ -15647,8 +15647,8 @@ public partial class MainViewModel : ViewModelBase
             Sp.Close();
             _homePage.LogText = "Disconnected";
             _initialScanComplete = false;
-            _expectedConfigResponses = 0;
-            _processedConfigResponses = 0;
+            _expectedShortDataResponses = 0;
+            _processedShortDataResponses = 0;
 
         }
         popupWindow.Close();
