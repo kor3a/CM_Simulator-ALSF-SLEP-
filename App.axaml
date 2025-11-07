@@ -1,0 +1,24 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="CM_Simulator.App"
+             xmlns:local="clr-namespace:CM_Simulator"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+  <Application.DataTemplates>
+    <local:ViewLocator></local:ViewLocator>
+  </Application.DataTemplates>
+  
+    <Application.Styles>
+        <FluentTheme />
+      <StyleInclude Source="/Styles/AppDefaultStyles.axaml"></StyleInclude>
+    </Application.Styles>
+
+  <Application.Resources>
+    <SolidColorBrush x:Key="PrimaryBackground">#F8F9FA</SolidColorBrush>
+    <LinearGradientBrush x:Key="PrimaryBackgroundGradient" StartPoint="0%, 0%" EndPoint="90%, 0%">
+      <GradientStop Offset="0" Color="#F8F9FA"></GradientStop>
+      <GradientStop Offset="1" Color="#91bfed"></GradientStop>
+    </LinearGradientBrush>
+  </Application.Resources>
+</Application>

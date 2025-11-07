@@ -1,0 +1,330 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:CM_Simulator.ViewModels"
+             xmlns:av="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+             x:Name="HomeViewRoot"
+             x:DataType="vm:HomeViewModel"
+             mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="750"
+             x:Class="CM_Simulator.Views.HomeView"
+             >
+
+  <Design.DataContext>
+    <vm:HomeViewModel/>
+  </Design.DataContext>
+
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+
+    <Border Grid.Column="1" Grid.ColumnSpan="4">
+      <Grid RowDefinitions="Auto, Auto, Auto, *">
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center">
+          <!--LVICC Pages-->
+          <HeaderedContentControl Header="LVICC Control &amp; Status" Height="250" Width="680" Margin="10" HorizontalAlignment="Center" Background="White" BorderBrush="Black" BorderThickness="3">
+            <StackPanel VerticalAlignment="Center">
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                    <Button x:Name="lvicc1Pg" Width="60" Height="50" Background="{Binding Lvicc1PgBackground}" Command="{Binding GoToICC1Command}">
+					    <Grid>
+						    <TextBlock Text="1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc1PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc2Pg" Width="60" Height="50" Background="{Binding Lvicc2PgBackground}" Command="{Binding GoToICC2Command}">
+					    <Grid>
+						    <TextBlock Text="2" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc2PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc3Pg" Width="60" Height="50" Background="{Binding Lvicc3PgBackground}" Command="{Binding GoToICC3Command}">
+					    <Grid>
+						    <TextBlock Text="3" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc3PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc4Pg" Width="60" Height="50" Background="{Binding Lvicc4PgBackground}" Command="{Binding GoToICC4Command}">
+					    <Grid>
+						    <TextBlock Text="4" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc4PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc5Pg" Width="60" Height="50" Background="{Binding Lvicc5PgBackground}" Command="{Binding GoToICC5Command}">
+					    <Grid>
+						    <TextBlock Text="5" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc5PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc6Pg" Width="60" Height="50" Background="{Binding Lvicc6PgBackground}" Command="{Binding GoToICC6Command}">
+					    <Grid>
+						    <TextBlock Text="6" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc6PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc7Pg" Width="60" Height="50" Background="{Binding Lvicc7PgBackground}" Command="{Binding GoToICC7Command}">
+					    <Grid>
+						    <TextBlock Text="7" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc7PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc8Pg" Width="60" Height="50" Background="{Binding Lvicc8PgBackground}" Command="{Binding GoToICC8Command}">
+					    <Grid>
+						    <TextBlock Text="8" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc8PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc9Pg" Width="60" Height="50" Background="{Binding Lvicc9PgBackground}" Command="{Binding GoToICC9Command}">
+					    <Grid>
+						    <TextBlock Text="9" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc9PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc10Pg" Width="60" Height="50" Background="{Binding Lvicc10PgBackground}" Command="{Binding GoToICC10Command}">
+					    <Grid>
+						    <TextBlock Text="10" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc10PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc11Pg" Width="60" Height="50" Background="{Binding Lvicc11PgBackground}" Command="{Binding GoToICC11Command}">
+					    <Grid>
+						    <TextBlock Text="11" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc11PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc12Pg" Width="60" Height="50" Background="{Binding Lvicc12PgBackground}" Command="{Binding GoToICC12Command}">
+					    <Grid>
+						    <TextBlock Text="12" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc12PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc13Pg" Width="60" Height="50" Background="{Binding Lvicc13PgBackground}" Command="{Binding GoToICC13Command}">
+					    <Grid>
+						    <TextBlock Text="13" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc13PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc14Pg" Width="60" Height="50" Background="{Binding Lvicc14PgBackground}" Command="{Binding GoToICC14Command}">
+					    <Grid>
+						    <TextBlock Text="14" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc14PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc15Pg" Width="60" Height="50" Background="{Binding Lvicc15PgBackground}" Command="{Binding GoToICC15Command}">
+					    <Grid>
+						    <TextBlock Text="15" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc15PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                  <Button x:Name="lvicc16Pg" Width="60" Height="50" Background="{Binding Lvicc16PgBackground}" Command="{Binding GoToICC16Command}">
+					    <Grid>
+						    <TextBlock Text="16" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc16PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60" IsVisible="{Binding AlsfMode}">
+                  <Button x:Name="lvicc17Pg" Width="60" Height="50" Background="{Binding Lvicc17PgBackground}" Command="{Binding GoToICC17Command}">
+					    <Grid>
+						    <TextBlock Text="17" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc17PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60" IsVisible="{Binding AlsfMode}">
+                  <Button x:Name="lvicc18Pg" Width="60" Height="50" Background="{Binding Lvicc18PgBackground}" Command="{Binding GoToICC18Command}">
+					    <Grid>
+						    <TextBlock Text="18" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc18PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60" IsVisible="{Binding AlsfMode}">
+                  <Button x:Name="lvicc19Pg" Width="60" Height="50" Background="{Binding Lvicc19PgBackground}" Command="{Binding GoToICC19Command}">
+					    <Grid>
+						    <TextBlock Text="19" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc19PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60" IsVisible="{Binding AlsfMode}">
+                  <Button x:Name="lvicc20Pg" Width="60" Height="50" Background="{Binding Lvicc20PgBackground}" Command="{Binding GoToICC20Command}">
+					    <Grid>
+						    <TextBlock Text="20" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc20PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60" IsVisible="{Binding AlsfMode}">
+                  <Button x:Name="lvicc21Pg" Width="60" Height="50" Background="{Binding Lvicc21PgBackground}" Command="{Binding GoToICC21Command}">
+					    <Grid>
+						    <TextBlock Text="21" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" Fill="Orange" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-5,-5" IsVisible="{Binding Lvicc21PgStatus}" />
+                        </Grid>	
+                    </Button>
+                </Border>
+              </StackPanel>
+            </StackPanel>
+          </HeaderedContentControl>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+          <HeaderedContentControl Header="CM Control" Height="100" Margin="10" HorizontalAlignment="Center" Background="White">
+            <StackPanel Orientation="Horizontal">
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding CmOffEnabled}" Content="OFF" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding OffForeground}" Background="{Binding OffButton}" Command="{Binding MainOffControlClicked}"/>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding CmOnEnabled}" Content="ON" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding OnForeground}" Background="{Binding OnButton}" Command="{Binding MainOnControlClicked}"/>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding CmLowEnabled}" Content="LOW" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding LowForeground}" Background="{Binding LowButton}" Command="{Binding MainLowControlClicked}"/>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding CmMedEnabled}" Content="MED" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding MedForeground}" Background="{Binding MedButton}" Command="{Binding MainMedControlClicked}"/>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding CmHighEnabled}" Content="HI" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding HighForeground}" Background="{Binding HighButton}" Command="{Binding MainHighControlClicked}"/>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding CmAlsfEnabled}" Content="ALSF" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding AlsfButton}" Command="{Binding AlsfModeChangeCommand}"/>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding CmSsalrEnabled}" Content="SSALR" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding SsalrButton}" Command="{Binding SsalrModeChangeCommand}"/>
+              </Border>
+            </StackPanel>
+          </HeaderedContentControl>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,0,0,0">
+          <HeaderedContentControl Header="COMMANDS" Height="100" Margin="10" HorizontalAlignment="Center" Background="White">
+            <StackPanel Orientation="Horizontal">
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding ResetEnabled}" x:Name="resetRequestBtn" Content="Reset" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Background="LightGray" Command="{Binding ResetResultRequested}"/>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding ShortEnabled}" x:Name="shortDataBtn" Content="Short" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Background="{Binding ShortButton}" Command="{Binding ShortDataRequested}"/>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button IsEnabled="{Binding ConfigEnabled}" x:Name="configRequestBtn" Content="Config" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding ConfigButton}" Command="{Binding ConfigDataRequested}"/>
+              </Border>
+            </StackPanel>
+          </HeaderedContentControl>
+          <HeaderedContentControl Header="STATUS" Height="100" Margin="50,0" HorizontalAlignment="Center" Background="White">
+            <StackPanel Orientation="Horizontal">
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Grid Width="80" Height="50">
+                  <Rectangle Width="80" Height="50" Fill="{Binding Caution}" />
+                  <TextBlock Text="CAUTION" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="{Binding CautionForeground}"/>
+                </Grid>
+              </Border>
+              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button Width="70" Height="50" Background="{Binding CommFault}" Command="{Binding CommFaultClickedCommand}">
+                    <Grid Width="70" Height="50">
+                        <TextBlock Text="COMM FAULT" FontSize="16" TextWrapping="Wrap" Foreground="{Binding CommFaultForeground}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Button>
+              </Border>
+            <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                <Button Width="80" Height="50" Background="{Binding Failure}" Command="{Binding FailureClickedCommand}">
+                    <Grid Width="80" Height="50">
+                        <TextBlock Text="FAILURE" FontSize="16" TextWrapping="Wrap" Foreground="{Binding FailureForeground}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Button>
+              </Border>
+            </StackPanel>
+          </HeaderedContentControl>
+        </StackPanel>
+          
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+          <!-- Use a Button that contains your Image (SVG). The Flyout is attached to the Button -->
+          <Button Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Right" Name="MenuButton">
+            <Button.Flyout>
+              <Flyout Placement="BottomEdgeAlignedRight">
+                <StackPanel Background="White" Width="180">
+                  <!-- NOTE: no CommandParameter bindings here -->
+                  <Button Content="Scan ICCs"
+                            FontSize="16"
+                            Background="Transparent"
+                            HorizontalAlignment="Left"
+                            Padding="10,8"
+                            Click="Scan_Click"/>
+                  <Button Content="Change Port"
+                          FontSize="16"
+                          Background="Transparent"
+                          HorizontalContentAlignment="Left"
+                          Padding="10,8"
+                          Click="ChangePort_Click"/>
+                  <Button Content="Export Log"
+                          FontSize="16"
+                          Background="Transparent"
+                          HorizontalContentAlignment="Left"
+                          Padding="10,8"
+                          Click="ExportLog_Click"/>
+                </StackPanel>
+              </Flyout>
+            </Button.Flyout>
+
+            <!-- Your SVG Image inside the button (same pattern you used earlier) -->
+            <Image Source="{SvgImage /Assets/Images/list.svg}"
+                   Width="37"
+                   Height="37"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"/>
+          </Button>
+        </StackPanel>
+        <StackPanel Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+			<StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TxStatus}" Margin="10,0"/>
+                <TextBlock Text="TX" VerticalAlignment="Center" FontSize="16" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,10,0">
+				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TxStatus}" Margin="10,0"/>
+                <TextBlock Text="RX" VerticalAlignment="Center" FontSize="16" />
+            </StackPanel>
+        </StackPanel>
+        
+        <TextBox x:Name="LogTextBox" Text="{Binding LogText, Mode=OneWay}" Grid.Row="4" Background="White" Margin="10,0,5,10" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" av:ScrollViewer.VerticalScrollBarVisibility="Auto" ></TextBox>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

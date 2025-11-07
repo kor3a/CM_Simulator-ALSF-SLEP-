@@ -1,0 +1,226 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith>
+    <Border Padding="20" Background="{DynamicResource PrimaryBackgroundGradient}" Width="200">
+      <!-- Add Controls for Previewer Here -->
+      <HeaderedContentControl Header="CCR1" HorizontalAlignment="Center"> </HeaderedContentControl>
+
+    </Border>
+  </Design.PreviewWith>
+
+  <!-- Add Styles Here -->
+  <Style Selector="Border">
+    <Setter Property="Transitions">
+      <Transitions>
+        <DoubleTransition Property="Width" Duration="0:0:1"></DoubleTransition>
+      </Transitions>
+    </Setter>
+  </Style>
+
+  <Style Selector="Button">
+    <Setter Property="FontSize" Value="20"></Setter>
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}"></Setter>
+    <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"></Setter>
+  </Style>
+
+  <Style Selector="Button:pointerover /template/ ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}"></Setter>
+    <Setter Property="Background" Value="{Binding $parent[Button].Background}"></Setter>
+  </Style>
+
+  <Style Selector="Button.active /template/ ContentPresenter">
+    <Setter Property="Background" Value="DarkGray"></Setter>
+  </Style>
+
+  <Style Selector="Button.active:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="DarkGray"></Setter>
+  </Style>
+
+  <Style Selector="Button.connect:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Green"></Setter>
+  </Style>
+  
+  <Style Selector="Button.disconnect:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="Red"></Setter>
+  </Style>
+
+    <Style Selector="ToggleButton:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource PrimaryHoverBackground}"></Setter>
+      <Setter Property="Foreground" Value="{DynamicResource PrimaryHoverForeground}"></Setter>
+    </Style>
+
+  <Style Selector="ToggleButton.autoToggle:checked /template/ ContentPresenter">
+    <Setter Property="Background" Value="LightGreen"></Setter>
+    <Setter Property="Foreground" Value="Black"></Setter>
+  </Style>
+
+  <Style Selector="TextBlock.commandError[IsVisible=True]">
+    <Style.Animations>
+      <Animation Duration="0:0:1" IterationCount="INFINITE" FillMode="Both" PlaybackDirection="Alternate" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <Style Selector="TextBlock.commandError[IsVisible=False]">
+    <Setter Property="Opacity" Value="0"/>
+  </Style>
+
+  <Style Selector="TextBlock.startByteMismatch[IsVisible=True]">
+    <Style.Animations>
+      <Animation Duration="0:0:1" IterationCount="INFINITE" FillMode="Both" PlaybackDirection="Alternate" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <Style Selector="TextBlock.startByteMismatch[IsVisible=False]">
+    <Setter Property="Opacity" Value="0"/>
+  </Style>
+
+  <Style Selector="TextBlock.misfireError[IsVisible=True]">
+    <Style.Animations>
+      <Animation Duration="0:0:1" IterationCount="INFINITE" FillMode="Both" PlaybackDirection="Alternate" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <Style Selector="TextBlock.misfireError[IsVisible=False]">
+    <Setter Property="Opacity" Value="0"/>
+  </Style>
+
+  <Style Selector="TextBlock.destinationByteMismatch[IsVisible=True]">
+    <Style.Animations>
+      <Animation Duration="0:0:1" IterationCount="INFINITE" FillMode="Both" PlaybackDirection="Alternate" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <Style Selector="TextBlock.destinationByteMismatch[IsVisible=False]">
+    <Setter Property="Opacity" Value="0"/>
+  </Style>
+
+  <Style Selector="TextBlock.sourceByteMismatch[IsVisible=True]">
+    <Style.Animations>
+      <Animation Duration="0:0:1" IterationCount="INFINITE" FillMode="Both" PlaybackDirection="Alternate" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <Style Selector="TextBlock.sourceByteMismatch[IsVisible=False]">
+    <Setter Property="Opacity" Value="0"/>
+  </Style>
+
+  <Style Selector="TextBlock.endByteMismatch[IsVisible=True]">
+    <Style.Animations>
+      <Animation Duration="0:0:1" IterationCount="INFINITE" FillMode="Both" PlaybackDirection="Alternate" Easing="QuadraticEaseInOut">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+        <KeyFrame Cue="50%">
+          <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+
+  <Style Selector="TextBlock.endByteMismatch[IsVisible=False]">
+    <Setter Property="Opacity" Value="0"/>
+  </Style>
+
+
+  <Style Selector="HeaderedContentControl">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <!-- Header -->
+          <Border
+              ZIndex="1"
+              Background="White"
+              Padding="5,0,5,0"
+              Margin="5,0,0,0">
+            <TextBlock
+                Text="{TemplateBinding Header}"
+                Foreground="Black"
+                FontSize="16"
+                FontWeight="Bold"/>
+          </Border>
+
+          <!-- Content Area -->
+          <Border
+              Background="{TemplateBinding Background}"
+              Grid.RowSpan="2"
+              Padding="0,5,0,0"
+              Grid.ColumnSpan="2"
+              CornerRadius="4"
+              Margin="0,10,0,0"
+              BorderBrush="Black"
+              BorderThickness="1">
+            <ContentPresenter
+                Name="PART_ContentPresenter"
+                Padding="8"
+                Content="{TemplateBinding Content}"/>
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+
+
+</Styles>

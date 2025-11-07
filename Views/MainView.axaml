@@ -1,0 +1,365 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1050" d:DesignHeight="720"
+        Width="1150" Height="720"
+        x:Class="CM_Simulator.MainView"
+        xmlns:vm="clr-namespace:CM_Simulator.ViewModels;assembly=CM_Simulator"
+        xmlns:view="clr-namespace:CM_Simulator.Views"
+        x:DataType="vm:MainViewModel"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Title="ALSF-2 SLEP CM_Simulator">
+
+  <!--For preview purpose only-->
+  <Design.DataContext>
+    <vm:MainViewModel></vm:MainViewModel>
+  </Design.DataContext>
+
+  <Grid Background="{DynamicResource PrimaryBackgroundGradient}">
+    
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="{Binding BorderWidth}" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <ContentControl Grid.Column="1" Content="{Binding CurrentPage}"/>
+
+      <!--Side Menu Begin-->
+      <Border Grid.Column="0" Padding="5" Background="{DynamicResource PrimaryBackground}" Width="{Binding BorderWidth}" HorizontalAlignment="Left">
+      <Grid RowDefinitions="Auto, *">
+        <StackPanel Grid.Row="0">
+          <Image PointerPressed="Image_PointerPressed" Source="{SvgImage /Assets/Images/nbpLogo.svg}" IsVisible="{Binding SideMenuExpanded}" Height="30"></Image>
+          <Image PointerPressed="Image_PointerPressed" Source="{SvgImage /Assets/Images/list.svg}" Width="30" HorizontalAlignment="Left" IsVisible="{Binding !SideMenuExpanded}" Margin="5,0,0,0"></Image>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+          <Button x:Name="homePg" Foreground="Black" Background="LightGray" Classes.active="{Binding HomePageIsActive}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Margin="0,5,0,0" Command="{Binding GoToHomeCommand}" Height="30">
+            <StackPanel Orientation="Horizontal">
+              <Image Source="{SvgImage /Assets/Images/home.svg}" Width="20"></Image>
+              <Label Content="Home" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+            </StackPanel>
+          </Button>
+          <Button Background="{Binding Icc1SideBackground}" Foreground="Black" Classes.active="{Binding Icc1PageIsActive}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Command="{Binding GoToICC1Command}" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 1" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc1BorderBrush}" Background="{Binding Icc1BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc1SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc2SideBackground}" Classes.active="{Binding Icc2PageIsActive}" Command="{Binding GoToICC2Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 2" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc2BorderBrush}" Background="{Binding Icc2BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc2SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc3SideBackground}" Classes.active="{Binding Icc3PageIsActive}" Command="{Binding GoToICC3Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 3" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc3BorderBrush}" Background="{Binding Icc3BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc3SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc4SideBackground}" Classes.active="{Binding Icc4PageIsActive}" Command="{Binding GoToICC4Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 4" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc4BorderBrush}" Background="{Binding Icc4BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc4SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc5SideBackground}" Classes.active="{Binding Icc5PageIsActive}" Command="{Binding GoToICC5Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 5" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc5BorderBrush}" Background="{Binding Icc5BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc5SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc6SideBackground}" Classes.active="{Binding Icc6PageIsActive}" Command="{Binding GoToICC6Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 6" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc6BorderBrush}" Background="{Binding Icc6BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc6SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc7SideBackground}" Classes.active="{Binding Icc7PageIsActive}" Command="{Binding GoToICC7Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 7" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc7BorderBrush}" Background="{Binding Icc7BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc7SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc8SideBackground}" Classes.active="{Binding Icc8PageIsActive}" Command="{Binding GoToICC8Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 8" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc8BorderBrush}" Background="{Binding Icc8BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc8SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc9SideBackground}" Classes.active="{Binding Icc9PageIsActive}" Command="{Binding GoToICC9Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 9" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc9BorderBrush}" Background="{Binding Icc9BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc9SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc10SideBackground}" Classes.active="{Binding Icc10PageIsActive}" Command="{Binding GoToICC10Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 10" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc10BorderBrush}" Background="{Binding Icc10BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc10SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc11SideBackground}" Classes.active="{Binding Icc11PageIsActive}" Command="{Binding GoToICC11Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 11" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc11BorderBrush}" Background="{Binding Icc11BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc11SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc13SideBackground}" Classes.active="{Binding Icc12PageIsActive}" Command="{Binding GoToICC12Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 12" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc12BorderBrush}" Background="{Binding Icc12BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc12SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc13SideBackground}" Classes.active="{Binding Icc13PageIsActive}" Command="{Binding GoToICC13Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 13" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc13BorderBrush}" Background="{Binding Icc13BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc13SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc14SideBackground}" Classes.active="{Binding Icc14PageIsActive}" Command="{Binding GoToICC14Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 14" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc14BorderBrush}" Background="{Binding Icc14BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc14SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc15SideBackground}" Classes.active="{Binding Icc15PageIsActive}" Command="{Binding GoToICC15Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 15" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc15BorderBrush}" Background="{Binding Icc15BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc15SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc16SideBackground}" Classes.active="{Binding Icc16PageIsActive}" Command="{Binding GoToICC16Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 16" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc16BorderBrush}" Background="{Binding Icc16BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc16SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc17SideBackground}" Classes.active="{Binding Icc17PageIsActive}" Command="{Binding GoToICC17Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 17" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc17BorderBrush}" Background="{Binding Icc17BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc17SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc18SideBackground}" Classes.active="{Binding Icc18PageIsActive}" Command="{Binding GoToICC18Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 18" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc18BorderBrush}" Background="{Binding Icc18BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc18SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc19SideBackground}" Classes.active="{Binding Icc19PageIsActive}" Command="{Binding GoToICC19Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 19" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc19BorderBrush}" Background="{Binding Icc19BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc19SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc20SideBackground}" Classes.active="{Binding Icc20PageIsActive}" Command="{Binding GoToICC20Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 20" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc20BorderBrush}" Background="{Binding Icc20BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc20SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+          <Button Foreground="Black" Background="{Binding Icc21SideBackground}" Classes.active="{Binding Icc21PageIsActive}" Command="{Binding GoToICC21Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+            <Grid ColumnDefinitions="*, Auto">
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
+                <Label Content="ICC 21" IsVisible="{Binding SideMenuExpanded}" FontSize="11.5" Margin="5,0"></Label>
+              </StackPanel>
+              <StackPanel Grid.Column="1" IsVisible="{Binding SideMenuExpanded}">
+                <Border BorderThickness="2" BorderBrush="{Binding Icc21BorderBrush}" Background="{Binding Icc21BorderBackground}">
+                  <Grid Width="50" Height="15">
+                    <TextBlock Text="{Binding Icc21SideMenu}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </Button>
+        </StackPanel>
+      </Grid>
+    
+    </Border>
+    <!--Side Menu End-->
+
+  </Grid>
+</Window>
