@@ -196,6 +196,24 @@ public partial class HomeViewModel : ViewModelBase
     private IBrush _rxStatus = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
+    private bool _ft2400Enabled = false;
+
+    [ObservableProperty]
+    private bool _ft3000Enabled = false;
+
+    [ObservableProperty]
+    private bool _ft2400Visible = true;
+
+    [ObservableProperty]
+    private bool _ft3000Visible = true;
+
+    [ObservableProperty]
+    private IBrush _ft2400Background = new SolidColorBrush(Colors.LightGray);
+
+    [ObservableProperty]
+    private IBrush _ft3000Background = new SolidColorBrush(Colors.LightGray);
+
+    [ObservableProperty]
     public string _logText = "";
 
     public bool stopCautionBeep = false;
@@ -660,6 +678,18 @@ public partial class HomeViewModel : ViewModelBase
             _mainViewModel.StopContinuousBeep();
         }
         
+    }
+
+    [RelayCommand]
+    public void Ft2400Clicked()
+    {
+
+    }
+
+    [RelayCommand]
+    public void Ft3000Clicked()
+    {
+
     }
 }
 

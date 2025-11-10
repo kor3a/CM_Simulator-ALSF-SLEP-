@@ -828,6 +828,18 @@ public partial class MainViewModel : ViewModelBase
         _homePage.ResetEnabled = true;
         _homePage.ShortEnabled = true;
         _homePage.ConfigEnabled = true;
+        if(AlsfMode)
+        {
+            _homePage.Ft2400Enabled = true;
+            _homePage.Ft3000Enabled = true;
+            _homePage.Ft2400Visible = true;
+            _homePage.Ft3000Visible = true;
+        }
+        else
+        {
+            _homePage.Ft2400Visible = false;
+            _homePage.Ft3000Visible = false;
+        }
     }
 
     public void disableButtons()
@@ -842,6 +854,8 @@ public partial class MainViewModel : ViewModelBase
         _homePage.ResetEnabled = false;
         _homePage.ShortEnabled = false;
         _homePage.ConfigEnabled = false;
+        _homePage.Ft2400Enabled = false;
+        _homePage.Ft3000Enabled = false;
     }
 
     public void StartContinuousBeep()
@@ -865,6 +879,7 @@ public partial class MainViewModel : ViewModelBase
         waveOut = null;
     }
 
+    /* START OF THE FLASHING */
     public void StartSequentialFlash()
     {
         // Cancel any existing flash task
@@ -975,7 +990,9 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    // Call from HomeViewModel
+    /* END OF THE FLASHING */
+
+    // Send ENQ message to the ICCs
     public async Task ScanIcc()
     {
         disableButtons();
