@@ -1367,6 +1367,15 @@ public partial class MainViewModel : ViewModelBase
             // Set TX indicator ON
             _homePage.TxStatus = new SolidColorBrush(Colors.Green);
 
+            // Turn off Failure if it's active
+            if(alsfFailure || ssalrFailure)
+            {
+                cautionToneCts?.Cancel();
+                alsfFailure = ssalrFailure = false;
+                _homePage.Failure = new SolidColorBrush(Colors.LightGray);
+                _homePage.FailureForeground = new SolidColorBrush(Colors.Black);
+            }
+
             // Blink for a short duration (non-blocking)
             _ = Task.Run(async () =>
             {
