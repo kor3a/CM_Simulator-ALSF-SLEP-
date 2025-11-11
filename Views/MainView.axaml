@@ -55,7 +55,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc2SideBackground}" Classes.active="{Binding Icc2PageIsActive}" Command="{Binding GoToICC2Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc2SideBackground}" Classes.active="{Binding Icc2PageIsActive}" Command="{Binding GoToICC2Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsEnabled="{Binding AlsfMode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal" Grid.Column="0">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -85,7 +85,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc4SideBackground}" Classes.active="{Binding Icc4PageIsActive}" Command="{Binding GoToICC4Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc4SideBackground}" Classes.active="{Binding Icc4PageIsActive}" Command="{Binding GoToICC4Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsEnabled="{Binding AlsfMode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal" Grid.Column="0">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -115,7 +115,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc6SideBackground}" Classes.active="{Binding Icc6PageIsActive}" Command="{Binding GoToICC6Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc6SideBackground}" Classes.active="{Binding Icc6PageIsActive}" Command="{Binding GoToICC6Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsEnabled="{Binding AlsfMode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal" Grid.Column="0">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -145,7 +145,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc8SideBackground}" Classes.active="{Binding Icc8PageIsActive}" Command="{Binding GoToICC8Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc8SideBackground}" Classes.active="{Binding Icc8PageIsActive}" Command="{Binding GoToICC8Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsEnabled="{Binding AlsfMode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -175,7 +175,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc10SideBackground}" Classes.active="{Binding Icc10PageIsActive}" Command="{Binding GoToICC10Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc10SideBackground}" Classes.active="{Binding Icc10PageIsActive}" Command="{Binding GoToICC10Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsEnabled="{Binding AlsfMode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -205,7 +205,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc13SideBackground}" Classes.active="{Binding Icc12PageIsActive}" Command="{Binding GoToICC12Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc12SideBackground}" Classes.active="{Binding Icc12PageIsActive}" Command="{Binding GoToICC12Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsEnabled="{Binding AlsfMode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -235,7 +235,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc14SideBackground}" Classes.active="{Binding Icc14PageIsActive}" Command="{Binding GoToICC14Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc14SideBackground}" Classes.active="{Binding Icc14PageIsActive}" Command="{Binding GoToICC14Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsEnabled="{Binding AlsfMode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -265,7 +265,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc16SideBackground}" Classes.active="{Binding Icc16PageIsActive}" Command="{Binding GoToICC16Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc16SideBackground}" Classes.active="{Binding Icc16PageIsActive}" Command="{Binding GoToICC16Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsEnabled="{Binding AlsfMode}" IsVisible="{Binding Ft3000Mode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -280,7 +280,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc17SideBackground}" Classes.active="{Binding Icc17PageIsActive}" Command="{Binding GoToICC17Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc17SideBackground}" Classes.active="{Binding Icc17PageIsActive}" Command="{Binding GoToICC17Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left"  Height="30" IsVisible="{Binding Ft3000Mode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -295,7 +295,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc18SideBackground}" Classes.active="{Binding Icc18PageIsActive}" Command="{Binding GoToICC18Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc18SideBackground}" Classes.active="{Binding Icc18PageIsActive}" Command="{Binding GoToICC18Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsEnabled="{Binding AlsfMode}" Height="30" IsVisible="{Binding Ft3000Mode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -310,7 +310,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc19SideBackground}" Classes.active="{Binding Icc19PageIsActive}" Command="{Binding GoToICC19Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc19SideBackground}" Classes.active="{Binding Icc19PageIsActive}" Command="{Binding GoToICC19Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsVisible="{Binding Ft3000Mode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -325,7 +325,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc20SideBackground}" Classes.active="{Binding Icc20PageIsActive}" Command="{Binding GoToICC20Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc20SideBackground}" Classes.active="{Binding Icc20PageIsActive}" Command="{Binding GoToICC20Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsEnabled="{Binding AlsfMode}" Height="30" IsVisible="{Binding Ft3000Mode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>
@@ -340,7 +340,7 @@
               </StackPanel>
             </Grid>
           </Button>
-          <Button Foreground="Black" Background="{Binding Icc21SideBackground}" Classes.active="{Binding Icc21PageIsActive}" Command="{Binding GoToICC21Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" IsVisible="{Binding AlsfMode}" Height="30">
+          <Button Foreground="Black" Background="{Binding Icc21SideBackground}" Classes.active="{Binding Icc21PageIsActive}" Command="{Binding GoToICC21Command}" Width="{Binding SideMenuItemWidth}" HorizontalAlignment="Left" Height="30" IsVisible="{Binding Ft3000Mode}">
             <Grid ColumnDefinitions="*, Auto">
               <StackPanel Orientation="Horizontal">
                 <Image Source="{SvgImage /Assets/Images/flasher.svg}" Width="20"></Image>

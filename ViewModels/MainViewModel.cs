@@ -249,6 +249,12 @@ public partial class MainViewModel : ViewModelBase
     private bool _alsfMode = true;
 
     [ObservableProperty]
+    private bool _ft2400Mode = true;
+
+    [ObservableProperty]
+    private bool _ft3000Mode = false;
+
+    [ObservableProperty]
     private string _icc1SideMenu = "OFF";
 
     [ObservableProperty]
@@ -662,6 +668,9 @@ public partial class MainViewModel : ViewModelBase
     private int _expectedShortDataResponses = 0;
     private int _processedShortDataResponses = 0;
 
+    public bool ft2400 = true;
+    public bool ft3000 = false;
+
     Dictionary<byte, int> dict = new Dictionary<byte, int>()
     {
         { 0x26, 1 },
@@ -839,6 +848,8 @@ public partial class MainViewModel : ViewModelBase
         {
             _homePage.Ft2400Visible = false;
             _homePage.Ft3000Visible = false;
+            ft2400 = false;
+            ft3000 = false;
         }
     }
 
@@ -1032,6 +1043,7 @@ public partial class MainViewModel : ViewModelBase
         enableButtons();
     }
 
+    // ENTRY POINT - CONNECT PORT
     [RelayCommand]
     public async Task Connect(Window popupWindow)
     {
@@ -1062,6 +1074,8 @@ public partial class MainViewModel : ViewModelBase
             resetPgStatus();
             // enable all the buttons
             enableButtons();
+            ft2400 = true;
+            _homePage.Ft2400Background = new SolidColorBrush(Colors.LightGreen);
 
             _ = Task.Run(async () => await CommunicationLoopAsync());
         }
@@ -1198,25 +1212,33 @@ public partial class MainViewModel : ViewModelBase
                 // CAUTION & FAILURE
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    // CAUTION
-                    if ((AlsfMode && flashersConnected == 19) || (!AlsfMode && flashersConnected == 15))
-                    {
-                        alsfCaution = ssalrCaution = true;
-                        _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
-                        _homePage.CautionForeground = new SolidColorBrush(Colors.White);
-                        // single 0.2 second beep for Caution
-                        Console.Beep(2000, 200);
-                    }
-                    else
-                    {
-                        alsfCaution = ssalrCaution = false;
-                        _homePage.Caution = new SolidColorBrush(Colors.LightGray);
-                        _homePage.CautionForeground = new SolidColorBrush(Colors.Black);
-                    }
-
-                    // FAILURE
+                    // ALSF CAUTION & FAILURE
                     if (AlsfMode)
                     {
+                        // CAUTION
+                        if (ft2400)
+                        {
+                            if (flashersConnected == 14)
+                            {
+                                alsfCaution = true;
+                                _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
+                                _homePage.CautionForeground = new SolidColorBrush(Colors.White);
+                                // single 0.2 second beep for Caution
+                                Console.Beep(2000, 200);
+                            }
+                        }
+                        else if (ft3000)
+                        {
+                            if (flashersConnected == 19)
+                            {
+                                alsfCaution = true;
+                                _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
+                                _homePage.CautionForeground = new SolidColorBrush(Colors.White);
+                                // single 0.2 second beep for Caution
+                                Console.Beep(2000, 200);
+                            }
+                        }
+                        // FAILURE
                         for (int i = 0; i < 20; i++)
                         {
                             if ((!(iccs[i] && iccs[i + 1])) || (flashersConnected <= 18))
@@ -1234,27 +1256,58 @@ public partial class MainViewModel : ViewModelBase
 
                             }
                         }
-                    }
-                    else if (!AlsfMode && flashersConnected <= 14)
-                    {
-                        if (!ssalrFailure)
+                        if (!alsfCaution)
                         {
-                            StartContinuousBeep();
+                            alsfCaution = false;
+                            _homePage.Caution = new SolidColorBrush(Colors.LightGray);
+                            _homePage.CautionForeground = new SolidColorBrush(Colors.Black);
                         }
-                        ssalrFailure = true;
-                        _homePage.Failure = new SolidColorBrush(Colors.Red);
-                        _homePage.FailureForeground = new SolidColorBrush(Colors.White);
-                        if (!portHealthy)
+                        if (!alsfFailure)
                         {
-                            cautionToneCts?.Cancel();
+                            alsfFailure = false;
+                            _homePage.Failure = new SolidColorBrush(Colors.LightGray);
+                            _homePage.FailureForeground = new SolidColorBrush(Colors.Black);
                         }
-
                     }
+                    // SSALR CAUTION & FAILURE
                     else
                     {
-                        alsfFailure = ssalrFailure = false;
-                        _homePage.Failure = new SolidColorBrush(Colors.LightGray);
-                        _homePage.FailureForeground = new SolidColorBrush(Colors.Black);
+                        // CAUTION
+                        if(flashersConnected == 10)
+                        {
+                            ssalrCaution = true;
+                            _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
+                            _homePage.CautionForeground = new SolidColorBrush(Colors.White);
+                            // single 0.2 second beep for Caution
+                            Console.Beep(2000, 200);
+                        }
+                        // FAILURE
+                        if(flashersConnected <= 9)
+                        {
+                            if (!ssalrFailure)
+                            {
+                                StartContinuousBeep();
+                            }
+                            ssalrFailure = true;
+                            _homePage.Failure = new SolidColorBrush(Colors.Red);
+                            _homePage.FailureForeground = new SolidColorBrush(Colors.White);
+                            if (!portHealthy)
+                            {
+                                cautionToneCts?.Cancel();
+                            }
+                        }
+                        if (!ssalrCaution)
+                        {
+                            ssalrCaution = false;
+                            _homePage.Caution = new SolidColorBrush(Colors.LightGray);
+                            _homePage.CautionForeground = new SolidColorBrush(Colors.Black);
+                        }
+                        if (!ssalrFailure)
+                        {
+                            ssalrFailure = false;
+                            _homePage.Failure = new SolidColorBrush(Colors.LightGray);
+                            _homePage.FailureForeground = new SolidColorBrush(Colors.Black);
+                        }
                     }
                 });
 
@@ -1372,6 +1425,15 @@ public partial class MainViewModel : ViewModelBase
             {
                 cautionToneCts?.Cancel();
                 alsfFailure = ssalrFailure = false;
+                _homePage.Failure = new SolidColorBrush(Colors.LightGray);
+                _homePage.FailureForeground = new SolidColorBrush(Colors.Black);
+            }
+
+            // Turn off Caution if it's active
+            if (alsfCaution || ssalrCaution)
+            {
+                cautionToneCts?.Cancel();
+                alsfCaution = ssalrCaution = false;
                 _homePage.Failure = new SolidColorBrush(Colors.LightGray);
                 _homePage.FailureForeground = new SolidColorBrush(Colors.Black);
             }
@@ -15664,6 +15726,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+
     [RelayCommand]
     public void Disconnect(Window popupWindow)
     {
@@ -15710,7 +15773,7 @@ public partial class MainViewModel : ViewModelBase
     {
         SideMenuItemWidth = SideMenuExpanded ? 180.0 : 40.0;
     }
-
+    
     [RelayCommand]
     public async Task RefreshPorts()
     {
