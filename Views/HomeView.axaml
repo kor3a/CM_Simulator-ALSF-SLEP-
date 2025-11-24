@@ -257,6 +257,7 @@
                   <TextBlock Text="CAUTION" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="{Binding CautionForeground}"/>
                 </Grid>
               </Border>
+                <!--
               <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
                 <Button Width="70" Height="50" Background="{Binding CommFault}" Command="{Binding CommFaultClickedCommand}">
                     <Grid Width="70" Height="50">
@@ -264,6 +265,7 @@
                     </Grid>
                 </Button>
               </Border>
+              -->
             <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
                 <Button Width="80" Height="50" Background="{Binding Failure}" Command="{Binding FailureClickedCommand}">
                     <Grid Width="80" Height="50">

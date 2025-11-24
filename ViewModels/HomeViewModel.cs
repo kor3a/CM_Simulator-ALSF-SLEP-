@@ -183,11 +183,11 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     private IBrush _cautionForeground = new SolidColorBrush(Colors.Black);
 
-    [ObservableProperty]
-    private IBrush _commFault = new SolidColorBrush(Colors.LightGray);
+    //[ObservableProperty]
+    //private IBrush _commFault = new SolidColorBrush(Colors.LightGray);
 
-    [ObservableProperty]
-    private IBrush _commFaultForeground = new SolidColorBrush(Colors.Black);
+    //[ObservableProperty]
+    //private IBrush _commFaultForeground = new SolidColorBrush(Colors.Black);
 
     [ObservableProperty]
     private IBrush _failure = new SolidColorBrush(Colors.LightGray);
@@ -663,27 +663,28 @@ public partial class HomeViewModel : ViewModelBase
         _mainViewModel.enableButtons();
     }
 
-    [RelayCommand]
-    public void CommFaultClicked()
-    {
-        stopCautionBeep = true;
-        _mainViewModel.cautionToneCts?.Cancel();
-        if (failureBtnPressed)
-        {
-            _mainViewModel.StopContinuousBeep();
-        }
-        failureBtnPressed = false;
-    }
+    //[RelayCommand]
+    //public void CommFaultClicked()
+    //{
+    //    stopCautionBeep = true;
+    //    _mainViewModel.cautionToneCts?.Cancel();
+    //    if (failureBtnPressed)
+    //    {
+    //        _mainViewModel.StopContinuousBeep();
+    //    }
+    //    failureBtnPressed = false;
+    //}
 
     [RelayCommand]
     public void FailureClicked()
     {
         failureBtnPressed = true;
-        if (!_mainViewModel.commFault)
-        {
-            _mainViewModel.StopContinuousBeep();
-        }
-        
+        _mainViewModel.StopContinuousBeep();
+        //if (!_mainViewModel.commFault)
+        //{
+        //    _mainViewModel.StopContinuousBeep();
+        //}
+
     }
 
     [RelayCommand]

@@ -1170,38 +1170,38 @@ public partial class MainViewModel : ViewModelBase
                     portStillHealthy = false;
                 }
 
-                if (portHealthy != portStillHealthy)
-                {
-                    portHealthy = portStillHealthy;
-                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        if (portHealthy)
-                        {
-                            _homePage.CommFault = new SolidColorBrush(Colors.LightGray);
-                            _homePage.CommFaultForeground = new SolidColorBrush(Colors.Black);
-                            commFault = false;
-                        }
-                        else
-                        {
-                            _homePage.CommFault = new SolidColorBrush(Color.Parse("#FFBF00"));
-                            _homePage.CommFaultForeground = new SolidColorBrush(Colors.White);
-                            commFault = true;
-                            _homePage.stopCautionBeep = false;
-                            cautionToneCts?.Cancel();
-                            // 0.33 second on; 0.66 second off for Comm Fault
-                            cautionToneCts = new CancellationTokenSource();
-                            var token = cautionToneCts.Token;
-                            Task.Run(async () =>
-                            {
-                                while (!token.IsCancellationRequested && !_homePage.stopCautionBeep && !alsfFailure && !ssalrFailure)
-                                {
-                                    Console.Beep(1000, 330); // 1000 Hz tone for 0.33 s
-                                    await Task.Delay(660, token); // wait 0.66 s off time
-                                }
-                            }, token);
-                        }
-                    });
-                }
+                //if (portHealthy != portStillHealthy)
+                //{
+                //    portHealthy = portStillHealthy;
+                //    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                //    {
+                //        if (portHealthy)
+                //        {
+                //            _homePage.CommFault = new SolidColorBrush(Colors.LightGray);
+                //            _homePage.CommFaultForeground = new SolidColorBrush(Colors.Black);
+                //            commFault = false;
+                //        }
+                //        else
+                //        {
+                //            _homePage.CommFault = new SolidColorBrush(Color.Parse("#FFBF00"));
+                //            _homePage.CommFaultForeground = new SolidColorBrush(Colors.White);
+                //            commFault = true;
+                //            _homePage.stopCautionBeep = false;
+                //            cautionToneCts?.Cancel();
+                //            // 0.33 second on; 0.66 second off for Comm Fault
+                //            cautionToneCts = new CancellationTokenSource();
+                //            var token = cautionToneCts.Token;
+                //            Task.Run(async () =>
+                //            {
+                //                while (!token.IsCancellationRequested && !_homePage.stopCautionBeep && !alsfFailure && !ssalrFailure)
+                //                {
+                //                    Console.Beep(1000, 330); // 1000 Hz tone for 0.33 s
+                //                    await Task.Delay(660, token); // wait 0.66 s off time
+                //                }
+                //            }, token);
+                //        }
+                //    });
+                //}
 
                 if (!portStillHealthy)
                 {
