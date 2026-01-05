@@ -19,7 +19,10 @@ public partial class HomeView : Window
     public HomeView()
     {
         InitializeComponent();
-        DataContext = new HomeViewModel();
+
+        // Create MainViewModel first, then pass it to HomeViewModel
+        var mainViewModel = new MainViewModel();
+        DataContext = new HomeViewModel(mainViewModel);
 
         this.AttachedToVisualTree += (_, _) =>
         {
