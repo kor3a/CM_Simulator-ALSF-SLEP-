@@ -6,8 +6,8 @@
         xmlns:av="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
         x:Name="HomeViewRoot"
         x:DataType="vm:HomeViewModel"
-        mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="750"
-        Width="1150" Height="720"
+        mc:Ignorable="d" d:DesignWidth="850" d:DesignHeight="720"
+        Width="850" Height="720"
         x:Class="CM_Simulator.Views.HomeView"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
@@ -57,7 +57,7 @@
                   <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
                     <StackPanel Orientation="Horizontal">
                       <Ellipse Width="12" Height="12" Fill="{Binding MainViewModel.Icc1Page.RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
-                      <TextBlock Text="REM" FontSize="11" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                   </Border>
                 </StackPanel>
@@ -74,7 +74,7 @@
                 <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC1Command}"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom"
                         HorizontalContentAlignment="Center"
-                        Width="120" Height="35" FontSize="12" Background="LightGray" Margin="0,5"/>
+                        Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
               </Grid>
             </HeaderedContentControl>
 
@@ -99,7 +99,7 @@
                   <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
                     <StackPanel Orientation="Horizontal">
                       <Ellipse Width="12" Height="12" Fill="{Binding MainViewModel.Icc2Page.RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
-                      <TextBlock Text="REM" FontSize="11" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                   </Border>
                 </StackPanel>
@@ -116,7 +116,7 @@
                 <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC2Command}"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom" IsEnabled="{Binding AlsfMode}"
                         HorizontalContentAlignment="Center"
-                        Width="120" Height="35" FontSize="12" Background="LightGray" Margin="0,5"/>
+                        Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
               </Grid>
             </HeaderedContentControl>
 
@@ -141,7 +141,7 @@
                   <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
                     <StackPanel Orientation="Horizontal">
                       <Ellipse Width="12" Height="12" Fill="{Binding MainViewModel.Icc3Page.RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
-                      <TextBlock Text="REM" FontSize="11" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                      <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                   </Border>
                 </StackPanel>
@@ -158,7 +158,7 @@
                 <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC3Command}"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom"
                         HorizontalContentAlignment="Center"
-                        Width="120" Height="35" FontSize="12" Background="LightGray" Margin="0,5"/>
+                        Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
               </Grid>
             </HeaderedContentControl>
           </StackPanel>
@@ -296,9 +296,9 @@
       </Grid.RowDefinitions>
 
       <!-- Back to Home Button -->
-      <Button Grid.Row="0" Content="Back to Home" Command="{Binding GoToHomeCommand}"
-              HorizontalAlignment="Left" VerticalAlignment="Top"
-              Width="120" Height="40" FontSize="14" Background="LightGray" Margin="20,15"/>
+      <Button Grid.Row="0" Content="&lt;" Command="{Binding GoToHomeCommand}"
+              HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+              Width="50" Height="35" FontSize="14" Background="LightGray" Margin="20,15"/>
 
       <!-- ICC View Container - displays the current ICC page -->
       <ContentControl Grid.Row="1" Content="{Binding CurrentIccPage}" Margin="0,-40,0,0"/>
