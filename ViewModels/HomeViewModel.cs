@@ -21,6 +21,10 @@ public partial class HomeViewModel : ViewModelBase
     private readonly MainViewModel _mainViewModel;
     public MainViewModel MainViewModel => _mainViewModel;
 
+    // Forwarding properties to enable proper change notification for nested bindings
+    public bool IsHomePageActive => _mainViewModel.HomePageIsActive;
+    public ViewModelBase CurrentIccPage => _mainViewModel.CurrentPage;
+
     [ObservableProperty]
     private bool _alsfMode = true;
 
@@ -242,6 +246,19 @@ public partial class HomeViewModel : ViewModelBase
     public HomeViewModel(MainViewModel mainViewModel)
     {
         _mainViewModel = mainViewModel;
+
+        // Subscribe to MainViewModel property changes to forward notifications
+        _mainViewModel.PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName == nameof(MainViewModel.HomePageIsActive))
+            {
+                OnPropertyChanged(nameof(IsHomePageActive));
+            }
+            else if (e.PropertyName == nameof(MainViewModel.CurrentPage))
+            {
+                OnPropertyChanged(nameof(CurrentIccPage));
+            }
+        };
     }
 
     [RelayCommand]
