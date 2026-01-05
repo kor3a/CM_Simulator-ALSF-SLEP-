@@ -253,12 +253,6 @@ public partial class MainViewModel : ViewModelBase
     private bool _alsfMode = true;
 
     [ObservableProperty]
-    private bool _ft2400Mode = true;
-
-    [ObservableProperty]
-    private bool _ft3000Mode = false;
-
-    [ObservableProperty]
     private string _icc1SideMenu = "OFF";
 
     [ObservableProperty]
@@ -672,9 +666,6 @@ public partial class MainViewModel : ViewModelBase
     private int _expectedShortDataResponses = 0;
     private int _processedShortDataResponses = 0;
 
-    public bool ft2400 = true;
-    public bool ft3000 = false;
-
     Dictionary<byte, int> dict = new Dictionary<byte, int>()
     {
         { 0x26, 1 },
@@ -841,20 +832,6 @@ public partial class MainViewModel : ViewModelBase
         _homePage.ResetEnabled = true;
         _homePage.ShortEnabled = true;
         _homePage.ConfigEnabled = true;
-        if(AlsfMode)
-        {
-            _homePage.Ft2400Enabled = true;
-            _homePage.Ft3000Enabled = true;
-            _homePage.Ft2400Visible = true;
-            _homePage.Ft3000Visible = true;
-        }
-        else
-        {
-            _homePage.Ft2400Visible = false;
-            _homePage.Ft3000Visible = false;
-            ft2400 = false;
-            ft3000 = false;
-        }
     }
 
     public void disableButtons()
@@ -869,8 +846,6 @@ public partial class MainViewModel : ViewModelBase
         _homePage.ResetEnabled = false;
         _homePage.ShortEnabled = false;
         _homePage.ConfigEnabled = false;
-        _homePage.Ft2400Enabled = false;
-        _homePage.Ft3000Enabled = false;
     }
 
     public void StartContinuousBeep()
@@ -1078,8 +1053,6 @@ public partial class MainViewModel : ViewModelBase
             resetPgStatus();
             // enable all the buttons
             enableButtons();
-            ft2400 = true;
-            _homePage.Ft2400Background = new SolidColorBrush(Colors.LightGreen);
 
             _ = Task.Run(async () => await CommunicationLoopAsync());
         }
@@ -1220,27 +1193,13 @@ public partial class MainViewModel : ViewModelBase
                     if (AlsfMode)
                     {
                         // CAUTION
-                        if (ft2400)
+                        if (flashersConnected == 14)
                         {
-                            if (flashersConnected == 14)
-                            {
-                                alsfCaution = true;
-                                _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
-                                _homePage.CautionForeground = new SolidColorBrush(Colors.White);
-                                // single 0.2 second beep for Caution
-                                Console.Beep(2000, 200);
-                            }
-                        }
-                        else if (ft3000)
-                        {
-                            if (flashersConnected == 19)
-                            {
-                                alsfCaution = true;
-                                _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
-                                _homePage.CautionForeground = new SolidColorBrush(Colors.White);
-                                // single 0.2 second beep for Caution
-                                Console.Beep(2000, 200);
-                            }
+                            alsfCaution = true;
+                            _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
+                            _homePage.CautionForeground = new SolidColorBrush(Colors.White);
+                            // single 0.2 second beep for Caution
+                            Console.Beep(2000, 200);
                         }
                         // FAILURE
                         for (int i = 0; i < 20; i++)

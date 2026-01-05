@@ -29,12 +29,6 @@ public partial class HomeViewModel : ViewModelBase
     private bool _alsfMode = true;
 
     [ObservableProperty]
-    private bool _ft2400Mode = true;
-
-    [ObservableProperty]
-    private bool _ft3000Mode = false;
-
-    [ObservableProperty]
     private IBrush _lvicc1PgBackground = new SolidColorBrush(Colors.LightGray);
     [ObservableProperty]
     private IBrush _lvicc2PgBackground = new SolidColorBrush(Colors.LightGray);
@@ -205,24 +199,6 @@ public partial class HomeViewModel : ViewModelBase
 
     [ObservableProperty]
     private IBrush _rxStatus = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private bool _ft2400Enabled = false;
-
-    [ObservableProperty]
-    private bool _ft3000Enabled = false;
-
-    [ObservableProperty]
-    private bool _ft2400Visible = true;
-
-    [ObservableProperty]
-    private bool _ft3000Visible = true;
-
-    [ObservableProperty]
-    private IBrush _ft2400Background = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _ft3000Background = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
     public string _logText = "";
@@ -709,32 +685,6 @@ public partial class HomeViewModel : ViewModelBase
         //    _mainViewModel.StopContinuousBeep();
         //}
 
-    }
-
-    [RelayCommand]
-    public void Ft2400Clicked()
-    {
-        _mainViewModel.ft2400 = true;
-        _mainViewModel.ft3000 = false;
-        Ft2400Mode = true;
-        _mainViewModel.Ft2400Mode = true;
-        Ft3000Mode = false;
-        _mainViewModel.Ft3000Mode = true;
-        Ft2400Background = new SolidColorBrush(Colors.LightGreen);
-        Ft3000Background = new SolidColorBrush(Colors.LightGray);
-    }
-
-    [RelayCommand]
-    public void Ft3000Clicked()
-    {
-        _mainViewModel.ft3000 = true;
-        _mainViewModel.ft2400 = false;
-        Ft2400Mode = false;
-        _mainViewModel.Ft2400Mode = false;
-        Ft3000Mode = true;
-        _mainViewModel.Ft3000Mode = false;
-        Ft3000Background = new SolidColorBrush(Colors.LightGreen);
-        Ft2400Background = new SolidColorBrush(Colors.LightGray);
     }
 }
 

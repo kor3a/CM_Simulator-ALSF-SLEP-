@@ -282,12 +282,6 @@
             </StackPanel>
         </StackPanel>
 
-         <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-			 <StackPanel Margin="0,10,10,0">
-				 <Button IsEnabled="{Binding Ft2400Enabled}" IsVisible="{Binding Ft2400Visible}" Content="2400ft" FontSize="14" HorizontalAlignment="Center" VerticalContentAlignment="Center" Width="65" Height="50" Background="{Binding Ft2400Background}" Command="{Binding Ft2400Clicked}"/>
-                 <Button IsEnabled="{Binding Ft3000Enabled}" IsVisible="{Binding Ft3000Visible}" Content="3000ft" FontSize="14" HorizontalAlignment="Center" VerticalContentAlignment="Center" Width="65" Height="50" Background="{Binding Ft3000Background}" Command="{Binding Ft3000Clicked}"/>
-             </StackPanel>
-         </StackPanel>
         
         <TextBox x:Name="LogTextBox" Text="{Binding LogText, Mode=OneWay}" Grid.Row="4" Background="White" Margin="10,0,5,10" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" av:ScrollViewer.VerticalScrollBarVisibility="Auto" ></TextBox>
         </Grid>
