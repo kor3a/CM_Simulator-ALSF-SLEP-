@@ -15,14 +15,15 @@ namespace CM_Simulator.Views;
 public partial class HomeView : Window
 {
     private ScrollViewer? _scrollViewer;
+    private MainViewModel? _mainViewModel;
 
     public HomeView()
     {
         InitializeComponent();
 
-        // Create MainViewModel first, then pass it to HomeViewModel
-        var mainViewModel = new MainViewModel();
-        DataContext = new HomeViewModel(mainViewModel);
+        // Create MainViewModel and use its HomePage instance
+        _mainViewModel = new MainViewModel();
+        DataContext = _mainViewModel.HomePage;
 
         this.AttachedToVisualTree += (_, _) =>
         {
@@ -39,7 +40,7 @@ public partial class HomeView : Window
     {
         var popup = new ConnectPopupView
         {
-            DataContext = this.DataContext
+            DataContext = _mainViewModel
         };
         await popup.ShowDialog(this);
     }
