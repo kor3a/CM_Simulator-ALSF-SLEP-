@@ -18,15 +18,16 @@
   </Design.DataContext>
 
   <Grid Background="{DynamicResource PrimaryBackgroundGradient}">
-    
+    <!--
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="{Binding BorderWidth}" />
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
 
     <ContentControl Grid.Column="1" Content="{Binding CurrentPage}"/>
-
+    -->
       <!--Side Menu Begin-->
+      <!--
       <Border Grid.Column="0" Padding="5" Background="{DynamicResource PrimaryBackground}" Width="{Binding BorderWidth}" HorizontalAlignment="Left">
       <Grid RowDefinitions="Auto, *">
         <StackPanel Grid.Row="0">
@@ -359,7 +360,8 @@
       </Grid>
     
     </Border>
+    -->
     <!--Side Menu End-->
-
+    
   </Grid>
 </Window>

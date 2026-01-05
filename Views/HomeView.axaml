@@ -14,7 +14,7 @@
     <vm:HomeViewModel/>
   </Design.DataContext>
 
-  <Grid>
+  <Grid Background="{DynamicResource PrimaryBackgroundGradient}">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="*" />
