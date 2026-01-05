@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CM_Simulator.Views;
 
 namespace CM_Simulator
 {
@@ -15,7 +16,7 @@ namespace CM_Simulator
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainView();
+                desktop.MainWindow = new HomeView();
             }
 
             base.OnFrameworkInitializationCompleted();

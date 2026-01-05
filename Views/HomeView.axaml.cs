@@ -12,13 +12,14 @@ using System.Reflection;
 
 namespace CM_Simulator.Views;
 
-public partial class HomeView : UserControl
+public partial class HomeView : Window
 {
     private ScrollViewer? _scrollViewer;
 
     public HomeView()
     {
         InitializeComponent();
+        DataContext = new HomeViewModel();
 
         this.AttachedToVisualTree += (_, _) =>
         {
@@ -28,6 +29,16 @@ public partial class HomeView : UserControl
         };
 
         this.DataContextChanged += OnDataContextChanged;
+        this.Opened += HomeView_Opened;
+    }
+
+    private async void HomeView_Opened(object? sender, EventArgs e)
+    {
+        var popup = new ConnectPopupView
+        {
+            DataContext = this.DataContext
+        };
+        await popup.ShowDialog(this);
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
