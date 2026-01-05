@@ -371,6 +371,12 @@ public partial class HomeViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void GoToHome()
+    {
+        _mainViewModel.GoToHome();
+    }
+
+    [RelayCommand]
     private void AlsfModeChange()
     {
         if (!_mainViewModel.AlsfMode)
