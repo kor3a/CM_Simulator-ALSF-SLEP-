@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:CM_Simulator.ViewModels"
              x:DataType="vm:ICC3ViewModel"
-             mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="750"
+             mc:Ignorable="d" d:DesignWidth="850" d:DesignHeight="750"
              x:Class="CM_Simulator.Views.ICC3View">
   <Design.DataContext>
     <vm:ICC3ViewModel/>
@@ -228,26 +228,26 @@
 
         </StackPanel>
         <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,30,8,0">
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-            <Label Margin="0,5" Width="75">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
+            <Label Margin="0,5" Width="37">
               <TextBlock Text="Start" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
             </Label>
             <TextBox x:Name="StartByteTextBox" Text="{Binding StartByte}" TextAlignment="Center" FontSize="14" MinHeight="35" Width="45" Background="{Binding StartByteBackground}" Margin="10,0,0,0" KeyDown="StartByte_KeyDown" LostFocus="StartByte_LostFocus"></TextBox>
           </StackPanel>
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-            <Label Margin="0,5" Width="75">
-              <TextBlock Text="Destination" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
+            <Label Margin="0,5" Width="37">
+              <TextBlock Text="Dest" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
             </Label>
             <TextBox x:Name="DestinationByteTextBox" Text="{Binding DestinationByte}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="{Binding DestinationByteBackground}" Margin="10,0,0,0" KeyDown="DestinationByte_KeyDown" LostFocus="DestinationByte_LostFocus"></TextBox>
           </StackPanel>
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-            <Label Margin="0,5" Width="75">
-              <TextBlock Text="Source" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
+            <Label Margin="0,5" Width="37">
+              <TextBlock Text="Src" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
             </Label>
             <TextBox x:Name="SourceByteTextBox" Text="{Binding SourceByte}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="{Binding SourceByteBackground}" Margin="10,0,0,0" KeyDown="SourceByte_KeyDown" LostFocus="SourceByte_LostFocus"></TextBox>
           </StackPanel>
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-            <Label Margin="0,5" Width="75">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
+            <Label Margin="0,5" Width="37">
               <TextBlock Text="End" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
             </Label>
             <TextBox x:Name="EndByteTextBox" Text="{Binding EndByte}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="{Binding EndByteBackground}" Margin="10,0,0,0" KeyDown="EndByte_KeyDown" LostFocus="EndByte_LostFocus"></TextBox>
