@@ -77,6 +77,9 @@ public partial class MainViewModel : ViewModelBase
     public bool Icc21PageIsActive => CurrentPage == _icc21Page;
 
     public HomeViewModel HomePage => _homePage;
+    public ICC1ViewModel Icc1Page => _icc1Page;
+    public ICC2ViewModel Icc2Page => _icc2Page;
+    public ICC3ViewModel Icc3Page => _icc3Page;
     private readonly HomeViewModel _homePage;
     private readonly ICC1ViewModel _icc1Page;
     private readonly ICC2ViewModel _icc2Page;

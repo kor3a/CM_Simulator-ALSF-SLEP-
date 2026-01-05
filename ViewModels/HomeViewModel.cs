@@ -19,6 +19,7 @@ public partial class HomeViewModel : ViewModelBase
 {
 
     private readonly MainViewModel _mainViewModel;
+    public MainViewModel MainViewModel => _mainViewModel;
 
     [ObservableProperty]
     private bool _alsfMode = true;
