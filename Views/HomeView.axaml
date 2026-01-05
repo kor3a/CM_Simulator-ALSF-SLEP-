@@ -71,8 +71,9 @@
                 </StackPanel>
 
                 <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open LVICC 1" Command="{Binding GoToICC1Command}"
+                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC1Command}"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                        HorizontalContentAlignment="Center"
                         Width="120" Height="35" FontSize="12" Background="LightGray" Margin="0,5"/>
               </Grid>
             </HeaderedContentControl>
@@ -112,8 +113,9 @@
                 </StackPanel>
 
                 <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open LVICC 2" Command="{Binding GoToICC2Command}"
+                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC2Command}"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom" IsEnabled="{Binding AlsfMode}"
+                        HorizontalContentAlignment="Center"
                         Width="120" Height="35" FontSize="12" Background="LightGray" Margin="0,5"/>
               </Grid>
             </HeaderedContentControl>
@@ -153,8 +155,9 @@
                 </StackPanel>
 
                 <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open LVICC 3" Command="{Binding GoToICC3Command}"
+                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC3Command}"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                        HorizontalContentAlignment="Center"
                         Width="120" Height="35" FontSize="12" Background="LightGray" Margin="0,5"/>
               </Grid>
             </HeaderedContentControl>
