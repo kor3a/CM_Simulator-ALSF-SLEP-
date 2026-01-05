@@ -1,14 +1,18 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:CM_Simulator.ViewModels"
-             xmlns:av="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
-             x:Name="HomeViewRoot"
-             x:DataType="vm:HomeViewModel"
-             mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="750"
-             x:Class="CM_Simulator.Views.HomeView"
-             >
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:CM_Simulator.ViewModels"
+        xmlns:av="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+        x:Name="HomeViewRoot"
+        x:DataType="vm:HomeViewModel"
+        mc:Ignorable="d" d:DesignWidth="1150" d:DesignHeight="750"
+        Width="1150" Height="720"
+        x:Class="CM_Simulator.Views.HomeView"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Title="ALSF-2 SLEP CM_Simulator"
+        >
 
   <Design.DataContext>
     <vm:HomeViewModel/>
@@ -336,4 +340,4 @@
       </Grid>
     </Border>
   </Grid>
-</UserControl>
+</Window>
