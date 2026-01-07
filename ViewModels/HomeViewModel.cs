@@ -452,7 +452,7 @@ public partial class HomeViewModel : ViewModelBase
 
 
     [RelayCommand]
-    public void MainOffControlClicked()
+    public async Task MainOffControlClicked()
     {
         if (_mainViewModel.cmOn)
         {
@@ -488,12 +488,12 @@ public partial class HomeViewModel : ViewModelBase
                 _mainViewModel.cmHigh = false;
             }
 
-            _mainViewModel.SendCmCommand();
+            await _mainViewModel.SendCmCommandAsync();
         }
     }
 
     [RelayCommand]
-    public void MainOnControlClicked()
+    public async Task MainOnControlClicked()
     {
         if (!_mainViewModel.cmOn)
         {
@@ -506,7 +506,7 @@ public partial class HomeViewModel : ViewModelBase
             LowForeground = new SolidColorBrush(Colors.Black);
             OffButton = new SolidColorBrush(Colors.LightGray);
             OffForeground = new SolidColorBrush(Colors.Black);
-            
+
             if (_mainViewModel.AlsfMode)
             {
                 _mainViewModel.AlsfMode = true;
@@ -520,12 +520,12 @@ public partial class HomeViewModel : ViewModelBase
 
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.fOffByte ^ _mainViewModel.fOnByte ^ _mainViewModel.fLowByte);
 
-            _mainViewModel.SendCmCommand();
+            await _mainViewModel.SendCmCommandAsync();
         }
     }
 
     [RelayCommand]
-    public void MainLowControlClicked()
+    public async Task MainLowControlClicked()
     {
         if (_mainViewModel.cmOn)
         {
@@ -554,13 +554,13 @@ public partial class HomeViewModel : ViewModelBase
 
                 _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.fLowByte);
 
-                _mainViewModel.SendCmCommand();
+                await _mainViewModel.SendCmCommandAsync();
             }
         }
     }
 
     [RelayCommand]
-    public void MainMedControlClicked()
+    public async Task MainMedControlClicked()
     {
         if (_mainViewModel.cmOn)
         {
@@ -588,14 +588,14 @@ public partial class HomeViewModel : ViewModelBase
 
                 _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.fMedByte);
 
-                _mainViewModel.SendCmCommand();
+                await _mainViewModel.SendCmCommandAsync();
             }
-            
+
         }
     }
 
     [RelayCommand]
-    public void MainHighControlClicked()
+    public async Task MainHighControlClicked()
     {
         if (_mainViewModel.cmOn)
         {
@@ -622,9 +622,9 @@ public partial class HomeViewModel : ViewModelBase
 
                 _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.fHighByte);
 
-                _mainViewModel.SendCmCommand();
+                await _mainViewModel.SendCmCommandAsync();
             }
-            
+
         }
     }
 
@@ -641,9 +641,10 @@ public partial class HomeViewModel : ViewModelBase
 
         for(int i = 0; i < 3; i++)
         {
-            _mainViewModel.SendShortDataRequest(_mainViewModel.addresses[i]);
-            await Task.Delay(1500);
-
+            await _mainViewModel.SendShortDataRequestAsync(_mainViewModel.addresses[i]);
+            // Wait for response
+            await _mainViewModel.WaitForResponseAsync(_mainViewModel.addresses[i], 500);
+            await Task.Delay(100);
         }
 
         _mainViewModel.enableButtons();
@@ -656,8 +657,10 @@ public partial class HomeViewModel : ViewModelBase
 
         for(int i = 0; i < 3; i++)
         {
-            _mainViewModel.SendConfigDataRequest(_mainViewModel.addresses[i]);
-            await Task.Delay(1500);
+            await _mainViewModel.SendConfigDataRequestAsync(_mainViewModel.addresses[i]);
+            // Wait for response
+            await _mainViewModel.WaitForResponseAsync(_mainViewModel.addresses[i], 500);
+            await Task.Delay(100);
         }
 
         _mainViewModel.enableButtons();
