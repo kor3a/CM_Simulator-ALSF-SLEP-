@@ -788,7 +788,7 @@ public partial class MainViewModel : ViewModelBase
         CurrentPage = _homePage;
         AvailablePorts = new ObservableCollection<string>(SerialPort.GetPortNames().OrderBy(p => p));
         SelectedPort = AvailablePorts.FirstOrDefault();
-        addresses = new byte[] {icc1, icc2, icc3, icc4, icc5, icc6, icc7, icc8, icc9, icc10, icc11, icc12, icc13, icc14, icc15, icc16, icc17, icc18, icc19, icc20, icc21};
+        addresses = new byte[] {icc1, icc2, icc3};
 
         // disable all the buttons
         disableButtons();
@@ -1193,7 +1193,7 @@ public partial class MainViewModel : ViewModelBase
                     if (AlsfMode)
                     {
                         // CAUTION
-                        if (flashersConnected == 14)
+                        if (flashersConnected == 1)
                         {
                             alsfCaution = true;
                             _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
@@ -1202,9 +1202,9 @@ public partial class MainViewModel : ViewModelBase
                             Console.Beep(2000, 200);
                         }
                         // FAILURE
-                        for (int i = 0; i < 20; i++)
+                        for (int i = 0; i < 2; i++)
                         {
-                            if ((!(iccs[i] && iccs[i + 1])) || (flashersConnected <= 18))
+                            if ((!(iccs[i] && iccs[i + 1])) || (flashersConnected == 0))
                             {
                                 if (!alsfFailure)
                                 {
@@ -1236,7 +1236,7 @@ public partial class MainViewModel : ViewModelBase
                     else
                     {
                         // CAUTION
-                        if(flashersConnected == 10)
+                        if(flashersConnected == 2)
                         {
                             ssalrCaution = true;
                             _homePage.Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
@@ -1245,7 +1245,7 @@ public partial class MainViewModel : ViewModelBase
                             Console.Beep(2000, 200);
                         }
                         // FAILURE
-                        if(flashersConnected <= 9)
+                        if(flashersConnected == 0)
                         {
                             if (!ssalrFailure)
                             {
@@ -1419,7 +1419,7 @@ public partial class MainViewModel : ViewModelBase
         // Send Short Data Request to receive updates for GUI update
         new Thread(async () =>
         {
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < 3; i++)
             {
                 byte[] shortDataRequestTx = new byte[8];
                 shortDataRequestTx[0] = start;
@@ -7085,14 +7085,6 @@ public partial class MainViewModel : ViewModelBase
                     _icc1Page.HighButton = new SolidColorBrush(Colors.LightGray);
                     _icc1Page.HighForeground = new SolidColorBrush(Colors.Black);
                 }
-                if ((message & alsfModeByte) == alsfModeByte)
-                {
-                    icc1MessageData = (byte)(icc1MessageData ^ alsfModeByte);
-                }
-                if ((message & ssalrModeByte) == ssalrModeByte)
-                {
-                    icc1MessageData = (byte)(icc1MessageData ^ ssalrModeByte);
-                }
             }
         }
         if ((message & fLowByte) == fLowByte)
@@ -7250,14 +7242,6 @@ public partial class MainViewModel : ViewModelBase
                     _icc2Page.HighButton = new SolidColorBrush(Colors.LightGray);
                     _icc2Page.HighForeground = new SolidColorBrush(Colors.Black);
                 }
-                if ((message & alsfModeByte) == alsfModeByte)
-                {
-                    icc2MessageData = (byte)(icc2MessageData ^ alsfModeByte);
-                }
-                if ((message & ssalrModeByte) == ssalrModeByte)
-                {
-                    icc2MessageData = (byte)(icc2MessageData ^ ssalrModeByte);
-                }
             }
         }
         if ((message & fLowByte) == fLowByte)
@@ -7412,14 +7396,6 @@ public partial class MainViewModel : ViewModelBase
                     icc3High = false;
                     _icc3Page.HighButton = new SolidColorBrush(Colors.LightGray);
                     _icc3Page.HighForeground = new SolidColorBrush(Colors.Black);
-                }
-                if ((message & alsfModeByte) == alsfModeByte)
-                {
-                    icc3MessageData = (byte)(icc3MessageData ^ alsfModeByte);
-                }
-                if ((message & ssalrModeByte) == ssalrModeByte)
-                {
-                    icc3MessageData = (byte)(icc3MessageData ^ ssalrModeByte);
                 }
             }
         }
@@ -10712,7 +10688,6 @@ public partial class MainViewModel : ViewModelBase
             _icc2Page.RemButton = new SolidColorBrush(Colors.Green);
             _icc2Page.RemForeground = new SolidColorBrush(Colors.White);
             icc2Rem = true;
-            _homePage.Lvicc2PgStatus = false;
             _icc2Page.IsCommandErrorVisible = false;
         }
         else if ((param2 & remoteConfig) == 0)
@@ -10724,7 +10699,6 @@ public partial class MainViewModel : ViewModelBase
 
             // activate mode error
             _icc2Page.IsCommandErrorVisible = true;
-            _homePage.Lvicc2PgStatus = true;
         }
         if ((param2 & offConfig) == offConfig)
         {

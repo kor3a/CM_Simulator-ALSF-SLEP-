@@ -639,7 +639,7 @@ public partial class HomeViewModel : ViewModelBase
     {
         _mainViewModel.disableButtons();
 
-        for(int i = 0; i < 21; i++)
+        for(int i = 0; i < 3; i++)
         {
             _mainViewModel.SendShortDataRequest(_mainViewModel.addresses[i]);
             await Task.Delay(1500);
@@ -654,7 +654,7 @@ public partial class HomeViewModel : ViewModelBase
     {
         _mainViewModel.disableButtons();
 
-        for(int i = 0; i < 21; i++)
+        for(int i = 0; i < 3; i++)
         {
             _mainViewModel.SendConfigDataRequest(_mainViewModel.addresses[i]);
             await Task.Delay(1500);
