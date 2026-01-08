@@ -7516,8 +7516,24 @@ public partial class MainViewModel : ViewModelBase
                 }
             }   
         }
-        
-        if(cmMessageData != icc1MessageData)
+
+        if ((message & alsfModeByte) == alsfModeByte)
+        {
+            if (!AlsfMode)
+            {
+                icc1MessageData = (byte)(icc1MessageData ^ alsfModeByte ^ ssalrModeByte);
+                AlsfMode = true;
+            }
+        }else
+        {
+            if (AlsfMode)
+            {
+                icc1MessageData = (byte)(icc1MessageData ^ alsfModeByte ^ ssalrModeByte);
+                AlsfMode = false;
+            }
+        }
+
+        if (cmMessageData != icc1MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc1MessageData, "ICC1");
             _homePage.LogText += "\nMODE ERROR: CM and LVICC 1 do not match.\n" + mismatchInfo;
@@ -7525,7 +7541,8 @@ public partial class MainViewModel : ViewModelBase
             // activate mode error
             _icc1Page.IsCommandErrorVisible = true;
             _homePage.Lvicc1PgStatus = true;
-        }else
+        }
+        else
         {
             _icc1Page.IsCommandErrorVisible = false;
             _homePage.Lvicc1PgStatus = false;
@@ -7669,6 +7686,22 @@ public partial class MainViewModel : ViewModelBase
                     _icc2Page.MedButton = new SolidColorBrush(Colors.LightGray);
                     _icc2Page.MedForeground = new SolidColorBrush(Colors.Black);
                 }
+            }
+        }
+        if ((message & alsfModeByte) == alsfModeByte)
+        {
+            if (!AlsfMode)
+            {
+                icc2MessageData = (byte)(icc2MessageData ^ alsfModeByte ^ ssalrModeByte);
+                AlsfMode = true;
+            }
+        }
+        else
+        {
+            if (AlsfMode)
+            {
+                icc2MessageData = (byte)(icc2MessageData ^ alsfModeByte ^ ssalrModeByte);
+                AlsfMode = false;
             }
         }
         if (cmMessageData != icc2MessageData)
@@ -7829,6 +7862,22 @@ public partial class MainViewModel : ViewModelBase
             }
 
 
+        }
+        if ((message & alsfModeByte) == alsfModeByte)
+        {
+            if (!AlsfMode)
+            {
+                icc3MessageData = (byte)(icc3MessageData ^ alsfModeByte ^ ssalrModeByte);
+                AlsfMode = true;
+            }
+        }
+        else
+        {
+            if (AlsfMode)
+            {
+                icc3MessageData = (byte)(icc3MessageData ^ alsfModeByte ^ ssalrModeByte);
+                AlsfMode = false;
+            }
         }
         if (cmMessageData != icc3MessageData)
         {
