@@ -216,16 +216,20 @@ public partial class HomeViewModel : ViewModelBase
     /// <param name="text">The text to append to the log</param>
     public void AppendToLog(string text)
     {
-        LogText += text;
+        // Work with the backing field directly to avoid multiple property change notifications
+        _logText += text;
 
         // Check if we need to trim the log
-        var lines = LogText.Split('\n');
+        var lines = _logText.Split('\n', StringSplitOptions.None);
         if (lines.Length > MaxLogLines)
         {
             // Keep only the most recent MaxLogLines
             var trimmedLines = lines.Skip(lines.Length - MaxLogLines).ToArray();
-            LogText = string.Join('\n', trimmedLines);
+            _logText = string.Join('\n', trimmedLines);
         }
+
+        // Notify UI only once at the end
+        OnPropertyChanged(nameof(LogText));
     }
 
     public HomeViewModel()
