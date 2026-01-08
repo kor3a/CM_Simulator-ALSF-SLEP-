@@ -211,7 +211,7 @@ public partial class ICC1ViewModel : ViewModelBase
 
                 // Update cmMessageData or other logic if needed
                 
-                _mainViewModel.SendCmCommand(); // Send updated cmMessageData
+                //_mainViewModel.SendCmCommand(); // Send updated cmMessageData
 
                 if (misfires > 7)
                 {
