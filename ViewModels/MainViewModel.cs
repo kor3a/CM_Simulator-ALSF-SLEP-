@@ -1215,7 +1215,7 @@ public partial class MainViewModel : ViewModelBase
                         // FAILURE
                         for (int i = 0; i < 2; i++)
                         {
-                            if ((!(iccs[i] && iccs[i + 1])) || (flashersConnected == 0))
+                            if ((!iccs[i] && !iccs[i + 1]) || (flashersConnected == 0))
                             {
                                 if (!alsfFailure)
                                 {
@@ -10790,8 +10790,13 @@ public partial class MainViewModel : ViewModelBase
             _icc1Page.RemButton = new SolidColorBrush(Colors.Green);
             _icc1Page.RemForeground = new SolidColorBrush(Colors.White);
             _icc1Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc1PgStatus = false;
             icc1Rem = true;
+            if (!icc1Connected)
+            {
+                iccs[0] = true;
+                flashersConnected++;
+                icc1Connected = true;
+            }
         }
         else if ((param2 & remoteConfig) == 0)
         {
@@ -10799,11 +10804,18 @@ public partial class MainViewModel : ViewModelBase
             _icc1Page.RemForeground = new SolidColorBrush(Colors.Black);
             
             icc1Rem = false;
+            if (icc1Connected)
+            {
+                iccs[0] = false;
+                flashersConnected--;
+                icc1Connected = false;
+            }
+                
+            
             _homePage.LogText += "\nMODE ERROR: LVICC 1 remote is turned OFF.\n";
 
             // activate mode error
             _icc1Page.IsCommandErrorVisible = true;
-            _homePage.Lvicc1PgStatus = true;
         }
         if ((param2 & offConfig) == offConfig)
         {
@@ -11021,12 +11033,10 @@ public partial class MainViewModel : ViewModelBase
 
             // activate mode error
             _icc1Page.IsCommandErrorVisible = true;
-            _homePage.Lvicc1PgStatus = true;
         }
         else
         {
             _icc1Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc1PgStatus = false;
         }
     }
 
@@ -11038,6 +11048,12 @@ public partial class MainViewModel : ViewModelBase
             _icc2Page.RemForeground = new SolidColorBrush(Colors.White);
             icc2Rem = true;
             _icc2Page.IsCommandErrorVisible = false;
+            if (!icc2Connected)
+            {
+                iccs[1] = true;
+                flashersConnected++;
+                icc2Connected = true;
+            }
         }
         else if ((param2 & remoteConfig) == 0)
         {
@@ -11046,6 +11062,12 @@ public partial class MainViewModel : ViewModelBase
             icc2Rem = false;
             _homePage.LogText += "\nMODE ERROR: LVICC 2 remote is turned OFF.\n";
 
+            if (icc2Connected)
+            {
+                iccs[1] = false;
+                flashersConnected--;
+                icc2Connected = false;
+            }
             // activate mode error
             _icc2Page.IsCommandErrorVisible = true;
         }
@@ -11285,7 +11307,12 @@ public partial class MainViewModel : ViewModelBase
             _icc3Page.RemForeground = new SolidColorBrush(Colors.White);
             icc3Rem = true;
             _icc3Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc3PgStatus = false;
+            if (!icc3Connected)
+            {
+                iccs[2] = true;
+                flashersConnected++;
+                icc3Connected = true;
+            }
         }
         else if ((param2 & remoteConfig) == 0)
         {
@@ -11294,9 +11321,15 @@ public partial class MainViewModel : ViewModelBase
             icc3Rem = false;
             _homePage.LogText += "\nMODE ERROR: LVICC 3 remote is turned OFF.\n";
 
+            if (icc1Connected)
+            {
+                iccs[2] = false;
+                flashersConnected--;
+                icc1Connected = false;
+            }
             // activate mode error
             _icc3Page.IsCommandErrorVisible = true;
-            _homePage.Lvicc3PgStatus = true;
+            
         }
         if ((param2 & offConfig) == offConfig)
         {
