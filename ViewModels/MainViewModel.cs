@@ -2871,10 +2871,7 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                if (message[29] > 7)
-                                {
-                                    _icc1Page.SubmitFlasherMisfires(misfires);
-                                }
+                                _icc1Page.SubmitFlasherMisfires(misfires);
 
                                 _icc1Page.Vac240V = vac240V;
                                 _icc1Page.Vac240A = vac240A;
@@ -3081,10 +3078,7 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                if (message[29] > 7)
-                                {
-                                    _icc2Page.SubmitFlasherMisfires(misfires);
-                                }
+                                _icc2Page.SubmitFlasherMisfires(misfires);
 
                                 _icc2Page.Vac240V = vac240V;
                                 _icc2Page.Vac240A = vac240A;
@@ -3290,10 +3284,7 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                if (message[29] > 7)
-                                {
-                                    _icc3Page.SubmitFlasherMisfires(misfires);
-                                }
+                                _icc3Page.SubmitFlasherMisfires(misfires);
 
                                 _icc3Page.Vac240V = vac240V;
                                 _icc3Page.Vac240A = vac240A;
@@ -11321,11 +11312,11 @@ public partial class MainViewModel : ViewModelBase
             icc3Rem = false;
             _homePage.LogText += "\nMODE ERROR: LVICC 3 remote is turned OFF.\n";
 
-            if (icc1Connected)
+            if (icc3Connected)
             {
                 iccs[2] = false;
                 flashersConnected--;
-                icc1Connected = false;
+                icc3Connected = false;
             }
             // activate mode error
             _icc3Page.IsCommandErrorVisible = true;
