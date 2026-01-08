@@ -197,7 +197,7 @@ public partial class ICC1ViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            _homeViewModel.LogText += "Error ICC1: FlasherMisfires input is empty.\n";
+            _homeViewModel.AppendLog("Error ICC1: FlasherMisfires input is empty.\n"));
             return;
         }
 
@@ -207,7 +207,7 @@ public partial class ICC1ViewModel : ViewModelBase
             {
                 FlasherMisfires = misfires.ToString(); // Update property
                 FlasherMisfireBackground = new SolidColorBrush(Colors.White); // Reset background
-                _homeViewModel.LogText += $"ICC1 FlasherMisfires updated to {misfires}.\n";
+                _homeViewModel.AppendLog($"ICC1 FlasherMisfires updated to {misfires}.\n"));
 
                 // Update cmMessageData or other logic if needed
                 
@@ -224,13 +224,13 @@ public partial class ICC1ViewModel : ViewModelBase
             }
             else
             {
-                _homeViewModel.LogText += "Error ICC1: FlasherMisfires must be non-negative.\n";
+                _homeViewModel.AppendLog("Error ICC1: FlasherMisfires must be non-negative.\n"));
                 FlasherMisfireBackground = new SolidColorBrush(Colors.Yellow);
             }
         }
         else
         {
-            _homeViewModel.LogText += "Error ICC1: Invalid FlasherMisfires input. Please enter a number.\n";
+            _homeViewModel.AppendLog("Error ICC1: Invalid FlasherMisfires input. Please enter a number.\n"));
             FlasherMisfireBackground = new SolidColorBrush(Colors.Yellow);
         }
     }
@@ -240,7 +240,7 @@ public partial class ICC1ViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            _homeViewModel.LogText += "Error ICC1: Start Byte input is empty.\n";
+            _homeViewModel.AppendLog("Error ICC1: Start Byte input is empty.\n"));
             return;
         }
 
@@ -265,7 +265,7 @@ public partial class ICC1ViewModel : ViewModelBase
         {
             StartByte = "0x" + startByte.ToString("X2"); // Update property in hex format
             StartByteBackground = new SolidColorBrush(Colors.White); // Reset background
-            _homeViewModel.LogText += $"ICC1 Start Byte updated to 0x{startByte.ToString("X2")}.\n";
+            _homeViewModel.AppendLog($"ICC1 Start Byte updated to 0x{startByte.ToString("X2")}.\n"));
 
             // Update cmMessageData or other logic if needed
             _mainViewModel.SendCmCommand(); // Send updated cmMessageData
@@ -281,7 +281,7 @@ public partial class ICC1ViewModel : ViewModelBase
         }
         else
         {
-            _homeViewModel.LogText += "Error ICC1: Invalid Start Byte input. Please enter a byte number without '0x'.\n";
+            _homeViewModel.AppendLog("Error ICC1: Invalid Start Byte input. Please enter a byte number without '0x'.\n"));
             StartByteBackground = new SolidColorBrush(Colors.Yellow);
         }
     }
@@ -291,7 +291,7 @@ public partial class ICC1ViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            _homeViewModel.LogText += "Error ICC1: Destination Byte input is empty.\n";
+            _homeViewModel.AppendLog("Error ICC1: Destination Byte input is empty.\n"));
             return;
         }
 
@@ -316,7 +316,7 @@ public partial class ICC1ViewModel : ViewModelBase
         {
             DestinationByte = "0x" + destinationByte.ToString("X2"); // Update property in hex format
             DestinationByteBackground = new SolidColorBrush(Colors.White); // Reset background
-            _homeViewModel.LogText += $"ICC1 Destination Byte updated to 0x{destinationByte.ToString("X2")}.\n";
+            _homeViewModel.AppendLog($"ICC1 Destination Byte updated to 0x{destinationByte.ToString("X2")}.\n"));
 
             // Update cmMessageData or other logic if needed
             _mainViewModel.SendCmCommand(); // Send updated cmMessageData
@@ -332,7 +332,7 @@ public partial class ICC1ViewModel : ViewModelBase
         }
         else
         {
-            _homeViewModel.LogText += "Error ICC1: Invalid Destination Byte input. Please enter a byte number without '0x'.\n";
+            _homeViewModel.AppendLog("Error ICC1: Invalid Destination Byte input. Please enter a byte number without '0x'.\n"));
             DestinationByteBackground = new SolidColorBrush(Colors.Yellow);
         }
     }
@@ -342,7 +342,7 @@ public partial class ICC1ViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            _homeViewModel.LogText += "Error ICC1: Source Byte input is empty.\n";
+            _homeViewModel.AppendLog("Error ICC1: Source Byte input is empty.\n"));
             return;
         }
 
@@ -367,7 +367,7 @@ public partial class ICC1ViewModel : ViewModelBase
         {
             SourceByte = "0x" + sourceByte.ToString("X2"); // Update property in hex format
             SourceByteBackground = new SolidColorBrush(Colors.White); // Reset background
-            _homeViewModel.LogText += $"ICC1 Source Byte updated to 0x{sourceByte.ToString("X2")}.\n";
+            _homeViewModel.AppendLog($"ICC1 Source Byte updated to 0x{sourceByte.ToString("X2")}.\n"));
 
             // Update cmMessageData or other logic if needed
             _mainViewModel.SendCmCommand(); // Send updated cmMessageData
@@ -383,7 +383,7 @@ public partial class ICC1ViewModel : ViewModelBase
         }
         else
         {
-            _homeViewModel.LogText += "Error ICC1: Invalid Source Byte input. Please enter a byte number without '0x'.\n";
+            _homeViewModel.AppendLog("Error ICC1: Invalid Source Byte input. Please enter a byte number without '0x'.\n"));
             SourceByteBackground = new SolidColorBrush(Colors.Yellow);
         }
     }
@@ -393,7 +393,7 @@ public partial class ICC1ViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(text))
         {
-            _homeViewModel.LogText += "Error ICC1: End Byte input is empty.\n";
+            _homeViewModel.AppendLog("Error ICC1: End Byte input is empty.\n"));
             return;
         }
 
@@ -418,7 +418,7 @@ public partial class ICC1ViewModel : ViewModelBase
         {
             EndByte = "0x" + endByte.ToString("X2"); // Update property in hex format
             EndByteBackground = new SolidColorBrush(Colors.White); // Reset background
-            _homeViewModel.LogText += $"ICC1 End Byte updated to 0x{endByte.ToString("X2")}.\n";
+            _homeViewModel.AppendLog($"ICC1 End Byte updated to 0x{endByte.ToString("X2")}.\n"));
 
             // Update cmMessageData or other logic if needed
             _mainViewModel.SendCmCommand(); // Send updated cmMessageData
@@ -434,7 +434,7 @@ public partial class ICC1ViewModel : ViewModelBase
         }
         else
         {
-            _homeViewModel.LogText += "Error ICC1: Invalid End Byte input. Please enter a byte number without '0x'.\n";
+            _homeViewModel.AppendLog("Error ICC1: Invalid End Byte input. Please enter a byte number without '0x'.\n"));
             EndByteBackground = new SolidColorBrush(Colors.Yellow);
         }
     }
