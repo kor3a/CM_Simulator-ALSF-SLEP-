@@ -694,6 +694,11 @@ public partial class MainViewModel : ViewModelBase
     public CancellationTokenSource? cautionToneCts = null;
     public CancellationTokenSource? sequentialFlashCts = null;
 
+    // Continuous data polling
+    private CancellationTokenSource? _continuousPollingCts = null;
+    private readonly SemaphoreSlim _serialSemaphore = new SemaphoreSlim(1, 1);
+    private bool _continuousPollingActive = false;
+
     private readonly Dictionary<byte, TaskCompletionSource<byte[]>> _pendingResponses = new();
     private readonly object _lock = new();
 
@@ -1119,6 +1124,12 @@ public partial class MainViewModel : ViewModelBase
                 CheckAndStartSequentialFlash();
             }
 
+            // Start continuous data polling after initial handshake is complete
+            if (flashersConnected > 0)
+            {
+                StartContinuousDataPolling();
+            }
+
             while (true)
             {
                 await Task.Delay(3000);
@@ -1283,7 +1294,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private async Task<bool> WaitForResponseAsync(byte address, int timeoutMs)
+    public async Task<bool> WaitForResponseAsync(byte address, int timeoutMs)
     {
         TaskCompletionSource<byte[]> tcs;
 
@@ -1326,6 +1337,9 @@ public partial class MainViewModel : ViewModelBase
         {
             _homePage.LogText += $"\nConnection lost: {message}\n";
         });
+
+        // Stop continuous data polling on disconnect
+        StopContinuousDataPolling();
 
         // Stop sequential flash on disconnect
         StopSequentialFlash();
@@ -1731,6 +1745,341 @@ public partial class MainViewModel : ViewModelBase
 
         }
 
+    }
+
+    /// <summary>
+    /// Starts continuous polling of Short Data and Config Data from connected ICCs.
+    /// This runs in the background and respects RS485 half-duplex by using a semaphore.
+    /// </summary>
+    public void StartContinuousDataPolling()
+    {
+        if (_continuousPollingActive)
+            return;
+
+        _continuousPollingCts = new CancellationTokenSource();
+        _continuousPollingActive = true;
+
+        _ = Task.Run(async () => await ContinuousDataPollingLoopAsync(_continuousPollingCts.Token));
+
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            _homePage.LogText += "Continuous data polling started.\n";
+        });
+    }
+
+    /// <summary>
+    /// Stops the continuous data polling loop.
+    /// </summary>
+    public void StopContinuousDataPolling()
+    {
+        if (!_continuousPollingActive)
+            return;
+
+        _continuousPollingCts?.Cancel();
+        _continuousPollingActive = false;
+
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            _homePage.LogText += "Continuous data polling stopped.\n";
+        });
+    }
+
+    /// <summary>
+    /// The main continuous polling loop that sends Short Data and Config Data requests
+    /// to all connected ICCs in a round-robin fashion.
+    /// </summary>
+    private async Task ContinuousDataPollingLoopAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested && Sp != null && Sp.IsOpen)
+            {
+                // Get list of connected ICC addresses
+                List<byte> connectedAddresses = GetConnectedAddresses();
+
+                if (connectedAddresses.Count == 0)
+                {
+                    // No connected ICCs, wait and retry
+                    await Task.Delay(1000, cancellationToken);
+                    continue;
+                }
+
+                // Send Short Data Request to each connected ICC
+                foreach (byte address in connectedAddresses)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+
+                    await SendShortDataRequestAsync(address, cancellationToken);
+
+                    // Wait for response with timeout
+                    await WaitForResponseAsync(address, 500);
+
+                    // Small delay between requests (RS485 half-duplex turnaround)
+                    await Task.Delay(100, cancellationToken);
+                }
+
+                // Send Config Data Request to each connected ICC
+                foreach (byte address in connectedAddresses)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+
+                    await SendConfigDataRequestAsync(address, cancellationToken);
+
+                    // Wait for response with timeout
+                    await WaitForResponseAsync(address, 500);
+
+                    // Small delay between requests (RS485 half-duplex turnaround)
+                    await Task.Delay(100, cancellationToken);
+                }
+
+                // Delay before next polling cycle (adjust as needed for your application)
+                await Task.Delay(500, cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Normal cancellation, ignore
+        }
+        catch (Exception ex)
+        {
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                _homePage.LogText += $"Continuous polling error: {ex.Message}\n";
+            });
+        }
+        finally
+        {
+            _continuousPollingActive = false;
+        }
+    }
+
+    /// <summary>
+    /// Gets a list of ICC addresses that are currently connected.
+    /// </summary>
+    private List<byte> GetConnectedAddresses()
+    {
+        List<byte> connected = new List<byte>();
+
+        if (icc1Connected) connected.Add(icc1);
+        if (icc2Connected) connected.Add(icc2);
+        if (icc3Connected) connected.Add(icc3);
+
+        return connected;
+    }
+
+    /// <summary>
+    /// Async version of SendShortDataRequest that acquires the serial semaphore.
+    /// </summary>
+    public async Task SendShortDataRequestAsync(byte destination, CancellationToken cancellationToken = default)
+    {
+        await _serialSemaphore.WaitAsync(cancellationToken);
+        try
+        {
+            byte[] shortDataRequestTx = new byte[8];
+            shortDataRequestTx[0] = start;
+            shortDataRequestTx[1] = destination;
+            shortDataRequestTx[2] = cm;
+            // message ID = Message Type 10; Message Number 0x03 = 10000011
+            shortDataRequestTx[3] = 0x83;
+            // length
+            shortDataRequestTx[4] = 0x00;
+            shortDataRequestTx[5] = end;
+
+            // compute crc16 for bytes 0 to 6
+            byte[] payload = new byte[6];
+            Array.Copy(shortDataRequestTx, 0, payload, 0, 6);
+            byte[] crc = ComputeCrc16(payload);
+
+            // computed checksum
+            shortDataRequestTx[6] = crc[1]; // low byte
+            shortDataRequestTx[7] = crc[0]; // high byte
+
+            // convert destination byte to corresponding string of an ICC #
+            int destString = dict[destination];
+
+            if (Sp != null && Sp.IsOpen)
+            {
+                Sp.RtsEnable = true;
+                Sp.Write(shortDataRequestTx, 0, shortDataRequestTx.Length);
+                Sp.RtsEnable = false;
+
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _homePage.LogText += $"[Poll] Sent Short Data Request to ICC {destString}: {BitConverter.ToString(shortDataRequestTx)}\n";
+                    _homePage.TxStatus = new SolidColorBrush(Colors.Green);
+                    _homePage.ShortButton = new SolidColorBrush(Colors.LightGreen);
+                });
+
+                // Blink for a short duration (non-blocking)
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _homePage.TxStatus = new SolidColorBrush(Colors.LightGray);
+                        _homePage.ShortButton = new SolidColorBrush(Colors.LightGray);
+                    });
+                });
+            }
+        }
+        finally
+        {
+            _serialSemaphore.Release();
+        }
+    }
+
+    /// <summary>
+    /// Async version of SendConfigDataRequest that acquires the serial semaphore.
+    /// </summary>
+    public async Task SendConfigDataRequestAsync(byte destination, CancellationToken cancellationToken = default)
+    {
+        await _serialSemaphore.WaitAsync(cancellationToken);
+        try
+        {
+            byte[] configDataRequestTx = new byte[8];
+            configDataRequestTx[0] = start;
+            configDataRequestTx[1] = destination;
+            configDataRequestTx[2] = cm;
+            // message ID = Message Type 10; Message Number 0x07 = 10000111
+            configDataRequestTx[3] = 0x87;
+            // length
+            configDataRequestTx[4] = 0x00;
+            configDataRequestTx[5] = end;
+
+            // compute crc16 for bytes 0 to 6
+            byte[] payload = new byte[6];
+            Array.Copy(configDataRequestTx, 0, payload, 0, 6);
+            byte[] crc = ComputeCrc16(payload);
+
+            // computed checksum
+            configDataRequestTx[6] = crc[1]; // low byte
+            configDataRequestTx[7] = crc[0]; // high byte
+
+            // convert destination byte to corresponding string of an ICC #
+            int destString = dict[destination];
+
+            if (Sp != null && Sp.IsOpen)
+            {
+                Sp.RtsEnable = true;
+                Sp.Write(configDataRequestTx, 0, configDataRequestTx.Length);
+                Sp.RtsEnable = false;
+
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _homePage.LogText += $"[Poll] Sent Config Data Request to ICC {destString}: {BitConverter.ToString(configDataRequestTx)}\n";
+                    _homePage.TxStatus = new SolidColorBrush(Colors.Green);
+                    _homePage.ConfigButton = new SolidColorBrush(Colors.LightGreen);
+                });
+
+                // Blink for a short duration (non-blocking)
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _homePage.TxStatus = new SolidColorBrush(Colors.LightGray);
+                        _homePage.ConfigButton = new SolidColorBrush(Colors.LightGray);
+                    });
+                });
+            }
+        }
+        finally
+        {
+            _serialSemaphore.Release();
+        }
+    }
+
+    /// <summary>
+    /// Async version of SendCmCommand that acquires the serial semaphore for thread-safe RS485 communication.
+    /// </summary>
+    public async Task SendCmCommandAsync()
+    {
+        await _serialSemaphore.WaitAsync();
+        try
+        {
+            byte[] cmCommandTx = new byte[9];
+            cmCommandTx[0] = start;
+            // destination
+            cmCommandTx[1] = global;
+            // source
+            cmCommandTx[2] = cm;
+            // message ID = Message Type (10) 10; Message Number (0x02) 0010 = 10000010
+            cmCommandTx[3] = 0x82;
+            // length
+            cmCommandTx[4] = 0x01;
+            cmCommandTx[5] = cmMessageData;
+            cmCommandTx[6] = end;
+
+            // compute crc16 for bytes 0 to 6
+            byte[] payload = new byte[7];
+            Array.Copy(cmCommandTx, 0, payload, 0, 7);
+            byte[] crc = ComputeCrc16(payload);
+
+            // computed checksum
+            cmCommandTx[7] = crc[1]; // low byte
+            cmCommandTx[8] = crc[0]; // high byte
+
+            // Send command if serial port is open
+            if (Sp != null && Sp.IsOpen)
+            {
+                Sp.RtsEnable = true;
+                Sp.Write(cmCommandTx, 0, cmCommandTx.Length);
+                Sp.RtsEnable = false;
+
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _homePage.LogText += $"Sent CM to global command message: {BitConverter.ToString(cmCommandTx)}\n";
+                    _homePage.TxStatus = new SolidColorBrush(Colors.Green);
+                });
+
+                // Turn off Failure if it's active
+                if (alsfFailure || ssalrFailure)
+                {
+                    cautionToneCts?.Cancel();
+                    alsfFailure = ssalrFailure = false;
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _homePage.Failure = new SolidColorBrush(Colors.LightGray);
+                        _homePage.FailureForeground = new SolidColorBrush(Colors.Black);
+                    });
+                }
+
+                // Turn off Caution if it's active
+                if (alsfCaution || ssalrCaution)
+                {
+                    cautionToneCts?.Cancel();
+                    alsfCaution = ssalrCaution = false;
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _homePage.Failure = new SolidColorBrush(Colors.LightGray);
+                        _homePage.FailureForeground = new SolidColorBrush(Colors.Black);
+                    });
+                }
+
+                // Blink for a short duration (non-blocking)
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(300);
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _homePage.TxStatus = new SolidColorBrush(Colors.LightGray);
+                    });
+                });
+            }
+            else
+            {
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _homePage.LogText += "Error: Error on sending Global CM Command Message\n";
+                });
+            }
+        }
+        finally
+        {
+            _serialSemaphore.Release();
+        }
     }
 
     private string GetBitMismatchInfo(byte cmData, byte iccData, string iccName)
