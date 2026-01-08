@@ -203,8 +203,30 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     public string _logText = "";
 
+    // Maximum number of log lines to keep in memory to prevent UI freezing
+    private const int MaxLogLines = 1000;
+
     public bool stopCautionBeep = false;
     public bool failureBtnPressed = false;
+
+    /// <summary>
+    /// Appends text to the log with automatic size management.
+    /// Keeps only the most recent MaxLogLines to prevent memory issues and UI freezing.
+    /// </summary>
+    /// <param name="text">The text to append to the log</param>
+    public void AppendToLog(string text)
+    {
+        LogText += text;
+
+        // Check if we need to trim the log
+        var lines = LogText.Split('\n');
+        if (lines.Length > MaxLogLines)
+        {
+            // Keep only the most recent MaxLogLines
+            var trimmedLines = lines.Skip(lines.Length - MaxLogLines).ToArray();
+            LogText = string.Join('\n', trimmedLines);
+        }
+    }
 
     public HomeViewModel()
     {
@@ -436,17 +458,17 @@ public partial class HomeViewModel : ViewModelBase
             {
                 // Write LogText to the selected file
                 await File.WriteAllTextAsync(result, LogText);
-                LogText += $"Log exported to {result}\n";
+                AppendToLog($"Log exported to {result}\n");
             }
             else
             {
-                LogText += "Export canceled by user\n";
+                AppendToLog("Export canceled by user\n");
             }
         }
         catch (Exception ex)
         {
             //MessageBox.Show($"Error exporting log: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            LogText += $"Error exporting log: {ex.Message}\n";
+            AppendToLog($"Error exporting log: {ex.Message}\n");
         }
     }
 
