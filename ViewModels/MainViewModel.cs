@@ -2897,7 +2897,7 @@ public partial class MainViewModel : ViewModelBase
                             if(cmMessageData != icc1MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc1MessageData, "ICC1");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc1);
                             }
                             break;
@@ -3104,7 +3104,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc2MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc2);
                             }
                             break;
@@ -3310,7 +3310,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc3MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc3MessageData, "ICC3");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc3);
                             }
                             break;
@@ -3520,7 +3520,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc4MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc4);
                             }
                             break;
@@ -3729,7 +3729,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc5MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc5MessageData, "ICC5");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc5);
                             }
                             break;
@@ -3934,7 +3934,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc6MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc6MessageData, "ICC6");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc6);
                             }
                             break;
@@ -4143,7 +4143,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc7MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc7MessageData, "ICC7");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc7);
                             }
                             break;
@@ -4349,7 +4349,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc8MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc8MessageData, "ICC8");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc8);
                             }
                             break;
@@ -4554,7 +4554,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc9MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc9MessageData, "ICC9");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc9);
                             }
                             break;
@@ -4758,7 +4758,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc10MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc10MessageData, "ICC10");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc10);
                             }
                             break;
@@ -4962,7 +4962,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc11MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc11MessageData, "ICC11");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc11);
                             }
                             break;
@@ -5166,7 +5166,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc12MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc12MessageData, "ICC12");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc12);
                             }
                             break;
@@ -5370,7 +5370,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc13MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc13MessageData, "ICC13");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc13);
                             }
                             break;
@@ -5574,7 +5574,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc14MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc14MessageData, "ICC14");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc14);
                             }
                             break;
@@ -5778,7 +5778,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc15MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc15MessageData, "ICC15");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc15);
                             }
                             break;
@@ -5982,7 +5982,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc16MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc16MessageData, "ICC16");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc16);
                             }
                             break;
@@ -6186,7 +6186,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc17MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc17MessageData, "ICC17");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc17);
                             }
                             break;
@@ -6390,7 +6390,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc18MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc18MessageData, "ICC18");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc18);
                             }
                             break;
@@ -6594,7 +6594,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc19MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc19MessageData, "ICC19");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc19);
                             }
                             break;
@@ -6798,7 +6798,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc20MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc20MessageData, "ICC20");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc20);
                             }
                             break;
@@ -7002,7 +7002,7 @@ public partial class MainViewModel : ViewModelBase
                             if (cmMessageData != icc21MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc21MessageData, "ICC21");
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd());
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
                                 SendCmCommand(icc21);
                             }
                             break;
