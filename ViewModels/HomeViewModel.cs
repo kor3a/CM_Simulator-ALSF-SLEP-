@@ -203,6 +203,19 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     public string _logText = "";
 
+    // StringBuilder for efficient log accumulation
+    private readonly StringBuilder _logBuilder = new StringBuilder();
+
+    /// <summary>
+    /// Appends a message to the log efficiently using StringBuilder.
+    /// Use this method instead of LogText += for better performance.
+    /// </summary>
+    public void AppendLog(string message)
+    {
+        _logBuilder.AppendLine(message);
+        LogText = _logBuilder.ToString();
+    }
+
     public bool stopCautionBeep = false;
     public bool failureBtnPressed = false;
 
@@ -436,17 +449,17 @@ public partial class HomeViewModel : ViewModelBase
             {
                 // Write LogText to the selected file
                 await File.WriteAllTextAsync(result, LogText);
-                LogText += $"Log exported to {result}\n";
+                AppendLog($"Log exported to {result}");
             }
             else
             {
-                LogText += "Export canceled by user\n";
+                AppendLog("Export canceled by user");
             }
         }
         catch (Exception ex)
         {
             //MessageBox.Show($"Error exporting log: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            LogText += $"Error exporting log: {ex.Message}\n";
+            AppendLog($"Error exporting log: {ex.Message}");
         }
     }
 
