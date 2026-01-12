@@ -1049,7 +1049,7 @@ public partial class MainViewModel : ViewModelBase
 
             Sp.Open();
 
-            _homePage.LogText = $"Connected to {SelectedPort}\n");
+            _homePage.LogText = $"Connected to {SelectedPort}\n";
             popupWindow.Close(); // Close the pop-up
 
             portHealthy = true;
@@ -2098,7 +2098,7 @@ public partial class MainViewModel : ViewModelBase
         }
 
         string bitList = string.Join(", ", mismatchedBits);
-        return $"{iccName} Message Data Mismatch: CM=0x{cmData:X2} ({Convert.ToString(cmData, 2).PadLeft(8, '0')}), ICC=0x{iccData:X2} ({Convert.ToString(iccData, 2).PadLeft(8, '0')}), Mismatched bits: [{bitList}]");
+        return $"{iccName} Message Data Mismatch: CM=0x{cmData:X2} ({Convert.ToString(cmData, 2).PadLeft(8, '0')}), ICC=0x{iccData:X2} ({Convert.ToString(iccData, 2).PadLeft(8, '0')}), Mismatched bits: [{bitList}]";
     }
 
     private void SerialDataReceivedEventHandler(object sender, SerialDataReceivedEventArgs e)
