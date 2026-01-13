@@ -530,6 +530,29 @@ public partial class MainViewModel : ViewModelBase
     public byte icc21 = 0x3A;
     public byte[] addresses = {};
 
+    // PLCK addresses
+    private byte plck1 = 0x26;
+    private byte plck2 = 0x27;
+    private byte plck3 = 0x28;
+    private byte plck4 = 0x29;
+    private byte plck5 = 0x2A;
+    private byte plck6 = 0x2B;
+    private byte plck7 = 0x2C;
+    private byte plck8 = 0x2D;
+    private byte plck9 = 0x2E;
+    private byte plck10 = 0x2F;
+    private byte plck11 = 0x30;
+    private byte plck12 = 0x31;
+    private byte plck13 = 0x32;
+    private byte plck14 = 0x33;
+    private byte plck15 = 0x34;
+    private byte plck16 = 0x35;
+    private byte plck17 = 0x36;
+    private byte plck18 = 0x37;
+    private byte plck19 = 0x38;
+    private byte plck20 = 0x39;
+    private byte plck21 = 0x3A;
+
     // icc connected?
     public bool icc1Connected = false;
     public bool icc2Connected = false;
@@ -1158,38 +1181,38 @@ public partial class MainViewModel : ViewModelBase
                     portStillHealthy = false;
                 }
 
-                //if (portHealthy != portStillHealthy)
-                //{
-                //    portHealthy = portStillHealthy;
-                //    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
-                //    {
-                //        if (portHealthy)
-                //        {
-                //            _homePage.CommFault = new SolidColorBrush(Colors.LightGray);
-                //            _homePage.CommFaultForeground = new SolidColorBrush(Colors.Black);
-                //            commFault = false;
-                //        }
-                //        else
-                //        {
-                //            _homePage.CommFault = new SolidColorBrush(Color.Parse("#FFBF00"));
-                //            _homePage.CommFaultForeground = new SolidColorBrush(Colors.White);
-                //            commFault = true;
-                //            _homePage.stopCautionBeep = false;
-                //            cautionToneCts?.Cancel();
-                //            // 0.33 second on; 0.66 second off for Comm Fault
-                //            cautionToneCts = new CancellationTokenSource();
-                //            var token = cautionToneCts.Token;
-                //            Task.Run(async () =>
-                //            {
-                //                while (!token.IsCancellationRequested && !_homePage.stopCautionBeep && !alsfFailure && !ssalrFailure)
-                //                {
-                //                    Console.Beep(1000, 330); // 1000 Hz tone for 0.33 s
-                //                    await Task.Delay(660, token); // wait 0.66 s off time
-                //                }
-                //            }, token);
-                //        }
-                //    });
-                //}
+                if (portHealthy != portStillHealthy)
+                {
+                    portHealthy = portStillHealthy;
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        if (portHealthy)
+                        {
+                            _homePage.CommFault = new SolidColorBrush(Colors.LightGray);
+                            _homePage.CommFaultForeground = new SolidColorBrush(Colors.Black);
+                            commFault = false;
+                        }
+                        else
+                        {
+                            _homePage.CommFault = new SolidColorBrush(Color.Parse("#FFBF00"));
+                            _homePage.CommFaultForeground = new SolidColorBrush(Colors.White);
+                            commFault = true;
+                            _homePage.stopCautionBeep = false;
+                            cautionToneCts?.Cancel();
+                            // 0.33 second on; 0.66 second off for Comm Fault
+                            cautionToneCts = new CancellationTokenSource();
+                            var token = cautionToneCts.Token;
+                            Task.Run(async () =>
+                            {
+                                while (!token.IsCancellationRequested && !_homePage.stopCautionBeep && !alsfFailure && !ssalrFailure)
+                                {
+                                    Console.Beep(1000, 330); // 1000 Hz tone for 0.33 s
+                                    await Task.Delay(660, token); // wait 0.66 s off time
+                                }
+                            }, token);
+                        }
+                    });
+                }
 
                 if (!portStillHealthy)
                 {
