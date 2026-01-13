@@ -548,6 +548,53 @@ public partial class MainViewModel : ViewModelBase
     public byte icc21 = 0x3A;
     public byte[] addresses = {};
 
+    /// <summary>
+    /// Updates the addresses array to contain the 3 ICC addresses starting from the given index.
+    /// Called when navigating through LVICCs in the home view carousel.
+    /// </summary>
+    /// <param name="startIndex">1-based index of the first visible LVICC (1-19)</param>
+    public void UpdateVisibleAddresses(int startIndex)
+    {
+        addresses = new byte[]
+        {
+            GetIccAddress(startIndex),
+            GetIccAddress(startIndex + 1),
+            GetIccAddress(startIndex + 2)
+        };
+    }
+
+    /// <summary>
+    /// Gets the ICC address byte for a given ICC number (1-21).
+    /// </summary>
+    private byte GetIccAddress(int iccNumber)
+    {
+        return iccNumber switch
+        {
+            1 => icc1,
+            2 => icc2,
+            3 => icc3,
+            4 => icc4,
+            5 => icc5,
+            6 => icc6,
+            7 => icc7,
+            8 => icc8,
+            9 => icc9,
+            10 => icc10,
+            11 => icc11,
+            12 => icc12,
+            13 => icc13,
+            14 => icc14,
+            15 => icc15,
+            16 => icc16,
+            17 => icc17,
+            18 => icc18,
+            19 => icc19,
+            20 => icc20,
+            21 => icc21,
+            _ => icc1
+        };
+    }
+
     // PLCK addresses
     private byte plck1 = 0x26;
     private byte plck2 = 0x27;

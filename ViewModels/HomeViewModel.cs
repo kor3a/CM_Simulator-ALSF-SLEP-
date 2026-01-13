@@ -310,6 +310,9 @@ public partial class HomeViewModel : ViewModelBase
         NotifyVisibleLviccPropertiesChanged();
         OnPropertyChanged(nameof(CanNavigateLeft));
         OnPropertyChanged(nameof(CanNavigateRight));
+
+        // Update the addresses array in MainViewModel to match the visible LVICCs
+        _mainViewModel?.UpdateVisibleAddresses(value);
     }
 
     // Called when AlsfMode changes - notify button enabled properties
