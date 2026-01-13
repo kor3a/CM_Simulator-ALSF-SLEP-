@@ -1944,17 +1944,54 @@ public partial class MainViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Gets a list of ICC addresses that are currently connected.
+    /// Gets a list of ICC addresses that are currently connected from the visible set.
+    /// Only returns addresses from the current addresses[] array that are connected.
     /// </summary>
     private List<byte> GetConnectedAddresses()
     {
         List<byte> connected = new List<byte>();
 
-        if (icc1Connected) connected.Add(icc1);
-        if (icc2Connected) connected.Add(icc2);
-        if (icc3Connected) connected.Add(icc3);
+        foreach (byte address in addresses)
+        {
+            if (IsIccConnected(address))
+            {
+                connected.Add(address);
+            }
+        }
 
         return connected;
+    }
+
+    /// <summary>
+    /// Checks if a given ICC address is connected.
+    /// </summary>
+    private bool IsIccConnected(byte address)
+    {
+        return address switch
+        {
+            0x26 => icc1Connected,
+            0x27 => icc2Connected,
+            0x28 => icc3Connected,
+            0x29 => icc4Connected,
+            0x2A => icc5Connected,
+            0x2B => icc6Connected,
+            0x2C => icc7Connected,
+            0x2D => icc8Connected,
+            0x2E => icc9Connected,
+            0x2F => icc10Connected,
+            0x30 => icc11Connected,
+            0x31 => icc12Connected,
+            0x32 => icc13Connected,
+            0x33 => icc14Connected,
+            0x34 => icc15Connected,
+            0x35 => icc16Connected,
+            0x36 => icc17Connected,
+            0x37 => icc18Connected,
+            0x38 => icc19Connected,
+            0x39 => icc20Connected,
+            0x3A => icc21Connected,
+            _ => false
+        };
     }
 
     /// <summary>
