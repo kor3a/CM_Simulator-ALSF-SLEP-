@@ -549,6 +549,12 @@ public partial class MainViewModel : ViewModelBase
     public byte[] addresses = {};
 
     /// <summary>
+    /// All available LVICC addresses for initial scanning (LVICCs 1-4).
+    /// This ensures all LVICCs are enquired at startup even though only 3 are visible at a time.
+    /// </summary>
+    private byte[] allAvailableAddresses => new byte[] { icc1, icc2, icc3, icc4 };
+
+    /// <summary>
     /// Updates the addresses array to contain the 3 ICC addresses starting from the given index.
     /// Called when navigating through LVICCs in the home view carousel.
     /// </summary>
@@ -1167,7 +1173,9 @@ public partial class MainViewModel : ViewModelBase
         {
             disableButtons();
 
-            foreach (byte address in addresses)
+            // Scan all available LVICCs (1-4) at startup to detect which are connected,
+            // even though only 3 are visible at a time in the carousel
+            foreach (byte address in allAvailableAddresses)
             {
                 if (Sp == null || !Sp.IsOpen)
                     break;
