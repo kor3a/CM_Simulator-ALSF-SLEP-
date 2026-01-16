@@ -549,24 +549,81 @@ public partial class MainViewModel : ViewModelBase
     public byte[] addresses = {};
 
     /// <summary>
-    /// All available LVICC addresses for initial scanning (LVICCs 1-4).
-    /// This ensures all LVICCs are enquired at startup even though only 3 are visible at a time.
+    /// Tracks which ICC addresses have been scanned/enquired.
     /// </summary>
-    private byte[] allAvailableAddresses => new byte[] { icc1, icc2, icc3, icc4 };
+    private HashSet<byte> _scannedAddresses = new HashSet<byte>();
 
     /// <summary>
     /// Updates the addresses array to contain the 3 ICC addresses starting from the given index.
     /// Called when navigating through LVICCs in the home view carousel.
+    /// Also triggers enquiry for any newly visible LVICCs that haven't been scanned yet.
     /// </summary>
-    /// <param name="startIndex">1-based index of the first visible LVICC (1-19)</param>
+    /// <param name="startIndex">1-based index of the first visible LVICC (1-2)</param>
     public void UpdateVisibleAddresses(int startIndex)
     {
-        addresses = new byte[]
+        byte[] newAddresses = new byte[]
         {
             GetIccAddress(startIndex),
             GetIccAddress(startIndex + 1),
             GetIccAddress(startIndex + 2)
         };
+
+        // Find newly visible addresses that haven't been scanned yet
+        List<byte> newlyVisible = new List<byte>();
+        foreach (byte addr in newAddresses)
+        {
+            if (!_scannedAddresses.Contains(addr))
+            {
+                newlyVisible.Add(addr);
+            }
+        }
+
+        // Update addresses array
+        addresses = newAddresses;
+
+        // Enquire newly visible LVICCs if any
+        if (newlyVisible.Count > 0 && Sp != null && Sp.IsOpen)
+        {
+            _ = Task.Run(async () => await EnquireNewlyVisibleLviccs(newlyVisible));
+        }
+    }
+
+    /// <summary>
+    /// Enquires newly visible LVICCs that haven't been scanned yet.
+    /// </summary>
+    private async Task EnquireNewlyVisibleLviccs(List<byte> newAddresses)
+    {
+        foreach (byte address in newAddresses)
+        {
+            if (Sp == null || !Sp.IsOpen)
+                break;
+
+            try
+            {
+                await SendEnquireMessage(address);
+                int destString = dict[address];
+                _scannedAddresses.Add(address);
+
+                bool received = await WaitForResponseAsync(address, 1000);
+                if (received)
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                        _homePage.AppendLog($"ICC {destString} connected after navigation"));
+                }
+                else
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                        _homePage.AppendLog($"Timeout waiting for response from ICC {destString}"));
+                }
+
+                await Task.Delay(500);
+            }
+            catch (Exception ex)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    _homePage.AppendLog($"Error enquiring ICC: {ex.Message}"));
+            }
+        }
     }
 
     /// <summary>
@@ -1172,10 +1229,10 @@ public partial class MainViewModel : ViewModelBase
         try
         {
             disableButtons();
+            _scannedAddresses.Clear();
 
-            // Scan all available LVICCs (1-4) at startup to detect which are connected,
-            // even though only 3 are visible at a time in the carousel
-            foreach (byte address in allAvailableAddresses)
+            // Scan only the 3 currently visible LVICCs at startup
+            foreach (byte address in addresses)
             {
                 if (Sp == null || !Sp.IsOpen)
                     break;
@@ -1183,6 +1240,7 @@ public partial class MainViewModel : ViewModelBase
             try
             {
                 await SendEnquireMessage(address);
+                _scannedAddresses.Add(address);
                 int destString = dict[address];
 
                 bool received = await WaitForResponseAsync(address, 1000);
