@@ -28,6 +28,55 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     private bool _alsfMode = true;
 
+    // Navigation properties for LVICC carousel
+    [ObservableProperty]
+    private int _currentStartIndex = 1; // 1-based index of the first visible LVICC
+
+    // Computed properties for navigation visibility
+    public bool CanNavigateLeft => CurrentStartIndex > 1;
+    public bool CanNavigateRight => CurrentStartIndex + 2 < 21;
+
+    // Computed properties for visible LVICC numbers (1-based)
+    public int VisibleLvicc1Number => CurrentStartIndex;
+    public int VisibleLvicc2Number => CurrentStartIndex + 1;
+    public int VisibleLvicc3Number => CurrentStartIndex + 2;
+
+    // Computed properties for visible LVICC headers
+    public string VisibleLvicc1Header => $"LVICC {VisibleLvicc1Number}";
+    public string VisibleLvicc2Header => $"LVICC {VisibleLvicc2Number}";
+    public string VisibleLvicc3Header => $"LVICC {VisibleLvicc3Number}";
+
+    // Computed properties for visible LVICC backgrounds
+    public IBrush VisibleLvicc1Background => GetLviccBackground(VisibleLvicc1Number);
+    public IBrush VisibleLvicc2Background => GetLviccBackground(VisibleLvicc2Number);
+    public IBrush VisibleLvicc3Background => GetLviccBackground(VisibleLvicc3Number);
+
+    // Computed properties for visible LVICC side menus
+    public string VisibleLvicc1SideMenu => GetLviccSideMenu(VisibleLvicc1Number);
+    public string VisibleLvicc2SideMenu => GetLviccSideMenu(VisibleLvicc2Number);
+    public string VisibleLvicc3SideMenu => GetLviccSideMenu(VisibleLvicc3Number);
+
+    // Computed properties for visible LVICC REM buttons
+    public IBrush VisibleLvicc1RemButton => GetLviccRemButton(VisibleLvicc1Number);
+    public IBrush VisibleLvicc2RemButton => GetLviccRemButton(VisibleLvicc2Number);
+    public IBrush VisibleLvicc3RemButton => GetLviccRemButton(VisibleLvicc3Number);
+
+    // Computed properties for visible LVICC command error visibility
+    public bool VisibleLvicc1CommandErrorVisible => GetLviccCommandErrorVisible(VisibleLvicc1Number);
+    public bool VisibleLvicc2CommandErrorVisible => GetLviccCommandErrorVisible(VisibleLvicc2Number);
+    public bool VisibleLvicc3CommandErrorVisible => GetLviccCommandErrorVisible(VisibleLvicc3Number);
+
+    // Computed properties for visible LVICC misfire error visibility
+    public bool VisibleLvicc1MisfireErrorVisible => GetLviccMisfireErrorVisible(VisibleLvicc1Number);
+    public bool VisibleLvicc2MisfireErrorVisible => GetLviccMisfireErrorVisible(VisibleLvicc2Number);
+    public bool VisibleLvicc3MisfireErrorVisible => GetLviccMisfireErrorVisible(VisibleLvicc3Number);
+
+    // Computed properties for visible LVICC button enabled states
+    // In SSALR mode (AlsfMode = false), only odd-numbered LVICCs are enabled
+    public bool VisibleLvicc1ButtonEnabled => AlsfMode || (VisibleLvicc1Number % 2 == 1);
+    public bool VisibleLvicc2ButtonEnabled => AlsfMode || (VisibleLvicc2Number % 2 == 1);
+    public bool VisibleLvicc3ButtonEnabled => AlsfMode || (VisibleLvicc3Number % 2 == 1);
+
     [ObservableProperty]
     private IBrush _lvicc1PgBackground = new SolidColorBrush(Colors.LightGray);
     [ObservableProperty]
@@ -247,7 +296,278 @@ public partial class HomeViewModel : ViewModelBase
             {
                 OnPropertyChanged(nameof(CurrentIccPage));
             }
+            // Forward property changes for all ICC pages to update visible LVICC bindings
+            else if (e.PropertyName?.StartsWith("Icc") == true)
+            {
+                NotifyVisibleLviccPropertiesChanged();
+            }
         };
+    }
+
+    // Called when CurrentStartIndex changes - notify all computed properties
+    partial void OnCurrentStartIndexChanged(int value)
+    {
+        NotifyVisibleLviccPropertiesChanged();
+        OnPropertyChanged(nameof(CanNavigateLeft));
+        OnPropertyChanged(nameof(CanNavigateRight));
+
+        // Update the addresses array in MainViewModel to match the visible LVICCs
+        _mainViewModel?.UpdateVisibleAddresses(value);
+    }
+
+    // Called when AlsfMode changes - notify button enabled properties
+    partial void OnAlsfModeChanged(bool value)
+    {
+        OnPropertyChanged(nameof(VisibleLvicc1ButtonEnabled));
+        OnPropertyChanged(nameof(VisibleLvicc2ButtonEnabled));
+        OnPropertyChanged(nameof(VisibleLvicc3ButtonEnabled));
+    }
+
+    private void NotifyVisibleLviccPropertiesChanged()
+    {
+        OnPropertyChanged(nameof(VisibleLvicc1Number));
+        OnPropertyChanged(nameof(VisibleLvicc2Number));
+        OnPropertyChanged(nameof(VisibleLvicc3Number));
+        OnPropertyChanged(nameof(VisibleLvicc1Header));
+        OnPropertyChanged(nameof(VisibleLvicc2Header));
+        OnPropertyChanged(nameof(VisibleLvicc3Header));
+        OnPropertyChanged(nameof(VisibleLvicc1Background));
+        OnPropertyChanged(nameof(VisibleLvicc2Background));
+        OnPropertyChanged(nameof(VisibleLvicc3Background));
+        OnPropertyChanged(nameof(VisibleLvicc1SideMenu));
+        OnPropertyChanged(nameof(VisibleLvicc2SideMenu));
+        OnPropertyChanged(nameof(VisibleLvicc3SideMenu));
+        OnPropertyChanged(nameof(VisibleLvicc1RemButton));
+        OnPropertyChanged(nameof(VisibleLvicc2RemButton));
+        OnPropertyChanged(nameof(VisibleLvicc3RemButton));
+        OnPropertyChanged(nameof(VisibleLvicc1CommandErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc2CommandErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc3CommandErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc1MisfireErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc2MisfireErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc3MisfireErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc1ButtonEnabled));
+        OnPropertyChanged(nameof(VisibleLvicc2ButtonEnabled));
+        OnPropertyChanged(nameof(VisibleLvicc3ButtonEnabled));
+    }
+
+    // Helper methods to get data for any LVICC number
+    private IBrush GetLviccBackground(int lviccNumber)
+    {
+        return lviccNumber switch
+        {
+            1 => Lvicc1PgBackground,
+            2 => Lvicc2PgBackground,
+            3 => Lvicc3PgBackground,
+            4 => Lvicc4PgBackground,
+            5 => Lvicc5PgBackground,
+            6 => Lvicc6PgBackground,
+            7 => Lvicc7PgBackground,
+            8 => Lvicc8PgBackground,
+            9 => Lvicc9PgBackground,
+            10 => Lvicc10PgBackground,
+            11 => Lvicc11PgBackground,
+            12 => Lvicc12PgBackground,
+            13 => Lvicc13PgBackground,
+            14 => Lvicc14PgBackground,
+            15 => Lvicc15PgBackground,
+            16 => Lvicc16PgBackground,
+            17 => Lvicc17PgBackground,
+            18 => Lvicc18PgBackground,
+            19 => Lvicc19PgBackground,
+            20 => Lvicc20PgBackground,
+            21 => Lvicc21PgBackground,
+            _ => new SolidColorBrush(Colors.LightGray)
+        };
+    }
+
+    private string GetLviccSideMenu(int lviccNumber)
+    {
+        return lviccNumber switch
+        {
+            1 => _mainViewModel?.Icc1SideMenu ?? "OFF",
+            2 => _mainViewModel?.Icc2SideMenu ?? "OFF",
+            3 => _mainViewModel?.Icc3SideMenu ?? "OFF",
+            4 => _mainViewModel?.Icc4SideMenu ?? "OFF",
+            5 => _mainViewModel?.Icc5SideMenu ?? "OFF",
+            6 => _mainViewModel?.Icc6SideMenu ?? "OFF",
+            7 => _mainViewModel?.Icc7SideMenu ?? "OFF",
+            8 => _mainViewModel?.Icc8SideMenu ?? "OFF",
+            9 => _mainViewModel?.Icc9SideMenu ?? "OFF",
+            10 => _mainViewModel?.Icc10SideMenu ?? "OFF",
+            11 => _mainViewModel?.Icc11SideMenu ?? "OFF",
+            12 => _mainViewModel?.Icc12SideMenu ?? "OFF",
+            13 => _mainViewModel?.Icc13SideMenu ?? "OFF",
+            14 => _mainViewModel?.Icc14SideMenu ?? "OFF",
+            15 => _mainViewModel?.Icc15SideMenu ?? "OFF",
+            16 => _mainViewModel?.Icc16SideMenu ?? "OFF",
+            17 => _mainViewModel?.Icc17SideMenu ?? "OFF",
+            18 => _mainViewModel?.Icc18SideMenu ?? "OFF",
+            19 => _mainViewModel?.Icc19SideMenu ?? "OFF",
+            20 => _mainViewModel?.Icc20SideMenu ?? "OFF",
+            21 => _mainViewModel?.Icc21SideMenu ?? "OFF",
+            _ => "OFF"
+        };
+    }
+
+    private IBrush GetLviccRemButton(int lviccNumber)
+    {
+        var defaultBrush = new SolidColorBrush(Colors.LightGray);
+        return lviccNumber switch
+        {
+            1 => _mainViewModel?.Icc1Page?.RemButton ?? defaultBrush,
+            2 => _mainViewModel?.Icc2Page?.RemButton ?? defaultBrush,
+            3 => _mainViewModel?.Icc3Page?.RemButton ?? defaultBrush,
+            4 => _mainViewModel?.Icc4Page?.RemButton ?? defaultBrush,
+            5 => _mainViewModel?.Icc5Page?.RemButton ?? defaultBrush,
+            6 => _mainViewModel?.Icc6Page?.RemButton ?? defaultBrush,
+            7 => _mainViewModel?.Icc7Page?.RemButton ?? defaultBrush,
+            8 => _mainViewModel?.Icc8Page?.RemButton ?? defaultBrush,
+            9 => _mainViewModel?.Icc9Page?.RemButton ?? defaultBrush,
+            10 => _mainViewModel?.Icc10Page?.RemButton ?? defaultBrush,
+            11 => _mainViewModel?.Icc11Page?.RemButton ?? defaultBrush,
+            12 => _mainViewModel?.Icc12Page?.RemButton ?? defaultBrush,
+            13 => _mainViewModel?.Icc13Page?.RemButton ?? defaultBrush,
+            14 => _mainViewModel?.Icc14Page?.RemButton ?? defaultBrush,
+            15 => _mainViewModel?.Icc15Page?.RemButton ?? defaultBrush,
+            16 => _mainViewModel?.Icc16Page?.RemButton ?? defaultBrush,
+            17 => _mainViewModel?.Icc17Page?.RemButton ?? defaultBrush,
+            18 => _mainViewModel?.Icc18Page?.RemButton ?? defaultBrush,
+            19 => _mainViewModel?.Icc19Page?.RemButton ?? defaultBrush,
+            20 => _mainViewModel?.Icc20Page?.RemButton ?? defaultBrush,
+            21 => _mainViewModel?.Icc21Page?.RemButton ?? defaultBrush,
+            _ => defaultBrush
+        };
+    }
+
+    private bool GetLviccCommandErrorVisible(int lviccNumber)
+    {
+        return lviccNumber switch
+        {
+            1 => _mainViewModel?.Icc1Page?.IsCommandErrorVisible ?? false,
+            2 => _mainViewModel?.Icc2Page?.IsCommandErrorVisible ?? false,
+            3 => _mainViewModel?.Icc3Page?.IsCommandErrorVisible ?? false,
+            4 => _mainViewModel?.Icc4Page?.IsCommandErrorVisible ?? false,
+            5 => _mainViewModel?.Icc5Page?.IsCommandErrorVisible ?? false,
+            6 => _mainViewModel?.Icc6Page?.IsCommandErrorVisible ?? false,
+            7 => _mainViewModel?.Icc7Page?.IsCommandErrorVisible ?? false,
+            8 => _mainViewModel?.Icc8Page?.IsCommandErrorVisible ?? false,
+            9 => _mainViewModel?.Icc9Page?.IsCommandErrorVisible ?? false,
+            10 => _mainViewModel?.Icc10Page?.IsCommandErrorVisible ?? false,
+            11 => _mainViewModel?.Icc11Page?.IsCommandErrorVisible ?? false,
+            12 => _mainViewModel?.Icc12Page?.IsCommandErrorVisible ?? false,
+            13 => _mainViewModel?.Icc13Page?.IsCommandErrorVisible ?? false,
+            14 => _mainViewModel?.Icc14Page?.IsCommandErrorVisible ?? false,
+            15 => _mainViewModel?.Icc15Page?.IsCommandErrorVisible ?? false,
+            16 => _mainViewModel?.Icc16Page?.IsCommandErrorVisible ?? false,
+            17 => _mainViewModel?.Icc17Page?.IsCommandErrorVisible ?? false,
+            18 => _mainViewModel?.Icc18Page?.IsCommandErrorVisible ?? false,
+            19 => _mainViewModel?.Icc19Page?.IsCommandErrorVisible ?? false,
+            20 => _mainViewModel?.Icc20Page?.IsCommandErrorVisible ?? false,
+            21 => _mainViewModel?.Icc21Page?.IsCommandErrorVisible ?? false,
+            _ => false
+        };
+    }
+
+    private bool GetLviccMisfireErrorVisible(int lviccNumber)
+    {
+        return lviccNumber switch
+        {
+            1 => _mainViewModel?.Icc1Page?.IsMisfireErrorVisible ?? false,
+            2 => _mainViewModel?.Icc2Page?.IsMisfireErrorVisible ?? false,
+            3 => _mainViewModel?.Icc3Page?.IsMisfireErrorVisible ?? false,
+            4 => _mainViewModel?.Icc4Page?.IsMisfireErrorVisible ?? false,
+            5 => _mainViewModel?.Icc5Page?.IsMisfireErrorVisible ?? false,
+            6 => _mainViewModel?.Icc6Page?.IsMisfireErrorVisible ?? false,
+            7 => _mainViewModel?.Icc7Page?.IsMisfireErrorVisible ?? false,
+            8 => _mainViewModel?.Icc8Page?.IsMisfireErrorVisible ?? false,
+            9 => _mainViewModel?.Icc9Page?.IsMisfireErrorVisible ?? false,
+            10 => _mainViewModel?.Icc10Page?.IsMisfireErrorVisible ?? false,
+            11 => _mainViewModel?.Icc11Page?.IsMisfireErrorVisible ?? false,
+            12 => _mainViewModel?.Icc12Page?.IsMisfireErrorVisible ?? false,
+            13 => _mainViewModel?.Icc13Page?.IsMisfireErrorVisible ?? false,
+            14 => _mainViewModel?.Icc14Page?.IsMisfireErrorVisible ?? false,
+            15 => _mainViewModel?.Icc15Page?.IsMisfireErrorVisible ?? false,
+            16 => _mainViewModel?.Icc16Page?.IsMisfireErrorVisible ?? false,
+            17 => _mainViewModel?.Icc17Page?.IsMisfireErrorVisible ?? false,
+            18 => _mainViewModel?.Icc18Page?.IsMisfireErrorVisible ?? false,
+            19 => _mainViewModel?.Icc19Page?.IsMisfireErrorVisible ?? false,
+            20 => _mainViewModel?.Icc20Page?.IsMisfireErrorVisible ?? false,
+            21 => _mainViewModel?.Icc21Page?.IsMisfireErrorVisible ?? false,
+            _ => false
+        };
+    }
+
+    // Navigation commands
+    [RelayCommand]
+    private void NavigateLeft()
+    {
+        if (CanNavigateLeft)
+        {
+            CurrentStartIndex--;
+        }
+    }
+
+    [RelayCommand]
+    private void NavigateRight()
+    {
+        if (CanNavigateRight)
+        {
+            CurrentStartIndex++;
+        }
+    }
+
+    // Commands to navigate to visible LVICC pages
+    [RelayCommand]
+    private void GoToVisibleIcc1()
+    {
+        GoToIccByNumber(VisibleLvicc1Number);
+    }
+
+    [RelayCommand]
+    private void GoToVisibleIcc2()
+    {
+        GoToIccByNumber(VisibleLvicc2Number);
+    }
+
+    [RelayCommand]
+    private void GoToVisibleIcc3()
+    {
+        GoToIccByNumber(VisibleLvicc3Number);
+    }
+
+    private void GoToIccByNumber(int iccNumber)
+    {
+        switch (iccNumber)
+        {
+            case 1: _mainViewModel.GoToICC1(); break;
+            case 2: _mainViewModel.GoToICC2(); break;
+            case 3: _mainViewModel.GoToICC3(); break;
+            case 4: _mainViewModel.GoToICC4(); break;
+            case 5: _mainViewModel.GoToICC5(); break;
+            case 6: _mainViewModel.GoToICC6(); break;
+            case 7: _mainViewModel.GoToICC7(); break;
+            case 8: _mainViewModel.GoToICC8(); break;
+            case 9: _mainViewModel.GoToICC9(); break;
+            case 10: _mainViewModel.GoToICC10(); break;
+            case 11: _mainViewModel.GoToICC11(); break;
+            case 12: _mainViewModel.GoToICC12(); break;
+            case 13: _mainViewModel.GoToICC13(); break;
+            case 14: _mainViewModel.GoToICC14(); break;
+            case 15: _mainViewModel.GoToICC15(); break;
+            case 16: _mainViewModel.GoToICC16(); break;
+            case 17: _mainViewModel.GoToICC17(); break;
+            case 18: _mainViewModel.GoToICC18(); break;
+            case 19: _mainViewModel.GoToICC19(); break;
+            case 20: _mainViewModel.GoToICC20(); break;
+            case 21: _mainViewModel.GoToICC21(); break;
+        }
+    }
+
+    // Public method to refresh visible LVICC properties (can be called from MainViewModel)
+    public void RefreshVisibleLviccs()
+    {
+        NotifyVisibleLviccPropertiesChanged();
     }
 
     [RelayCommand]

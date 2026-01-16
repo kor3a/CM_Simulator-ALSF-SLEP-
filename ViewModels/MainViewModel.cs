@@ -80,6 +80,24 @@ public partial class MainViewModel : ViewModelBase
     public ICC1ViewModel Icc1Page => _icc1Page;
     public ICC2ViewModel Icc2Page => _icc2Page;
     public ICC3ViewModel Icc3Page => _icc3Page;
+    public ICC4ViewModel Icc4Page => _icc4Page;
+    public ICC5ViewModel Icc5Page => _icc5Page;
+    public ICC6ViewModel Icc6Page => _icc6Page;
+    public ICC7ViewModel Icc7Page => _icc7Page;
+    public ICC8ViewModel Icc8Page => _icc8Page;
+    public ICC9ViewModel Icc9Page => _icc9Page;
+    public ICC10ViewModel Icc10Page => _icc10Page;
+    public ICC11ViewModel Icc11Page => _icc11Page;
+    public ICC12ViewModel Icc12Page => _icc12Page;
+    public ICC13ViewModel Icc13Page => _icc13Page;
+    public ICC14ViewModel Icc14Page => _icc14Page;
+    public ICC15ViewModel Icc15Page => _icc15Page;
+    public ICC16ViewModel Icc16Page => _icc16Page;
+    public ICC17ViewModel Icc17Page => _icc17Page;
+    public ICC18ViewModel Icc18Page => _icc18Page;
+    public ICC19ViewModel Icc19Page => _icc19Page;
+    public ICC20ViewModel Icc20Page => _icc20Page;
+    public ICC21ViewModel Icc21Page => _icc21Page;
     private readonly HomeViewModel _homePage;
     private readonly ICC1ViewModel _icc1Page;
     private readonly ICC2ViewModel _icc2Page;
@@ -529,6 +547,53 @@ public partial class MainViewModel : ViewModelBase
     public byte icc20 = 0x39;
     public byte icc21 = 0x3A;
     public byte[] addresses = {};
+
+    /// <summary>
+    /// Updates the addresses array to contain the 3 ICC addresses starting from the given index.
+    /// Called when navigating through LVICCs in the home view carousel.
+    /// </summary>
+    /// <param name="startIndex">1-based index of the first visible LVICC (1-19)</param>
+    public void UpdateVisibleAddresses(int startIndex)
+    {
+        addresses = new byte[]
+        {
+            GetIccAddress(startIndex),
+            GetIccAddress(startIndex + 1),
+            GetIccAddress(startIndex + 2)
+        };
+    }
+
+    /// <summary>
+    /// Gets the ICC address byte for a given ICC number (1-21).
+    /// </summary>
+    private byte GetIccAddress(int iccNumber)
+    {
+        return iccNumber switch
+        {
+            1 => icc1,
+            2 => icc2,
+            3 => icc3,
+            4 => icc4,
+            5 => icc5,
+            6 => icc6,
+            7 => icc7,
+            8 => icc8,
+            9 => icc9,
+            10 => icc10,
+            11 => icc11,
+            12 => icc12,
+            13 => icc13,
+            14 => icc14,
+            15 => icc15,
+            16 => icc16,
+            17 => icc17,
+            18 => icc18,
+            19 => icc19,
+            20 => icc20,
+            21 => icc21,
+            _ => icc1
+        };
+    }
 
     // PLCK addresses
     private byte plck1 = 0x26;
@@ -1879,17 +1944,54 @@ public partial class MainViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Gets a list of ICC addresses that are currently connected.
+    /// Gets a list of ICC addresses that are currently connected from the visible set.
+    /// Only returns addresses from the current addresses[] array that are connected.
     /// </summary>
     private List<byte> GetConnectedAddresses()
     {
         List<byte> connected = new List<byte>();
 
-        if (icc1Connected) connected.Add(icc1);
-        if (icc2Connected) connected.Add(icc2);
-        if (icc3Connected) connected.Add(icc3);
+        foreach (byte address in addresses)
+        {
+            if (IsIccConnected(address))
+            {
+                connected.Add(address);
+            }
+        }
 
         return connected;
+    }
+
+    /// <summary>
+    /// Checks if a given ICC address is connected.
+    /// </summary>
+    private bool IsIccConnected(byte address)
+    {
+        return address switch
+        {
+            0x26 => icc1Connected,
+            0x27 => icc2Connected,
+            0x28 => icc3Connected,
+            0x29 => icc4Connected,
+            0x2A => icc5Connected,
+            0x2B => icc6Connected,
+            0x2C => icc7Connected,
+            0x2D => icc8Connected,
+            0x2E => icc9Connected,
+            0x2F => icc10Connected,
+            0x30 => icc11Connected,
+            0x31 => icc12Connected,
+            0x32 => icc13Connected,
+            0x33 => icc14Connected,
+            0x34 => icc15Connected,
+            0x35 => icc16Connected,
+            0x36 => icc17Connected,
+            0x37 => icc18Connected,
+            0x38 => icc19Connected,
+            0x39 => icc20Connected,
+            0x3A => icc21Connected,
+            _ => false
+        };
     }
 
     /// <summary>

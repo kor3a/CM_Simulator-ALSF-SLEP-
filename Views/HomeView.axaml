@@ -34,10 +34,19 @@
       <Border Grid.Column="1" Grid.ColumnSpan="4">
         <Grid RowDefinitions="Auto, Auto, Auto, *">
           <StackPanel Grid.Row="0" HorizontalAlignment="Center">
-          <!--LVICC Cards-->
+          <!--LVICC Cards with Navigation Arrows-->
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <!-- LVICC 1 Card -->
-            <HeaderedContentControl Header="LVICC 1" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
+            <!-- Left Navigation Arrow -->
+            <Button Content="&lt;" Command="{Binding NavigateLeftCommand}"
+                    IsVisible="{Binding CanNavigateLeft}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Width="40" Height="50" FontSize="24" FontWeight="Bold"
+                    Background="LightGray" Margin="5,0"/>
+            <!-- Invisible placeholder when left arrow is hidden to maintain layout -->
+            <Border Width="40" Margin="5,0" IsVisible="{Binding !CanNavigateLeft}"/>
+
+            <!-- LVICC 1 Card (Dynamic) -->
+            <HeaderedContentControl Header="{Binding VisibleLvicc1Header}" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
               <Grid Margin="10">
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto"/>
@@ -47,8 +56,8 @@
                 </Grid.RowDefinitions>
 
                 <!-- Status Display -->
-                <Border Grid.Row="0" Background="{Binding Lvicc1PgBackground}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Text="{Binding MainViewModel.Icc1SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <Border Grid.Row="0" Background="{Binding VisibleLvicc1Background}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
+                  <TextBlock Text="{Binding VisibleLvicc1SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                 </Border>
 
                 <!-- Indicators Row -->
@@ -56,7 +65,7 @@
                   <!-- Remote Indicator -->
                   <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
                     <StackPanel Orientation="Horizontal">
-                      <Ellipse Width="12" Height="12" Fill="{Binding MainViewModel.Icc1Page.RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
+                      <Ellipse Width="12" Height="12" Fill="{Binding VisibleLvicc1RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
                       <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                   </Border>
@@ -64,22 +73,28 @@
 
                 <!-- Error Indicators -->
                 <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Classes="commandError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding MainViewModel.Icc1Page.IsCommandErrorVisible}" Margin="0,2"/>
+                <TextBlock Classes="commError" Text="COMM ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
+                             TextAlignment="Center" IsVisible="True" Margin="0,2"/>
+                  <TextBlock Classes="commandError" Text="SETTING ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
+                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc1CommandErrorVisible}" Margin="0,2"/>
+                    <TextBlock Classes="modeError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
+                             TextAlignment="Center" IsVisible="True" Margin="0,2"/>
                   <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding MainViewModel.Icc1Page.IsMisfireErrorVisible}" Margin="0,2"/>
+                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc1MisfireErrorVisible}" Margin="0,2"/>
+                    
                 </StackPanel>
 
                 <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC1Command}"
+                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToVisibleIcc1Command}"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                        IsEnabled="{Binding VisibleLvicc1ButtonEnabled}"
                         HorizontalContentAlignment="Center"
                         Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
               </Grid>
             </HeaderedContentControl>
 
-            <!-- LVICC 2 Card -->
-            <HeaderedContentControl Header="LVICC 2" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
+            <!-- LVICC 2 Card (Dynamic) -->
+            <HeaderedContentControl Header="{Binding VisibleLvicc2Header}" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
               <Grid Margin="10">
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto"/>
@@ -89,8 +104,8 @@
                 </Grid.RowDefinitions>
 
                 <!-- Status Display -->
-                <Border Grid.Row="0" Background="{Binding Lvicc2PgBackground}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Text="{Binding MainViewModel.Icc2SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <Border Grid.Row="0" Background="{Binding VisibleLvicc2Background}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
+                  <TextBlock Text="{Binding VisibleLvicc2SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                 </Border>
 
                 <!-- Indicators Row -->
@@ -98,7 +113,7 @@
                   <!-- Remote Indicator -->
                   <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
                     <StackPanel Orientation="Horizontal">
-                      <Ellipse Width="12" Height="12" Fill="{Binding MainViewModel.Icc2Page.RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
+                      <Ellipse Width="12" Height="12" Fill="{Binding VisibleLvicc2RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
                       <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
                   </Border>
@@ -107,60 +122,71 @@
                 <!-- Error Indicators -->
                 <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
                   <TextBlock Classes="commandError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding MainViewModel.Icc2Page.IsCommandErrorVisible}" Margin="0,2"/>
+                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc2CommandErrorVisible}" Margin="0,2"/>
                   <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding MainViewModel.Icc2Page.IsMisfireErrorVisible}" Margin="0,2"/>
+                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc2MisfireErrorVisible}" Margin="0,2"/>
                 </StackPanel>
 
                 <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC2Command}"
-                        HorizontalAlignment="Center" VerticalAlignment="Bottom" IsEnabled="{Binding AlsfMode}"
-                        HorizontalContentAlignment="Center"
-                        Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
-              </Grid>
-            </HeaderedContentControl>
-
-            <!-- LVICC 3 Card -->
-            <HeaderedContentControl Header="LVICC 3" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
-              <Grid Margin="10">
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <!-- Status Display -->
-                <Border Grid.Row="0" Background="{Binding Lvicc3PgBackground}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Text="{Binding MainViewModel.Icc3SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </Border>
-
-                <!-- Indicators Row -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-                  <!-- Remote Indicator -->
-                  <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
-                    <StackPanel Orientation="Horizontal">
-                      <Ellipse Width="12" Height="12" Fill="{Binding MainViewModel.Icc3Page.RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
-                      <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
-
-                <!-- Error Indicators -->
-                <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Classes="commandError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding MainViewModel.Icc3Page.IsCommandErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding MainViewModel.Icc3Page.IsMisfireErrorVisible}" Margin="0,2"/>
-                </StackPanel>
-
-                <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToICC3Command}"
+                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToVisibleIcc2Command}"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                        IsEnabled="{Binding VisibleLvicc2ButtonEnabled}"
                         HorizontalContentAlignment="Center"
                         Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
               </Grid>
             </HeaderedContentControl>
+
+            <!-- LVICC 3 Card (Dynamic) -->
+            <HeaderedContentControl Header="{Binding VisibleLvicc3Header}" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
+              <Grid Margin="10">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Status Display -->
+                <Border Grid.Row="0" Background="{Binding VisibleLvicc3Background}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
+                  <TextBlock Text="{Binding VisibleLvicc3SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </Border>
+
+                <!-- Indicators Row -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+                  <!-- Remote Indicator -->
+                  <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
+                    <StackPanel Orientation="Horizontal">
+                      <Ellipse Width="12" Height="12" Fill="{Binding VisibleLvicc3RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
+                      <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                  </Border>
+                </StackPanel>
+
+                <!-- Error Indicators -->
+                <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
+                  <TextBlock Classes="commandError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
+                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc3CommandErrorVisible}" Margin="0,2"/>
+                  <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
+                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc3MisfireErrorVisible}" Margin="0,2"/>
+                </StackPanel>
+
+                <!-- Navigation Button -->
+                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToVisibleIcc3Command}"
+                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                        IsEnabled="{Binding VisibleLvicc3ButtonEnabled}"
+                        HorizontalContentAlignment="Center"
+                        Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
+              </Grid>
+            </HeaderedContentControl>
+
+            <!-- Right Navigation Arrow -->
+            <Button Content="&gt;" Command="{Binding NavigateRightCommand}"
+                    IsVisible="{Binding CanNavigateRight}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Width="40" Height="50" FontSize="24" FontWeight="Bold"
+                    Background="LightGray" Margin="5,0"/>
+            <!-- Invisible placeholder when right arrow is hidden to maintain layout -->
+            <Border Width="40" Margin="5,0" IsVisible="{Binding !CanNavigateRight}"/>
           </StackPanel>
         </StackPanel>
         
