@@ -73,10 +73,15 @@
 
                 <!-- Error Indicators -->
                 <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Classes="commandError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
+                <TextBlock Classes="commError" Text="COMM ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
+                             TextAlignment="Center" IsVisible="True" Margin="0,2"/>
+                  <TextBlock Classes="commandError" Text="SETTING ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
                              TextAlignment="Center" IsVisible="{Binding VisibleLvicc1CommandErrorVisible}" Margin="0,2"/>
+                    <TextBlock Classes="modeError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
+                             TextAlignment="Center" IsVisible="True" Margin="0,2"/>
                   <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
                              TextAlignment="Center" IsVisible="{Binding VisibleLvicc1MisfireErrorVisible}" Margin="0,2"/>
+                    
                 </StackPanel>
 
                 <!-- Navigation Button -->
