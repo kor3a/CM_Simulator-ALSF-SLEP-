@@ -71,6 +71,16 @@ public partial class HomeViewModel : ViewModelBase
     public bool VisibleLvicc2MisfireErrorVisible => GetLviccMisfireErrorVisible(VisibleLvicc2Number);
     public bool VisibleLvicc3MisfireErrorVisible => GetLviccMisfireErrorVisible(VisibleLvicc3Number);
 
+    // Computed properties for visible LVICC comm error visibility
+    public bool VisibleLvicc1CommErrorVisible => GetLviccCommErrorVisible(VisibleLvicc1Number);
+    public bool VisibleLvicc2CommErrorVisible => GetLviccCommErrorVisible(VisibleLvicc2Number);
+    public bool VisibleLvicc3CommErrorVisible => GetLviccCommErrorVisible(VisibleLvicc3Number);
+
+    // Computed properties for visible LVICC mode error visibility
+    public bool VisibleLvicc1ModeErrorVisible => GetLviccModeErrorVisible(VisibleLvicc1Number);
+    public bool VisibleLvicc2ModeErrorVisible => GetLviccModeErrorVisible(VisibleLvicc2Number);
+    public bool VisibleLvicc3ModeErrorVisible => GetLviccModeErrorVisible(VisibleLvicc3Number);
+
     // Computed properties for visible LVICC button enabled states
     // In SSALR mode (AlsfMode = false), only odd-numbered LVICCs are enabled
     public bool VisibleLvicc1ButtonEnabled => AlsfMode || (VisibleLvicc1Number % 2 == 1);
@@ -346,6 +356,12 @@ public partial class HomeViewModel : ViewModelBase
         OnPropertyChanged(nameof(VisibleLvicc1MisfireErrorVisible));
         OnPropertyChanged(nameof(VisibleLvicc2MisfireErrorVisible));
         OnPropertyChanged(nameof(VisibleLvicc3MisfireErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc1CommErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc2CommErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc3CommErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc1ModeErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc2ModeErrorVisible));
+        OnPropertyChanged(nameof(VisibleLvicc3ModeErrorVisible));
         OnPropertyChanged(nameof(VisibleLvicc1ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc2ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc3ButtonEnabled));
@@ -494,6 +510,64 @@ public partial class HomeViewModel : ViewModelBase
             19 => _mainViewModel?.Icc19Page?.IsMisfireErrorVisible ?? false,
             20 => _mainViewModel?.Icc20Page?.IsMisfireErrorVisible ?? false,
             21 => _mainViewModel?.Icc21Page?.IsMisfireErrorVisible ?? false,
+            _ => false
+        };
+    }
+
+    private bool GetLviccCommErrorVisible(int lviccNumber)
+    {
+        return lviccNumber switch
+        {
+            1 => _mainViewModel?.Icc1Page?.IsCommErrorVisible ?? false,
+            2 => _mainViewModel?.Icc2Page?.IsCommErrorVisible ?? false,
+            3 => _mainViewModel?.Icc3Page?.IsCommErrorVisible ?? false,
+            4 => _mainViewModel?.Icc4Page?.IsCommErrorVisible ?? false,
+            5 => _mainViewModel?.Icc5Page?.IsCommErrorVisible ?? false,
+            6 => _mainViewModel?.Icc6Page?.IsCommErrorVisible ?? false,
+            7 => _mainViewModel?.Icc7Page?.IsCommErrorVisible ?? false,
+            8 => _mainViewModel?.Icc8Page?.IsCommErrorVisible ?? false,
+            9 => _mainViewModel?.Icc9Page?.IsCommErrorVisible ?? false,
+            10 => _mainViewModel?.Icc10Page?.IsCommErrorVisible ?? false,
+            11 => _mainViewModel?.Icc11Page?.IsCommErrorVisible ?? false,
+            12 => _mainViewModel?.Icc12Page?.IsCommErrorVisible ?? false,
+            13 => _mainViewModel?.Icc13Page?.IsCommErrorVisible ?? false,
+            14 => _mainViewModel?.Icc14Page?.IsCommErrorVisible ?? false,
+            15 => _mainViewModel?.Icc15Page?.IsCommErrorVisible ?? false,
+            16 => _mainViewModel?.Icc16Page?.IsCommErrorVisible ?? false,
+            17 => _mainViewModel?.Icc17Page?.IsCommErrorVisible ?? false,
+            18 => _mainViewModel?.Icc18Page?.IsCommErrorVisible ?? false,
+            19 => _mainViewModel?.Icc19Page?.IsCommErrorVisible ?? false,
+            20 => _mainViewModel?.Icc20Page?.IsCommErrorVisible ?? false,
+            21 => _mainViewModel?.Icc21Page?.IsCommErrorVisible ?? false,
+            _ => false
+        };
+    }
+
+    private bool GetLviccModeErrorVisible(int lviccNumber)
+    {
+        return lviccNumber switch
+        {
+            1 => _mainViewModel?.Icc1Page?.IsModeErrorVisible ?? false,
+            2 => _mainViewModel?.Icc2Page?.IsModeErrorVisible ?? false,
+            3 => _mainViewModel?.Icc3Page?.IsModeErrorVisible ?? false,
+            4 => _mainViewModel?.Icc4Page?.IsModeErrorVisible ?? false,
+            5 => _mainViewModel?.Icc5Page?.IsModeErrorVisible ?? false,
+            6 => _mainViewModel?.Icc6Page?.IsModeErrorVisible ?? false,
+            7 => _mainViewModel?.Icc7Page?.IsModeErrorVisible ?? false,
+            8 => _mainViewModel?.Icc8Page?.IsModeErrorVisible ?? false,
+            9 => _mainViewModel?.Icc9Page?.IsModeErrorVisible ?? false,
+            10 => _mainViewModel?.Icc10Page?.IsModeErrorVisible ?? false,
+            11 => _mainViewModel?.Icc11Page?.IsModeErrorVisible ?? false,
+            12 => _mainViewModel?.Icc12Page?.IsModeErrorVisible ?? false,
+            13 => _mainViewModel?.Icc13Page?.IsModeErrorVisible ?? false,
+            14 => _mainViewModel?.Icc14Page?.IsModeErrorVisible ?? false,
+            15 => _mainViewModel?.Icc15Page?.IsModeErrorVisible ?? false,
+            16 => _mainViewModel?.Icc16Page?.IsModeErrorVisible ?? false,
+            17 => _mainViewModel?.Icc17Page?.IsModeErrorVisible ?? false,
+            18 => _mainViewModel?.Icc18Page?.IsModeErrorVisible ?? false,
+            19 => _mainViewModel?.Icc19Page?.IsModeErrorVisible ?? false,
+            20 => _mainViewModel?.Icc20Page?.IsModeErrorVisible ?? false,
+            21 => _mainViewModel?.Icc21Page?.IsModeErrorVisible ?? false,
             _ => false
         };
     }

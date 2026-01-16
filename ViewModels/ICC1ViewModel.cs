@@ -154,6 +154,12 @@ public partial class ICC1ViewModel : ViewModelBase
     public bool _isMisfireErrorVisible;
 
     [ObservableProperty]
+    public bool _isCommErrorVisible;
+
+    [ObservableProperty]
+    public bool _isModeErrorVisible;
+
+    [ObservableProperty]
     public bool _isStartByteErrorVisible;
 
     [ObservableProperty]
@@ -184,6 +190,8 @@ public partial class ICC1ViewModel : ViewModelBase
         _homeViewModel = homeViewModel;
         IsCommandErrorVisible = false;
         IsMisfireErrorVisible = false;
+        IsCommErrorVisible = false;
+        IsModeErrorVisible = false;
         IsStartByteErrorVisible = false;
         IsDestinationByteErrorVisible = false;
         IsSourceByteErrorVisible = false;
