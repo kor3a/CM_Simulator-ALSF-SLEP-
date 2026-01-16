@@ -34,7 +34,7 @@ public partial class HomeViewModel : ViewModelBase
 
     // Computed properties for navigation visibility
     public bool CanNavigateLeft => CurrentStartIndex > 1;
-    public bool CanNavigateRight => CurrentStartIndex + 2 < 21;
+    public bool CanNavigateRight => CurrentStartIndex + 2 < 4;
 
     // Computed properties for visible LVICC numbers (1-based)
     public int VisibleLvicc1Number => CurrentStartIndex;
