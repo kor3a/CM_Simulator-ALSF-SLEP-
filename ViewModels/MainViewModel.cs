@@ -1849,7 +1849,6 @@ public partial class MainViewModel : ViewModelBase
                         break;
 
                     await SendShortDataRequestAsync(address, cancellationToken);
-                    shortDataRequestCount++;
 
                     // Wait for response with timeout
                     await WaitForResponseAsync(address, 500);
@@ -1858,7 +1857,10 @@ public partial class MainViewModel : ViewModelBase
                     await Task.Delay(100, cancellationToken);
                 }
 
-                // Every 10 short data requests, send 1 Config Data Request to each visible LVICC
+                // Increment counter after completing one full loop through all visible LVICCs
+                shortDataRequestCount++;
+
+                // Every 10 complete loops, send 1 Config Data Request to each visible LVICC
                 if (shortDataRequestCount >= 10)
                 {
                     foreach (byte address in visibleAddresses)
