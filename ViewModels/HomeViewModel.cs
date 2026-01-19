@@ -241,11 +241,13 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     private IBrush _cautionForeground = new SolidColorBrush(Colors.Black);
 
+    /*
     [ObservableProperty]
     private IBrush _commFault = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
     private IBrush _commFaultForeground = new SolidColorBrush(Colors.Black);
+    */
 
     [ObservableProperty]
     private IBrush _failure = new SolidColorBrush(Colors.LightGray);

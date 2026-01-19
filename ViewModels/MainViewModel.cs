@@ -1195,6 +1195,7 @@ public partial class MainViewModel : ViewModelBase
                     portStillHealthy = false;
                 }
 
+                /*
                 if (portHealthy != portStillHealthy)
                 {
                     portHealthy = portStillHealthy;
@@ -1227,6 +1228,7 @@ public partial class MainViewModel : ViewModelBase
                         }
                     });
                 }
+                */
 
                 if (!portStillHealthy)
                 {
