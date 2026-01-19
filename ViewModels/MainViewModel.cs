@@ -549,81 +549,18 @@ public partial class MainViewModel : ViewModelBase
     public byte[] addresses = {};
 
     /// <summary>
-    /// Tracks which ICC addresses have been scanned/enquired.
-    /// </summary>
-    private HashSet<byte> _scannedAddresses = new HashSet<byte>();
-
-    /// <summary>
     /// Updates the addresses array to contain the 3 ICC addresses starting from the given index.
     /// Called when navigating through LVICCs in the home view carousel.
-    /// Also triggers enquiry for any newly visible LVICCs that haven't been scanned yet.
     /// </summary>
     /// <param name="startIndex">1-based index of the first visible LVICC (1-2)</param>
     public void UpdateVisibleAddresses(int startIndex)
     {
-        byte[] newAddresses = new byte[]
+        addresses = new byte[]
         {
             GetIccAddress(startIndex),
             GetIccAddress(startIndex + 1),
             GetIccAddress(startIndex + 2)
         };
-
-        // Find newly visible addresses that haven't been scanned yet
-        List<byte> newlyVisible = new List<byte>();
-        foreach (byte addr in newAddresses)
-        {
-            if (!_scannedAddresses.Contains(addr))
-            {
-                newlyVisible.Add(addr);
-            }
-        }
-
-        // Update addresses array
-        addresses = newAddresses;
-
-        // Enquire newly visible LVICCs if any
-        if (newlyVisible.Count > 0 && Sp != null && Sp.IsOpen)
-        {
-            _ = Task.Run(async () => await EnquireNewlyVisibleLviccs(newlyVisible));
-        }
-    }
-
-    /// <summary>
-    /// Enquires newly visible LVICCs that haven't been scanned yet.
-    /// </summary>
-    private async Task EnquireNewlyVisibleLviccs(List<byte> newAddresses)
-    {
-        foreach (byte address in newAddresses)
-        {
-            if (Sp == null || !Sp.IsOpen)
-                break;
-
-            try
-            {
-                await SendEnquireMessage(address);
-                int destString = dict[address];
-                _scannedAddresses.Add(address);
-
-                bool received = await WaitForResponseAsync(address, 1000);
-                if (received)
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                        _homePage.AppendLog($"ICC {destString} connected after navigation"));
-                }
-                else
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                        _homePage.AppendLog($"Timeout waiting for response from ICC {destString}"));
-                }
-
-                await Task.Delay(500);
-            }
-            catch (Exception ex)
-            {
-                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                    _homePage.AppendLog($"Error enquiring ICC: {ex.Message}"));
-            }
-        }
     }
 
     /// <summary>
@@ -1222,67 +1159,13 @@ public partial class MainViewModel : ViewModelBase
     {
         var lastPortCheck = DateTime.UtcNow;
         portHealthy = true;
-        _initialScanComplete = false;
-        _expectedShortDataResponses = 0;
-        _processedShortDataResponses = 0;
 
         try
         {
-            disableButtons();
-            _scannedAddresses.Clear();
-
-            // Scan only the 3 currently visible LVICCs at startup
-            foreach (byte address in addresses)
-            {
-                if (Sp == null || !Sp.IsOpen)
-                    break;
-
-            try
-            {
-                await SendEnquireMessage(address);
-                _scannedAddresses.Add(address);
-                int destString = dict[address];
-
-                bool received = await WaitForResponseAsync(address, 1000);
-                if (received)
-                {
-                    _expectedShortDataResponses++;
-                }
-                else
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog($"Timeout waiting for response from ICC {destString}"));
-                }
-
-                    await Task.Delay(500);
-                }
-                catch (IOException ex)
-                {
-                    await HandleDisconnectAsync($"I/O error: {ex.Message}");
-                    enableButtons();
-                    return;
-                }
-                catch (InvalidOperationException ex)
-                {
-                    await HandleDisconnectAsync($"Disconnected: {ex.Message}");
-                    enableButtons();
-                    return;
-                }
-            }
-
             enableButtons();
-            _initialScanComplete = true;
 
-            // If no responses expected, call CheckAndStartSequentialFlash immediately
-            if (_expectedShortDataResponses == 0)
-            {
-                CheckAndStartSequentialFlash();
-            }
-
-            // Start continuous data polling after initial handshake is complete
-            if (flashersConnected > 0)
-            {
-                StartContinuousDataPolling();
-            }
+            // Start continuous data polling immediately after connection
+            StartContinuousDataPolling();
 
             while (true)
             {
@@ -1939,32 +1822,34 @@ public partial class MainViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// The main continuous polling loop that sends Short Data and Config Data requests
-    /// to all connected ICCs in a round-robin fashion.
+    /// The main continuous polling loop that sends Short Data requests to all visible LVICCs.
+    /// Every 10 short data requests, sends 1 Config Data request to each visible LVICC.
     /// </summary>
     private async Task ContinuousDataPollingLoopAsync(CancellationToken cancellationToken)
     {
+        int shortDataRequestCount = 0;
+
         try
         {
             while (!cancellationToken.IsCancellationRequested && Sp != null && Sp.IsOpen)
             {
-                // Get list of connected ICC addresses
-                List<byte> connectedAddresses = GetConnectedAddresses();
+                // Get current visible addresses (poll all visible, not just connected)
+                byte[] visibleAddresses = addresses;
 
-                if (connectedAddresses.Count == 0)
+                if (visibleAddresses.Length == 0)
                 {
-                    // No connected ICCs, wait and retry
                     await Task.Delay(1000, cancellationToken);
                     continue;
                 }
 
-                // Send Short Data Request to each connected ICC
-                foreach (byte address in connectedAddresses)
+                // Send Short Data Request to each visible LVICC
+                foreach (byte address in visibleAddresses)
                 {
                     if (cancellationToken.IsCancellationRequested)
                         break;
 
                     await SendShortDataRequestAsync(address, cancellationToken);
+                    shortDataRequestCount++;
 
                     // Wait for response with timeout
                     await WaitForResponseAsync(address, 500);
@@ -1973,22 +1858,26 @@ public partial class MainViewModel : ViewModelBase
                     await Task.Delay(100, cancellationToken);
                 }
 
-                // Send Config Data Request to each connected ICC
-                foreach (byte address in connectedAddresses)
+                // Every 10 short data requests, send 1 Config Data Request to each visible LVICC
+                if (shortDataRequestCount >= 10)
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
+                    foreach (byte address in visibleAddresses)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                            break;
 
-                    await SendConfigDataRequestAsync(address, cancellationToken);
+                        await SendConfigDataRequestAsync(address, cancellationToken);
 
-                    // Wait for response with timeout
-                    await WaitForResponseAsync(address, 500);
+                        // Wait for response with timeout
+                        await WaitForResponseAsync(address, 500);
 
-                    // Small delay between requests (RS485 half-duplex turnaround)
-                    await Task.Delay(100, cancellationToken);
+                        // Small delay between requests (RS485 half-duplex turnaround)
+                        await Task.Delay(100, cancellationToken);
+                    }
+                    shortDataRequestCount = 0;
                 }
 
-                // Delay before next polling cycle (adjust as needed for your application)
+                // Delay before next polling cycle
                 await Task.Delay(500, cancellationToken);
             }
         }
