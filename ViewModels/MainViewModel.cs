@@ -1859,16 +1859,29 @@ public partial class MainViewModel : ViewModelBase
 
                     bool isNewAddress = !_initializedAddresses.Contains(address);
 
-                    await SendShortDataRequestAsync(address, cancellationToken);
-
-                    // Wait for response - longer timeout for new addresses (they send POST results first)
-                    await WaitForResponseAsync(address, isNewAddress ? 1500 : 500);
-
                     if (isNewAddress)
                     {
+                        // For new addresses, send short data request first (triggers POST results)
+                        await SendShortDataRequestAsync(address, cancellationToken);
+                        await WaitForResponseAsync(address, 1500);
+                        await Task.Delay(200, cancellationToken);
+
+                        // Then send config data request to fully initialize the LVICC
+                        await SendConfigDataRequestAsync(address, cancellationToken);
+                        await WaitForResponseAsync(address, 1000);
+                        await Task.Delay(200, cancellationToken);
+
+                        // Now send another short data request - LVICC should be ready
+                        await SendShortDataRequestAsync(address, cancellationToken);
+                        await WaitForResponseAsync(address, 1000);
+
                         _initializedAddresses.Add(address);
-                        // Extra delay after first contact to let LVICC finish initialization
-                        await Task.Delay(500, cancellationToken);
+                        await Task.Delay(200, cancellationToken);
+                    }
+                    else
+                    {
+                        await SendShortDataRequestAsync(address, cancellationToken);
+                        await WaitForResponseAsync(address, 500);
                     }
 
                     // Small delay between requests (RS485 half-duplex turnaround)
