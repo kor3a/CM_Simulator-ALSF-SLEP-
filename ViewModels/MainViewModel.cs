@@ -549,6 +549,12 @@ public partial class MainViewModel : ViewModelBase
     public byte[] addresses = {};
 
     /// <summary>
+    /// Tracks which ICC addresses have been polled and are ready for normal polling.
+    /// New addresses need extra time after sending POST results.
+    /// </summary>
+    private HashSet<byte> _initializedAddresses = new HashSet<byte>();
+
+    /// <summary>
     /// Updates the addresses array to contain the 3 ICC addresses starting from the given index.
     /// Called when navigating through LVICCs in the home view carousel.
     /// </summary>
@@ -1830,6 +1836,7 @@ public partial class MainViewModel : ViewModelBase
     private async Task ContinuousDataPollingLoopAsync(CancellationToken cancellationToken)
     {
         int shortDataRequestCount = 0;
+        _initializedAddresses.Clear();
 
         try
         {
@@ -1850,10 +1857,19 @@ public partial class MainViewModel : ViewModelBase
                     if (cancellationToken.IsCancellationRequested)
                         break;
 
+                    bool isNewAddress = !_initializedAddresses.Contains(address);
+
                     await SendShortDataRequestAsync(address, cancellationToken);
 
-                    // Wait for response with timeout
-                    await WaitForResponseAsync(address, 500);
+                    // Wait for response - longer timeout for new addresses (they send POST results first)
+                    await WaitForResponseAsync(address, isNewAddress ? 1500 : 500);
+
+                    if (isNewAddress)
+                    {
+                        _initializedAddresses.Add(address);
+                        // Extra delay after first contact to let LVICC finish initialization
+                        await Task.Delay(500, cancellationToken);
+                    }
 
                     // Small delay between requests (RS485 half-duplex turnaround)
                     await Task.Delay(100, cancellationToken);
