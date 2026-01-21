@@ -2791,7 +2791,6 @@ public partial class MainViewModel : ViewModelBase
                                 iccs[0] = true;
                             }
 
-                            icc1Rem = true;
                             if (icc1Compat)
                             {
                                 // compatibility mode - 25 bytes
@@ -3001,6 +3000,18 @@ public partial class MainViewModel : ViewModelBase
                             }
                             break;
                         case byte s when s == icc2:
+                            // Change the color of the menu item of the ICC
+                            Icc2SideBackground = new SolidColorBrush(Colors.LightGreen);
+                            _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.LightGreen);
+                            // Receive configuration (switch) data and update the GUI of the LVICC page
+                            if (!icc2Connected)
+                            {
+                                // increment the counter
+                                flashersConnected++;
+                                icc2Connected = true;
+                                iccs[1] = true;
+                            }
+
                             if (icc2Compat)
                             {
                                 // compatibility mode - 25 bytes
@@ -3208,6 +3219,17 @@ public partial class MainViewModel : ViewModelBase
                             }
                             break;
                         case byte s when s == icc3:
+                            // Change the color of the menu item of the ICC
+                            Icc3SideBackground = new SolidColorBrush(Colors.LightGreen);
+                            _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.LightGreen);
+                            // Receive configuration (switch) data and update the GUI of the LVICC page
+                            if (!icc3Connected)
+                            {
+                                // increment the counter
+                                flashersConnected++;
+                                icc3Connected = true;
+                                iccs[2] = true;
+                            }
                             if (icc3Compat)
                             {
                                 // compatibility mode - 25 bytes
@@ -3414,6 +3436,17 @@ public partial class MainViewModel : ViewModelBase
                             }
                             break;
                         case byte s when s == icc4:
+                            // Change the color of the menu item of the ICC
+                            Icc4SideBackground = new SolidColorBrush(Colors.LightGreen);
+                            _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGreen);
+                            // Receive configuration (switch) data and update the GUI of the LVICC page
+                            if (!icc4Connected)
+                            {
+                                // increment the counter
+                                flashersConnected++;
+                                icc4Connected = true;
+                                iccs[3] = true;
+                            }
                             if (icc4Compat)
                             {
                                 // compatibility mode - 25 bytes
@@ -3590,10 +3623,7 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                if (message[29] > 7)
-                                {
-                                    _icc4Page.SubmitFlasherMisfires(misfires);
-                                }
+                                _icc4Page.SubmitFlasherMisfires(misfires);
 
                                 _icc4Page.Vac240V = vac240V;
                                 _icc4Page.Vac240A = vac240A;
@@ -11706,7 +11736,12 @@ public partial class MainViewModel : ViewModelBase
             _icc4Page.RemForeground = new SolidColorBrush(Colors.White);
             icc4Rem = true;
             _icc4Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc4PgStatus = false;
+            if (!icc4Connected)
+            {
+                iccs[3] = true;
+                flashersConnected++;
+                icc4Connected = true;
+            }
         }
         else if ((param2 & remoteConfig) == 0)
         {
@@ -11715,9 +11750,14 @@ public partial class MainViewModel : ViewModelBase
             icc4Rem = false;
             _homePage.AppendLog("\nMODE ERROR: LVICC 4 remote is turned OFF.");
 
+            if (icc4Connected)
+            {
+                iccs[3] = false;
+                flashersConnected--;
+                icc4Connected = false;
+            }
             // activate mode error
             _icc4Page.IsCommandErrorVisible = true;
-            _homePage.Lvicc4PgStatus = true;
         }
         if ((param2 & offConfig) == offConfig)
         {
