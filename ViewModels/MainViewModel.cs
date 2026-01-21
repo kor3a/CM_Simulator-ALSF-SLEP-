@@ -1987,6 +1987,7 @@ public partial class MainViewModel : ViewModelBase
             {
                 Sp.RtsEnable = true;
                 Sp.Write(shortDataRequestTx, 0, shortDataRequestTx.Length);
+                await Task.Delay(10); // Allow transmission to complete before switching to receive mode
                 Sp.RtsEnable = false;
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
@@ -2048,6 +2049,7 @@ public partial class MainViewModel : ViewModelBase
             {
                 Sp.RtsEnable = true;
                 Sp.Write(configDataRequestTx, 0, configDataRequestTx.Length);
+                await Task.Delay(10); // Allow transmission to complete before switching to receive mode
                 Sp.RtsEnable = false;
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
