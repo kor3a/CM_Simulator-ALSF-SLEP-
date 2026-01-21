@@ -2779,6 +2779,19 @@ public partial class MainViewModel : ViewModelBase
                     switch (source)
                     {
                         case byte s when s == icc1:
+                            // Change the color of the menu item of the ICC
+                            Icc1SideBackground = new SolidColorBrush(Colors.LightGreen);
+                            _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.LightGreen);
+                            // Receive configuration (switch) data and update the GUI of the LVICC page
+                            if (!icc1Connected)
+                            {
+                                // increment the counter
+                                flashersConnected++;
+                                icc1Connected = true;
+                                iccs[0] = true;
+                            }
+
+                            icc1Rem = true;
                             if (icc1Compat)
                             {
                                 // compatibility mode - 25 bytes
