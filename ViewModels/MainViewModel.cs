@@ -549,18 +549,68 @@ public partial class MainViewModel : ViewModelBase
     public byte[] addresses = {};
 
     /// <summary>
+    /// Tracks which ICC addresses have been enquired to establish communication.
+    /// </summary>
+    private HashSet<byte> _enquiredAddresses = new HashSet<byte>();
+
+    /// <summary>
     /// Updates the addresses array to contain the 3 ICC addresses starting from the given index.
     /// Called when navigating through LVICCs in the home view carousel.
+    /// Also triggers enquiry for any newly visible LVICCs that haven't been enquired yet.
     /// </summary>
     /// <param name="startIndex">1-based index of the first visible LVICC (1-2)</param>
     public void UpdateVisibleAddresses(int startIndex)
     {
-        addresses = new byte[]
+        byte[] newAddresses = new byte[]
         {
             GetIccAddress(startIndex),
             GetIccAddress(startIndex + 1),
             GetIccAddress(startIndex + 2)
         };
+
+        // Find newly visible addresses that haven't been enquired yet
+        List<byte> newlyVisible = new List<byte>();
+        foreach (byte addr in newAddresses)
+        {
+            if (!_enquiredAddresses.Contains(addr))
+            {
+                newlyVisible.Add(addr);
+            }
+        }
+
+        // Update addresses array
+        addresses = newAddresses;
+
+        // Enquire newly visible LVICCs if any
+        if (newlyVisible.Count > 0 && Sp != null && Sp.IsOpen)
+        {
+            _ = Task.Run(async () => await EnquireNewlyVisibleLviccs(newlyVisible));
+        }
+    }
+
+    /// <summary>
+    /// Enquires newly visible LVICCs that haven't been enquired yet.
+    /// </summary>
+    private async Task EnquireNewlyVisibleLviccs(List<byte> newAddresses)
+    {
+        foreach (byte address in newAddresses)
+        {
+            if (Sp == null || !Sp.IsOpen)
+                break;
+
+            try
+            {
+                await SendEnquireMessage(address);
+                _enquiredAddresses.Add(address);
+                await WaitForResponseAsync(address, 1000);
+                await Task.Delay(100);
+            }
+            catch (Exception ex)
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    _homePage.AppendLog($"Error enquiring ICC: {ex.Message}"));
+            }
+        }
     }
 
     /// <summary>
@@ -1833,6 +1883,22 @@ public partial class MainViewModel : ViewModelBase
 
         try
         {
+            // Clear enquired addresses tracking on new connection
+            _enquiredAddresses.Clear();
+
+            // Initial enquire to each visible LVICC to establish communication
+            byte[] initialAddresses = addresses;
+            foreach (byte address in initialAddresses)
+            {
+                if (cancellationToken.IsCancellationRequested || Sp == null || !Sp.IsOpen)
+                    break;
+
+                await SendEnquireMessage(address);
+                _enquiredAddresses.Add(address);
+                await WaitForResponseAsync(address, 1000);
+                await Task.Delay(100, cancellationToken);
+            }
+
             while (!cancellationToken.IsCancellationRequested && Sp != null && Sp.IsOpen)
             {
                 // Get current visible addresses (poll all visible, not just connected)
