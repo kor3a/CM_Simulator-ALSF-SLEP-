@@ -7692,21 +7692,8 @@ public partial class MainViewModel : ViewModelBase
             }   
         }
 
-        if ((message & alsfModeByte) == alsfModeByte)
-        {
-            if (!AlsfMode)
-            {
-                icc1MessageData = (byte)(icc1MessageData ^ alsfModeByte ^ ssalrModeByte);
-                AlsfMode = true;
-            }
-        }else
-        {
-            if (AlsfMode)
-            {
-                icc1MessageData = (byte)(icc1MessageData ^ alsfModeByte ^ ssalrModeByte);
-                AlsfMode = false;
-            }
-        }
+        // Copy mode bits directly from ICC response
+        icc1MessageData = (byte)((icc1MessageData & ~(alsfModeByte | ssalrModeByte)) | (message & (alsfModeByte | ssalrModeByte)));
 
         if (cmMessageData != icc1MessageData)
         {
@@ -7863,22 +7850,8 @@ public partial class MainViewModel : ViewModelBase
                 }
             }
         }
-        if ((message & alsfModeByte) == alsfModeByte)
-        {
-            if (!AlsfMode)
-            {
-                icc2MessageData = (byte)(icc2MessageData ^ alsfModeByte ^ ssalrModeByte);
-                AlsfMode = true;
-            }
-        }
-        else
-        {
-            if (AlsfMode)
-            {
-                icc2MessageData = (byte)(icc2MessageData ^ alsfModeByte ^ ssalrModeByte);
-                AlsfMode = false;
-            }
-        }
+        // Copy mode bits directly from ICC response
+        icc2MessageData = (byte)((icc2MessageData & ~(alsfModeByte | ssalrModeByte)) | (message & (alsfModeByte | ssalrModeByte)));
         if (cmMessageData != icc2MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
@@ -8038,22 +8011,8 @@ public partial class MainViewModel : ViewModelBase
 
 
         }
-        if ((message & alsfModeByte) == alsfModeByte)
-        {
-            if (!AlsfMode)
-            {
-                icc3MessageData = (byte)(icc3MessageData ^ alsfModeByte ^ ssalrModeByte);
-                AlsfMode = true;
-            }
-        }
-        else
-        {
-            if (AlsfMode)
-            {
-                icc3MessageData = (byte)(icc3MessageData ^ alsfModeByte ^ ssalrModeByte);
-                AlsfMode = false;
-            }
-        }
+        // Copy mode bits directly from ICC response
+        icc3MessageData = (byte)((icc3MessageData & ~(alsfModeByte | ssalrModeByte)) | (message & (alsfModeByte | ssalrModeByte)));
         if (cmMessageData != icc3MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc3MessageData, "ICC3");
@@ -8209,22 +8168,8 @@ public partial class MainViewModel : ViewModelBase
                 }
             }
         }
-        if ((message & alsfModeByte) == alsfModeByte)
-        {
-            if (!AlsfMode)
-            {
-                icc4MessageData = (byte)(icc4MessageData ^ alsfModeByte ^ ssalrModeByte);
-                AlsfMode = true;
-            }
-        }
-        else
-        {
-            if (AlsfMode)
-            {
-                icc4MessageData = (byte)(icc4MessageData ^ alsfModeByte ^ ssalrModeByte);
-                AlsfMode = false;
-            }
-        }
+        // Copy mode bits directly from ICC response
+        icc4MessageData = (byte)((icc4MessageData & ~(alsfModeByte | ssalrModeByte)) | (message & (alsfModeByte | ssalrModeByte)));
         if (cmMessageData != icc4MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
