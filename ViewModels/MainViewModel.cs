@@ -657,25 +657,6 @@ public partial class MainViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Gets the addresses of LVICCs that are connected in the current mode.
-    /// In ALSF mode, all visible LVICCs are connected.
-    /// In SSALR mode, only odd-numbered LVICCs (1, 3, 5, etc.) are connected.
-    /// </summary>
-    public byte[] GetConnectedAddresses()
-    {
-        if (AlsfMode)
-        {
-            // All visible addresses are connected in ALSF mode
-            return addresses;
-        }
-        else
-        {
-            // Only odd-numbered LVICCs are connected in SSALR mode
-            return addresses.Where(addr => GetIccNumber(addr) % 2 == 1).ToArray();
-        }
-    }
-
-    /// <summary>
     /// Clears mode errors for disconnected LVICCs when switching to SSALR mode.
     /// Even-numbered LVICCs (2, 4, 6, etc.) are not connected in SSALR mode.
     /// Also syncs their message data with CM to avoid false errors when switching back.
@@ -1941,9 +1922,9 @@ public partial class MainViewModel : ViewModelBase
             while (!cancellationToken.IsCancellationRequested && Sp != null && Sp.IsOpen)
             {
                 // Get current connected addresses based on mode (ALSF = all, SSALR = odd-numbered only)
-                byte[] connectedAddresses = GetConnectedAddresses();
+                List<byte> connectedAddresses = GetConnectedAddresses();
 
-                if (connectedAddresses.Length == 0)
+                if (connectedAddresses.Count == 0)
                 {
                     await Task.Delay(1000, cancellationToken);
                     continue;
@@ -2032,6 +2013,7 @@ public partial class MainViewModel : ViewModelBase
     /// <summary>
     /// Gets a list of ICC addresses that are currently connected from the visible set.
     /// Only returns addresses from the current addresses[] array that are connected.
+    /// In SSALR mode, only odd-numbered LVICCs (1, 3, 5, etc.) are connected.
     /// </summary>
     private List<byte> GetConnectedAddresses()
     {
@@ -2039,6 +2021,14 @@ public partial class MainViewModel : ViewModelBase
 
         foreach (byte address in addresses)
         {
+            int iccNumber = GetIccNumber(address);
+
+            // In SSALR mode, skip even-numbered LVICCs (they're not connected)
+            if (!AlsfMode && iccNumber % 2 == 0)
+            {
+                continue;
+            }
+
             if (IsIccConnected(address))
             {
                 connected.Add(address);
