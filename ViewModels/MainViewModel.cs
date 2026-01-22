@@ -81,8 +81,16 @@ public partial class MainViewModel : ViewModelBase
     {
         // Sync even-numbered LVICCs (2, 4) with CM data in BOTH directions:
         // - When switching to SSALR: they won't be polled, so sync now
-        // - When switching to ALSF: they weren't polled in SSALR, so sync now
+        // - When switching to ALSF: they weren't polled in SSALR, so sync and send commands
         SyncEvenNumberedLviccData();
+
+        if (value)
+        {
+            // Switching back to ALSF mode - send CM commands to ICC 2 and 4
+            // to set them to the correct state (they may have drifted while not polled)
+            SendCmCommand(icc2);
+            SendCmCommand(icc4);
+        }
     }
 
     [ObservableProperty]
