@@ -73,6 +73,11 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _alsfMode = true;
 
+    // Skip comparison counters for ICC 2 and 4 after mode switch
+    // These are decremented each time a comparison would occur, skipping until 0
+    private int _skipIcc2Comparisons = 0;
+    private int _skipIcc4Comparisons = 0;
+
     /// <summary>
     /// Called when AlsfMode changes. Syncs message data for even-numbered LVICCs
     /// that are not polled in SSALR mode to prevent false errors.
@@ -88,6 +93,9 @@ public partial class MainViewModel : ViewModelBase
         {
             // Switching back to ALSF mode - send CM commands to ICC 2 and 4
             // to set them to the correct state (they may have drifted while not polled)
+            // Skip first 2 comparisons to allow ICC to process commands
+            _skipIcc2Comparisons = 2;
+            _skipIcc4Comparisons = 2;
             SendCmCommand(icc2);
             SendCmCommand(icc4);
         }
@@ -3335,8 +3343,12 @@ public partial class MainViewModel : ViewModelBase
                                 // enhanced mode - 34 bytes
 
                             }
-                            // compare cmMessageData to iccMessageData (skip in SSALR mode - ICC 2 not connected)
-                            if (AlsfMode && cmMessageData != icc2MessageData)
+                            // compare cmMessageData to iccMessageData (skip in SSALR mode or during resync)
+                            if (_skipIcc2Comparisons > 0)
+                            {
+                                _skipIcc2Comparisons--;
+                            }
+                            else if (AlsfMode && cmMessageData != icc2MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
                                 Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
@@ -3760,8 +3772,12 @@ public partial class MainViewModel : ViewModelBase
                                 // enhanced mode - 34 bytes
 
                             }
-                            // compare cmMessageData to iccMessageData (skip in SSALR mode - ICC 4 not connected)
-                            if (AlsfMode && cmMessageData != icc4MessageData)
+                            // compare cmMessageData to iccMessageData (skip in SSALR mode or during resync)
+                            if (_skipIcc4Comparisons > 0)
+                            {
+                                _skipIcc4Comparisons--;
+                            }
+                            else if (AlsfMode && cmMessageData != icc4MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
                                 Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
@@ -7921,8 +7937,14 @@ public partial class MainViewModel : ViewModelBase
         }
         // Copy mode bits directly from ICC response
         icc2MessageData = (byte)((icc2MessageData & ~(alsfModeByte | ssalrModeByte)) | (message & (alsfModeByte | ssalrModeByte)));
-        // Skip comparison in SSALR mode - ICC 2 not connected
-        if (AlsfMode && cmMessageData != icc2MessageData)
+        // Skip comparison in SSALR mode or during resync after mode switch
+        if (_skipIcc2Comparisons > 0)
+        {
+            _skipIcc2Comparisons--;
+            _icc2Page.IsCommandErrorVisible = false;
+            _homePage.Lvicc2PgStatus = false;
+        }
+        else if (AlsfMode && cmMessageData != icc2MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
             _homePage.AppendLog("\nMODE ERROR: CM and LVICC 2 do not match." + mismatchInfo);
@@ -7931,7 +7953,7 @@ public partial class MainViewModel : ViewModelBase
             _icc2Page.IsCommandErrorVisible = true;
             _homePage.Lvicc2PgStatus = true;
         }
-        else
+        else if (AlsfMode)
         {
             _icc2Page.IsCommandErrorVisible = false;
             _homePage.Lvicc2PgStatus = false;
@@ -8240,8 +8262,14 @@ public partial class MainViewModel : ViewModelBase
         }
         // Copy mode bits directly from ICC response
         icc4MessageData = (byte)((icc4MessageData & ~(alsfModeByte | ssalrModeByte)) | (message & (alsfModeByte | ssalrModeByte)));
-        // Skip comparison in SSALR mode - ICC 4 not connected
-        if (AlsfMode && cmMessageData != icc4MessageData)
+        // Skip comparison in SSALR mode or during resync after mode switch
+        if (_skipIcc4Comparisons > 0)
+        {
+            _skipIcc4Comparisons--;
+            _icc4Page.IsCommandErrorVisible = false;
+            _homePage.Lvicc4PgStatus = false;
+        }
+        else if (AlsfMode && cmMessageData != icc4MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
             _homePage.AppendLog("\nMODE ERROR: CM and LVICC 4 do not match." + mismatchInfo);
@@ -8250,7 +8278,7 @@ public partial class MainViewModel : ViewModelBase
             _icc4Page.IsCommandErrorVisible = true;
             _homePage.Lvicc4PgStatus = true;
         }
-        else
+        else if (AlsfMode)
         {
             _icc4Page.IsCommandErrorVisible = false;
             _homePage.Lvicc4PgStatus = false;
@@ -11522,8 +11550,14 @@ public partial class MainViewModel : ViewModelBase
             _icc2Page.CompatBackground = new SolidColorBrush(Colors.LightGray);
             _icc2Page.EnhancedBackground = new SolidColorBrush(Colors.LightGreen);
         }
-        // Skip comparison in SSALR mode - ICC 2 not connected
-        if (AlsfMode && cmMessageData != icc2MessageData)
+        // Skip comparison in SSALR mode or during resync after mode switch
+        if (_skipIcc2Comparisons > 0)
+        {
+            _skipIcc2Comparisons--;
+            _icc2Page.IsCommandErrorVisible = false;
+            _homePage.Lvicc2PgStatus = false;
+        }
+        else if (AlsfMode && cmMessageData != icc2MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
             _homePage.AppendLog("\nMODE ERROR: CM and LVICC 2 do not match." + mismatchInfo);
@@ -12042,8 +12076,14 @@ public partial class MainViewModel : ViewModelBase
             _icc4Page.CompatBackground = new SolidColorBrush(Colors.LightGray);
             _icc4Page.EnhancedBackground = new SolidColorBrush(Colors.LightGreen);
         }
-        // Skip comparison in SSALR mode - ICC 4 not connected
-        if (AlsfMode && cmMessageData != icc4MessageData)
+        // Skip comparison in SSALR mode or during resync after mode switch
+        if (_skipIcc4Comparisons > 0)
+        {
+            _skipIcc4Comparisons--;
+            _icc4Page.IsCommandErrorVisible = false;
+            _homePage.Lvicc4PgStatus = false;
+        }
+        else if (AlsfMode && cmMessageData != icc4MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
             _homePage.AppendLog("\nMODE ERROR: CM and LVICC 4 do not match." + mismatchInfo);
