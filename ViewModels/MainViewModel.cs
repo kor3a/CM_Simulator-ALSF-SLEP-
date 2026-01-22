@@ -74,15 +74,15 @@ public partial class MainViewModel : ViewModelBase
     private bool _alsfMode = true;
 
     /// <summary>
-    /// Called when AlsfMode changes. Clears errors for disconnected LVICCs in SSALR mode.
+    /// Called when AlsfMode changes. Syncs message data for even-numbered LVICCs
+    /// that are not polled in SSALR mode to prevent false errors.
     /// </summary>
     partial void OnAlsfModeChanged(bool value)
     {
-        if (!value)
-        {
-            // Switching to SSALR mode - clear errors for even-numbered (disconnected) LVICCs
-            ClearDisconnectedLviccErrors();
-        }
+        // Sync even-numbered LVICCs (2, 4) with CM data in BOTH directions:
+        // - When switching to SSALR: they won't be polled, so sync now
+        // - When switching to ALSF: they weren't polled in SSALR, so sync now
+        SyncEvenNumberedLviccData();
     }
 
     [ObservableProperty]
@@ -657,21 +657,21 @@ public partial class MainViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Clears mode errors for disconnected LVICCs when switching to SSALR mode.
-    /// Even-numbered LVICCs (2, 4, 6, etc.) are not connected in SSALR mode.
-    /// Also syncs their message data with CM to avoid false errors when switching back.
+    /// Syncs message data and clears errors for even-numbered LVICCs (2, 4).
+    /// Called when mode changes to ensure LVICCs that aren't polled in SSALR mode
+    /// stay in sync with CM and don't show false errors.
     /// </summary>
-    public void ClearDisconnectedLviccErrors()
+    public void SyncEvenNumberedLviccData()
     {
-        // Clear errors for ICC 2 and sync message data
+        // Sync ICC 2 with CM data and clear any errors
+        icc2MessageData = cmMessageData;
         _icc2Page.IsCommandErrorVisible = false;
         _homePage.Lvicc2PgStatus = false;
-        icc2MessageData = cmMessageData;
 
-        // Clear errors for ICC 4 and sync message data
+        // Sync ICC 4 with CM data and clear any errors
+        icc4MessageData = cmMessageData;
         _icc4Page.IsCommandErrorVisible = false;
         _homePage.Lvicc4PgStatus = false;
-        icc4MessageData = cmMessageData;
     }
 
     #region PLCK Addresses
