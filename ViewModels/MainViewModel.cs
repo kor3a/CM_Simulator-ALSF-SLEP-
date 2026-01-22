@@ -3019,21 +3019,16 @@ public partial class MainViewModel : ViewModelBase
                                         CheckAndStartSequentialFlash();
                                     }
                                 }
-                                if ((message[6] & 0x10) == 0x10) // ALSF
+                                // Copy mode bit from SHORT_DATA_RESPONSE (bit 4) to iccMessageData (bits 5/6)
+                                if ((message[6] & 0x10) == 0x10) // ALSF in response
                                 {
-                                    if (!AlsfMode)
-                                    {
-                                        icc1MessageData = (byte)(icc1MessageData ^ alsfModeByte ^ ssalrModeByte);
-                                        AlsfMode = true;
-                                    }
+                                    // Set ALSF mode (bit 5), clear SSALR mode (bit 6)
+                                    icc1MessageData = (byte)((icc1MessageData & ~ssalrModeByte) | alsfModeByte);
                                 }
-                                else // SSALR
+                                else // SSALR in response
                                 {
-                                    if (AlsfMode)
-                                    {
-                                        icc1MessageData = (byte)(icc1MessageData ^ alsfModeByte ^ ssalrModeByte);
-                                        AlsfMode = false;
-                                    }
+                                    // Set SSALR mode (bit 6), clear ALSF mode (bit 5)
+                                    icc1MessageData = (byte)((icc1MessageData & ~alsfModeByte) | ssalrModeByte);
                                 }
 
                                 if ((message[6] & 0x20) == 0x20) // ON
@@ -3239,21 +3234,16 @@ public partial class MainViewModel : ViewModelBase
                                         CheckAndStartSequentialFlash();
                                     }
                                 }
-                                if ((message[6] & 0x10) == 0x10) // ALSF
+                                // Copy mode bit from SHORT_DATA_RESPONSE (bit 4) to iccMessageData (bits 5/6)
+                                if ((message[6] & 0x10) == 0x10) // ALSF in response
                                 {
-                                    if (!AlsfMode)
-                                    {
-                                        icc2MessageData = (byte)(icc2MessageData ^ alsfModeByte ^ ssalrModeByte);
-                                        AlsfMode = true;
-                                    }
+                                    // Set ALSF mode (bit 5), clear SSALR mode (bit 6)
+                                    icc2MessageData = (byte)((icc2MessageData & ~ssalrModeByte) | alsfModeByte);
                                 }
-                                else // SSALR
+                                else // SSALR in response
                                 {
-                                    if (AlsfMode)
-                                    {
-                                        icc2MessageData = (byte)(icc2MessageData ^ alsfModeByte ^ ssalrModeByte);
-                                        AlsfMode = false;
-                                    }
+                                    // Set SSALR mode (bit 6), clear ALSF mode (bit 5)
+                                    icc2MessageData = (byte)((icc2MessageData & ~alsfModeByte) | ssalrModeByte);
                                 }
                                 if ((message[6] & 0x20) == 0x20) // ON
                                 {
@@ -3457,21 +3447,16 @@ public partial class MainViewModel : ViewModelBase
                                         CheckAndStartSequentialFlash();
                                     }
                                 }
-                                if ((message[6] & 0x10) == 0x10) // ALSF
+                                // Copy mode bit from SHORT_DATA_RESPONSE (bit 4) to iccMessageData (bits 5/6)
+                                if ((message[6] & 0x10) == 0x10) // ALSF in response
                                 {
-                                    if (!AlsfMode)
-                                    {
-                                        icc3MessageData = (byte)(icc3MessageData ^ alsfModeByte ^ ssalrModeByte);
-                                        AlsfMode = true;
-                                    }
+                                    // Set ALSF mode (bit 5), clear SSALR mode (bit 6)
+                                    icc3MessageData = (byte)((icc3MessageData & ~ssalrModeByte) | alsfModeByte);
                                 }
-                                else // SSALR
+                                else // SSALR in response
                                 {
-                                    if (AlsfMode)
-                                    {
-                                        icc3MessageData = (byte)(icc3MessageData ^ alsfModeByte ^ ssalrModeByte);
-                                        AlsfMode = false;
-                                    }
+                                    // Set SSALR mode (bit 6), clear ALSF mode (bit 5)
+                                    icc3MessageData = (byte)((icc3MessageData & ~alsfModeByte) | ssalrModeByte);
                                 }
                                 if ((message[6] & 0x20) == 0x20) // ON
                                 {
@@ -3674,21 +3659,16 @@ public partial class MainViewModel : ViewModelBase
                                         CheckAndStartSequentialFlash();
                                     }
                                 }
-                                if ((message[6] & 0x10) == 0x10) // ALSF
+                                // Copy mode bit from SHORT_DATA_RESPONSE (bit 4) to iccMessageData (bits 5/6)
+                                if ((message[6] & 0x10) == 0x10) // ALSF in response
                                 {
-                                    if (!AlsfMode)
-                                    {
-                                        icc4MessageData = (byte)(icc4MessageData ^ alsfModeByte ^ ssalrModeByte);
-                                        AlsfMode = true;
-                                    }
+                                    // Set ALSF mode (bit 5), clear SSALR mode (bit 6)
+                                    icc4MessageData = (byte)((icc4MessageData & ~ssalrModeByte) | alsfModeByte);
                                 }
-                                else // SSALR
+                                else // SSALR in response
                                 {
-                                    if (AlsfMode)
-                                    {
-                                        icc4MessageData = (byte)(icc4MessageData ^ alsfModeByte ^ ssalrModeByte);
-                                        AlsfMode = false;
-                                    }
+                                    // Set SSALR mode (bit 6), clear ALSF mode (bit 5)
+                                    icc4MessageData = (byte)((icc4MessageData & ~alsfModeByte) | ssalrModeByte);
                                 }
                                 if ((message[6] & 0x20) == 0x20) // ON
                                 {
