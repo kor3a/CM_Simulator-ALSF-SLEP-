@@ -8103,14 +8103,6 @@ public partial class MainViewModel : ViewModelBase
                     _icc4Page.HighButton = new SolidColorBrush(Colors.LightGray);
                     _icc4Page.HighForeground = new SolidColorBrush(Colors.Black);
                 }
-                if ((message & alsfModeByte) == alsfModeByte)
-                {
-                    icc4MessageData = (byte)(icc4MessageData ^ alsfModeByte);
-                }
-                if ((message & ssalrModeByte) == ssalrModeByte)
-                {
-                    icc4MessageData = (byte)(icc4MessageData ^ ssalrModeByte);
-                }
             }
         }
         if ((message & fLowByte) == fLowByte)
@@ -8198,6 +8190,22 @@ public partial class MainViewModel : ViewModelBase
                     _icc4Page.MedButton = new SolidColorBrush(Colors.LightGray);
                     _icc4Page.MedForeground = new SolidColorBrush(Colors.Black);
                 }
+            }
+        }
+        if ((message & alsfModeByte) == alsfModeByte)
+        {
+            if (!AlsfMode)
+            {
+                icc4MessageData = (byte)(icc4MessageData ^ alsfModeByte ^ ssalrModeByte);
+                AlsfMode = true;
+            }
+        }
+        else
+        {
+            if (AlsfMode)
+            {
+                icc4MessageData = (byte)(icc4MessageData ^ alsfModeByte ^ ssalrModeByte);
+                AlsfMode = false;
             }
         }
         if (cmMessageData != icc4MessageData)
