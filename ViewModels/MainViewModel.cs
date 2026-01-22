@@ -25,6 +25,8 @@ public partial class MainViewModel : ViewModelBase
     private WaveOutEvent waveOut;
     private SignalGenerator signalGen;
 
+    #region Observable Properties
+
     [ObservableProperty]
     private bool _sideMenuExpanded = true;
 
@@ -52,205 +54,6 @@ public partial class MainViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(Icc20PageIsActive))]
     [NotifyPropertyChangedFor(nameof(Icc21PageIsActive))]
     private ViewModelBase _currentPage;
-
-    public bool HomePageIsActive => CurrentPage == _homePage;
-    public bool Icc1PageIsActive => CurrentPage == _icc1Page;
-    public bool Icc2PageIsActive => CurrentPage == _icc2Page;
-    public bool Icc3PageIsActive => CurrentPage == _icc3Page;
-    public bool Icc4PageIsActive => CurrentPage == _icc4Page;
-    public bool Icc5PageIsActive => CurrentPage == _icc5Page;
-    public bool Icc6PageIsActive => CurrentPage == _icc6Page;
-    public bool Icc7PageIsActive => CurrentPage == _icc7Page;
-    public bool Icc8PageIsActive => CurrentPage == _icc8Page;
-    public bool Icc9PageIsActive => CurrentPage == _icc9Page;
-    public bool Icc10PageIsActive => CurrentPage == _icc10Page;
-    public bool Icc11PageIsActive => CurrentPage == _icc11Page;
-    public bool Icc12PageIsActive => CurrentPage == _icc12Page;
-    public bool Icc13PageIsActive => CurrentPage == _icc13Page;
-    public bool Icc14PageIsActive => CurrentPage == _icc14Page;
-    public bool Icc15PageIsActive => CurrentPage == _icc15Page;
-    public bool Icc16PageIsActive => CurrentPage == _icc16Page;
-    public bool Icc17PageIsActive => CurrentPage == _icc17Page;
-    public bool Icc18PageIsActive => CurrentPage == _icc18Page;
-    public bool Icc19PageIsActive => CurrentPage == _icc19Page;
-    public bool Icc20PageIsActive => CurrentPage == _icc20Page;
-    public bool Icc21PageIsActive => CurrentPage == _icc21Page;
-
-    public HomeViewModel HomePage => _homePage;
-    public ICC1ViewModel Icc1Page => _icc1Page;
-    public ICC2ViewModel Icc2Page => _icc2Page;
-    public ICC3ViewModel Icc3Page => _icc3Page;
-    public ICC4ViewModel Icc4Page => _icc4Page;
-    public ICC5ViewModel Icc5Page => _icc5Page;
-    public ICC6ViewModel Icc6Page => _icc6Page;
-    public ICC7ViewModel Icc7Page => _icc7Page;
-    public ICC8ViewModel Icc8Page => _icc8Page;
-    public ICC9ViewModel Icc9Page => _icc9Page;
-    public ICC10ViewModel Icc10Page => _icc10Page;
-    public ICC11ViewModel Icc11Page => _icc11Page;
-    public ICC12ViewModel Icc12Page => _icc12Page;
-    public ICC13ViewModel Icc13Page => _icc13Page;
-    public ICC14ViewModel Icc14Page => _icc14Page;
-    public ICC15ViewModel Icc15Page => _icc15Page;
-    public ICC16ViewModel Icc16Page => _icc16Page;
-    public ICC17ViewModel Icc17Page => _icc17Page;
-    public ICC18ViewModel Icc18Page => _icc18Page;
-    public ICC19ViewModel Icc19Page => _icc19Page;
-    public ICC20ViewModel Icc20Page => _icc20Page;
-    public ICC21ViewModel Icc21Page => _icc21Page;
-    private readonly HomeViewModel _homePage;
-    private readonly ICC1ViewModel _icc1Page;
-    private readonly ICC2ViewModel _icc2Page;
-    private readonly ICC3ViewModel _icc3Page;
-    private readonly ICC4ViewModel _icc4Page;
-    private readonly ICC5ViewModel _icc5Page;
-    private readonly ICC6ViewModel _icc6Page;
-    private readonly ICC7ViewModel _icc7Page;
-    private readonly ICC8ViewModel _icc8Page;
-    private readonly ICC9ViewModel _icc9Page;
-    private readonly ICC10ViewModel _icc10Page;
-    private readonly ICC11ViewModel _icc11Page;
-    private readonly ICC12ViewModel _icc12Page;
-    private readonly ICC13ViewModel _icc13Page;
-    private readonly ICC14ViewModel _icc14Page;
-    private readonly ICC15ViewModel _icc15Page;
-    private readonly ICC16ViewModel _icc16Page;
-    private readonly ICC17ViewModel _icc17Page;
-    private readonly ICC18ViewModel _icc18Page;
-    private readonly ICC19ViewModel _icc19Page;
-    private readonly ICC20ViewModel _icc20Page;
-    private readonly ICC21ViewModel _icc21Page;
-
-    public bool cmOn = false;
-    public bool cmLow = false;
-    public bool cmMed = false;
-    public bool cmHigh = false;
-
-    public bool icc1On = false;
-    public bool icc1Rem = false;
-    public bool icc1Low = false;
-    public bool icc1Med = false;
-    public bool icc1High = false;
-
-    public bool icc2On = false;
-    public bool icc2Rem = false;
-    public bool icc2Low = false;
-    public bool icc2Med = false;
-    public bool icc2High = false;
-
-    public bool icc3On = false;
-    public bool icc3Rem = false;
-    public bool icc3Low = false;
-    public bool icc3Med = false;
-    public bool icc3High = false;
-
-    public bool icc4On = false;
-    public bool icc4Rem = false;
-    public bool icc4Low = false;
-    public bool icc4Med = false;
-    public bool icc4High = false;
-
-    public bool icc5On = false;
-    public bool icc5Rem = false;
-    public bool icc5Low = false;
-    public bool icc5Med = false;
-    public bool icc5High = false;
-
-    public bool icc6On = false;
-    public bool icc6Rem = false;
-    public bool icc6Low = false;
-    public bool icc6Med = false;
-    public bool icc6High = false;
-
-    public bool icc7On = false;
-    public bool icc7Rem = false;
-    public bool icc7Low = false;
-    public bool icc7Med = false;
-    public bool icc7High = false;
-
-    public bool icc8On = false;
-    public bool icc8Rem = false;
-    public bool icc8Low = false;
-    public bool icc8Med = false;
-    public bool icc8High = false;
-
-    public bool icc9On = false;
-    public bool icc9Rem = false;
-    public bool icc9Low = false;
-    public bool icc9Med = false;
-    public bool icc9High = false;
-
-    public bool icc10On = false;
-    public bool icc10Rem = false;
-    public bool icc10Low = false;
-    public bool icc10Med = false;
-    public bool icc10High = false;
-
-    public bool icc11On = false;
-    public bool icc11Rem = false;
-    public bool icc11Low = false;
-    public bool icc11Med = false;
-    public bool icc11High = false;
-
-    public bool icc12On = false;
-    public bool icc12Rem = false;
-    public bool icc12Low = false;
-    public bool icc12Med = false;
-    public bool icc12High = false;
-
-    public bool icc13On = false;
-    public bool icc13Rem = false;
-    public bool icc13Low = false;
-    public bool icc13Med = false;
-    public bool icc13High = false;
-
-    public bool icc14On = false;
-    public bool icc14Rem = false;
-    public bool icc14Low = false;
-    public bool icc14Med = false;
-    public bool icc14High = false;
-
-    public bool icc15On = false;
-    public bool icc15Rem = false;
-    public bool icc15Low = false;
-    public bool icc15Med = false;
-    public bool icc15High = false;
-
-    public bool icc16On = false;
-    public bool icc16Rem = false;
-    public bool icc16Low = false;
-    public bool icc16Med = false;
-    public bool icc16High = false;
-
-    public bool icc17On = false;
-    public bool icc17Rem = false;
-    public bool icc17Low = false;
-    public bool icc17Med = false;
-    public bool icc17High = false;
-
-    public bool icc18On = false;
-    public bool icc18Rem = false;
-    public bool icc18Low = false;
-    public bool icc18Med = false;
-    public bool icc18High = false;
-
-    public bool icc19On = false;
-    public bool icc19Rem = false;
-    public bool icc19Low = false;
-    public bool icc19Med = false;
-    public bool icc19High = false;
-
-    public bool icc20On = false;
-    public bool icc20Rem = false;
-    public bool icc20Low = false;
-    public bool icc20Med = false;
-    public bool icc20High = false;
-
-    public bool icc21On = false;
-    public bool icc21Rem = false;
-    public bool icc21Low = false;
-    public bool icc21Med = false;
-    public bool icc21High = false;
 
     [ObservableProperty]
     private GridLength _borderWidth = new GridLength(200.0); // Default expanded width
@@ -522,7 +325,214 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private IBrush _icc21BorderBackground = new SolidColorBrush(Colors.Black);
 
-    // addresses
+    #endregion
+
+    #region Page Active Booleans
+    public bool HomePageIsActive => CurrentPage == _homePage;
+    public bool Icc1PageIsActive => CurrentPage == _icc1Page;
+    public bool Icc2PageIsActive => CurrentPage == _icc2Page;
+    public bool Icc3PageIsActive => CurrentPage == _icc3Page;
+    public bool Icc4PageIsActive => CurrentPage == _icc4Page;
+    public bool Icc5PageIsActive => CurrentPage == _icc5Page;
+    public bool Icc6PageIsActive => CurrentPage == _icc6Page;
+    public bool Icc7PageIsActive => CurrentPage == _icc7Page;
+    public bool Icc8PageIsActive => CurrentPage == _icc8Page;
+    public bool Icc9PageIsActive => CurrentPage == _icc9Page;
+    public bool Icc10PageIsActive => CurrentPage == _icc10Page;
+    public bool Icc11PageIsActive => CurrentPage == _icc11Page;
+    public bool Icc12PageIsActive => CurrentPage == _icc12Page;
+    public bool Icc13PageIsActive => CurrentPage == _icc13Page;
+    public bool Icc14PageIsActive => CurrentPage == _icc14Page;
+    public bool Icc15PageIsActive => CurrentPage == _icc15Page;
+    public bool Icc16PageIsActive => CurrentPage == _icc16Page;
+    public bool Icc17PageIsActive => CurrentPage == _icc17Page;
+    public bool Icc18PageIsActive => CurrentPage == _icc18Page;
+    public bool Icc19PageIsActive => CurrentPage == _icc19Page;
+    public bool Icc20PageIsActive => CurrentPage == _icc20Page;
+    public bool Icc21PageIsActive => CurrentPage == _icc21Page;
+    #endregion
+
+    #region ViewModels
+    public HomeViewModel HomePage => _homePage;
+    public ICC1ViewModel Icc1Page => _icc1Page;
+    public ICC2ViewModel Icc2Page => _icc2Page;
+    public ICC3ViewModel Icc3Page => _icc3Page;
+    public ICC4ViewModel Icc4Page => _icc4Page;
+    public ICC5ViewModel Icc5Page => _icc5Page;
+    public ICC6ViewModel Icc6Page => _icc6Page;
+    public ICC7ViewModel Icc7Page => _icc7Page;
+    public ICC8ViewModel Icc8Page => _icc8Page;
+    public ICC9ViewModel Icc9Page => _icc9Page;
+    public ICC10ViewModel Icc10Page => _icc10Page;
+    public ICC11ViewModel Icc11Page => _icc11Page;
+    public ICC12ViewModel Icc12Page => _icc12Page;
+    public ICC13ViewModel Icc13Page => _icc13Page;
+    public ICC14ViewModel Icc14Page => _icc14Page;
+    public ICC15ViewModel Icc15Page => _icc15Page;
+    public ICC16ViewModel Icc16Page => _icc16Page;
+    public ICC17ViewModel Icc17Page => _icc17Page;
+    public ICC18ViewModel Icc18Page => _icc18Page;
+    public ICC19ViewModel Icc19Page => _icc19Page;
+    public ICC20ViewModel Icc20Page => _icc20Page;
+    public ICC21ViewModel Icc21Page => _icc21Page;
+    private readonly HomeViewModel _homePage;
+    private readonly ICC1ViewModel _icc1Page;
+    private readonly ICC2ViewModel _icc2Page;
+    private readonly ICC3ViewModel _icc3Page;
+    private readonly ICC4ViewModel _icc4Page;
+    private readonly ICC5ViewModel _icc5Page;
+    private readonly ICC6ViewModel _icc6Page;
+    private readonly ICC7ViewModel _icc7Page;
+    private readonly ICC8ViewModel _icc8Page;
+    private readonly ICC9ViewModel _icc9Page;
+    private readonly ICC10ViewModel _icc10Page;
+    private readonly ICC11ViewModel _icc11Page;
+    private readonly ICC12ViewModel _icc12Page;
+    private readonly ICC13ViewModel _icc13Page;
+    private readonly ICC14ViewModel _icc14Page;
+    private readonly ICC15ViewModel _icc15Page;
+    private readonly ICC16ViewModel _icc16Page;
+    private readonly ICC17ViewModel _icc17Page;
+    private readonly ICC18ViewModel _icc18Page;
+    private readonly ICC19ViewModel _icc19Page;
+    private readonly ICC20ViewModel _icc20Page;
+    private readonly ICC21ViewModel _icc21Page;
+    #endregion
+
+    #region Status Booleans
+    public bool cmOn = false;
+    public bool cmLow = false;
+    public bool cmMed = false;
+    public bool cmHigh = false;
+
+    public bool icc1On = false;
+    public bool icc1Rem = false;
+    public bool icc1Low = false;
+    public bool icc1Med = false;
+    public bool icc1High = false;
+
+    public bool icc2On = false;
+    public bool icc2Rem = false;
+    public bool icc2Low = false;
+    public bool icc2Med = false;
+    public bool icc2High = false;
+
+    public bool icc3On = false;
+    public bool icc3Rem = false;
+    public bool icc3Low = false;
+    public bool icc3Med = false;
+    public bool icc3High = false;
+
+    public bool icc4On = false;
+    public bool icc4Rem = false;
+    public bool icc4Low = false;
+    public bool icc4Med = false;
+    public bool icc4High = false;
+
+    public bool icc5On = false;
+    public bool icc5Rem = false;
+    public bool icc5Low = false;
+    public bool icc5Med = false;
+    public bool icc5High = false;
+
+    public bool icc6On = false;
+    public bool icc6Rem = false;
+    public bool icc6Low = false;
+    public bool icc6Med = false;
+    public bool icc6High = false;
+
+    public bool icc7On = false;
+    public bool icc7Rem = false;
+    public bool icc7Low = false;
+    public bool icc7Med = false;
+    public bool icc7High = false;
+
+    public bool icc8On = false;
+    public bool icc8Rem = false;
+    public bool icc8Low = false;
+    public bool icc8Med = false;
+    public bool icc8High = false;
+
+    public bool icc9On = false;
+    public bool icc9Rem = false;
+    public bool icc9Low = false;
+    public bool icc9Med = false;
+    public bool icc9High = false;
+
+    public bool icc10On = false;
+    public bool icc10Rem = false;
+    public bool icc10Low = false;
+    public bool icc10Med = false;
+    public bool icc10High = false;
+
+    public bool icc11On = false;
+    public bool icc11Rem = false;
+    public bool icc11Low = false;
+    public bool icc11Med = false;
+    public bool icc11High = false;
+
+    public bool icc12On = false;
+    public bool icc12Rem = false;
+    public bool icc12Low = false;
+    public bool icc12Med = false;
+    public bool icc12High = false;
+
+    public bool icc13On = false;
+    public bool icc13Rem = false;
+    public bool icc13Low = false;
+    public bool icc13Med = false;
+    public bool icc13High = false;
+
+    public bool icc14On = false;
+    public bool icc14Rem = false;
+    public bool icc14Low = false;
+    public bool icc14Med = false;
+    public bool icc14High = false;
+
+    public bool icc15On = false;
+    public bool icc15Rem = false;
+    public bool icc15Low = false;
+    public bool icc15Med = false;
+    public bool icc15High = false;
+
+    public bool icc16On = false;
+    public bool icc16Rem = false;
+    public bool icc16Low = false;
+    public bool icc16Med = false;
+    public bool icc16High = false;
+
+    public bool icc17On = false;
+    public bool icc17Rem = false;
+    public bool icc17Low = false;
+    public bool icc17Med = false;
+    public bool icc17High = false;
+
+    public bool icc18On = false;
+    public bool icc18Rem = false;
+    public bool icc18Low = false;
+    public bool icc18Med = false;
+    public bool icc18High = false;
+
+    public bool icc19On = false;
+    public bool icc19Rem = false;
+    public bool icc19Low = false;
+    public bool icc19Med = false;
+    public bool icc19High = false;
+
+    public bool icc20On = false;
+    public bool icc20Rem = false;
+    public bool icc20Low = false;
+    public bool icc20Med = false;
+    public bool icc20High = false;
+
+    public bool icc21On = false;
+    public bool icc21Rem = false;
+    public bool icc21Low = false;
+    public bool icc21Med = false;
+    public bool icc21High = false;
+    #endregion
+
+    #region ICC Address & Global
     private byte global = 0x20;
     public byte cm = 0x21;
     public byte icc1 = 0x26;
@@ -547,6 +557,7 @@ public partial class MainViewModel : ViewModelBase
     public byte icc20 = 0x39;
     public byte icc21 = 0x3A;
     public byte[] addresses = {};
+    #endregion
 
     /// <summary>
     /// Tracks which ICC addresses have been polled and are ready for normal polling.
@@ -601,7 +612,7 @@ public partial class MainViewModel : ViewModelBase
         };
     }
 
-    // PLCK addresses
+    #region PLCK Addresses
     private byte plck1 = 0x26;
     private byte plck2 = 0x27;
     private byte plck3 = 0x28;
@@ -623,8 +634,9 @@ public partial class MainViewModel : ViewModelBase
     private byte plck19 = 0x38;
     private byte plck20 = 0x39;
     private byte plck21 = 0x3A;
+    #endregion
 
-    // icc connected?
+    #region iccConnected?
     public bool icc1Connected = false;
     public bool icc2Connected = false;
     public bool icc3Connected = false;
@@ -646,11 +658,13 @@ public partial class MainViewModel : ViewModelBase
     public bool icc19Connected = false;
     public bool icc20Connected = false;
     public bool icc21Connected = false;
+    #endregion
 
     // protocol
     public byte start = 0x01;
     public byte end = 0x03;
-    
+
+    #region Message Data Bytes
     public byte cmMessageData = 0xA2;
     public byte icc1MessageData = 0xA2;
     public byte icc2MessageData = 0xA2;
@@ -673,8 +687,9 @@ public partial class MainViewModel : ViewModelBase
     public byte icc19MessageData = 0xA2;
     public byte icc20MessageData = 0xA2;
     public byte icc21MessageData = 0xA2;
+    #endregion
 
-    // Reset
+    #region Reset Message Data Bytes
     public byte RESET_COMMAND = 0x41;
     public byte RESET_RESULTS = 0xC0;
     public byte cpuTest = 0x01;
@@ -688,8 +703,9 @@ public partial class MainViewModel : ViewModelBase
     public byte rs485_2Test = 0x01;
     public byte rs232Test = 0x02;
     public byte ledDisplayTest = 0x04;
+    #endregion
 
-    // Commands Response Message
+    #region Commands Response Message Data Bytes
     public byte COMMANDS_RESPONSE = 0x42;
     public byte fOnByte = 0x01;
     public byte fOffByte = 0x02;
@@ -700,6 +716,7 @@ public partial class MainViewModel : ViewModelBase
     public byte ssalrModeByte = 0x40;
     public byte gen2HzByte = 0x80;
     public byte commandRejected = 0x80;
+    #endregion
 
     // Short Data Response Message
     public byte SHORT_DATA_RESPONSE = 0x43;
