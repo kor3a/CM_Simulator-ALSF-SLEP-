@@ -1921,17 +1921,17 @@ public partial class MainViewModel : ViewModelBase
         {
             while (!cancellationToken.IsCancellationRequested && Sp != null && Sp.IsOpen)
             {
-                // Get current connected addresses based on mode (ALSF = all, SSALR = odd-numbered only)
-                List<byte> connectedAddresses = GetConnectedAddresses();
+                // Get addresses to poll based on mode (ALSF = all visible, SSALR = odd-numbered only)
+                List<byte> addressesToPoll = GetAddressesToPoll();
 
-                if (connectedAddresses.Count == 0)
+                if (addressesToPoll.Count == 0)
                 {
                     await Task.Delay(1000, cancellationToken);
                     continue;
                 }
 
                 // Send Short Data Request to each visible LVICC
-                foreach (byte address in connectedAddresses)
+                foreach (byte address in addressesToPoll)
                 {
                     if (cancellationToken.IsCancellationRequested)
                         break;
@@ -1973,7 +1973,7 @@ public partial class MainViewModel : ViewModelBase
                 // Every 10 complete loops, send 1 Config Data Request to each visible LVICC
                 if (shortDataRequestCount >= 10)
                 {
-                    foreach (byte address in connectedAddresses)
+                    foreach (byte address in addressesToPoll)
                     {
                         if (cancellationToken.IsCancellationRequested)
                             break;
@@ -2013,7 +2013,6 @@ public partial class MainViewModel : ViewModelBase
     /// <summary>
     /// Gets a list of ICC addresses that are currently connected from the visible set.
     /// Only returns addresses from the current addresses[] array that are connected.
-    /// In SSALR mode, only odd-numbered LVICCs (1, 3, 5, etc.) are connected.
     /// </summary>
     private List<byte> GetConnectedAddresses()
     {
@@ -2021,14 +2020,6 @@ public partial class MainViewModel : ViewModelBase
 
         foreach (byte address in addresses)
         {
-            int iccNumber = GetIccNumber(address);
-
-            // In SSALR mode, skip even-numbered LVICCs (they're not connected)
-            if (!AlsfMode && iccNumber % 2 == 0)
-            {
-                continue;
-            }
-
             if (IsIccConnected(address))
             {
                 connected.Add(address);
@@ -2036,6 +2027,25 @@ public partial class MainViewModel : ViewModelBase
         }
 
         return connected;
+    }
+
+    /// <summary>
+    /// Gets addresses to poll based on current mode.
+    /// In ALSF mode, returns all visible addresses.
+    /// In SSALR mode, returns only odd-numbered LVICCs (1, 3, 5, etc.).
+    /// </summary>
+    private List<byte> GetAddressesToPoll()
+    {
+        if (AlsfMode)
+        {
+            // All visible addresses in ALSF mode
+            return addresses.ToList();
+        }
+        else
+        {
+            // Only odd-numbered LVICCs in SSALR mode
+            return addresses.Where(addr => GetIccNumber(addr) % 2 == 1).ToList();
+        }
     }
 
     /// <summary>
