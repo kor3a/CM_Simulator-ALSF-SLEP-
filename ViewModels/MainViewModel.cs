@@ -73,6 +73,18 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _alsfMode = true;
 
+    /// <summary>
+    /// Called when AlsfMode changes. Clears errors for disconnected LVICCs in SSALR mode.
+    /// </summary>
+    partial void OnAlsfModeChanged(bool value)
+    {
+        if (!value)
+        {
+            // Switching to SSALR mode - clear errors for even-numbered (disconnected) LVICCs
+            ClearDisconnectedLviccErrors();
+        }
+    }
+
     [ObservableProperty]
     private string _icc1SideMenu = "OFF";
 
@@ -610,6 +622,75 @@ public partial class MainViewModel : ViewModelBase
             21 => icc21,
             _ => icc1
         };
+    }
+
+    /// <summary>
+    /// Gets the ICC number (1-21) from an ICC address byte.
+    /// </summary>
+    private int GetIccNumber(byte address)
+    {
+        return address switch
+        {
+            0x26 => 1,
+            0x27 => 2,
+            0x28 => 3,
+            0x29 => 4,
+            0x2A => 5,
+            0x2B => 6,
+            0x2C => 7,
+            0x2D => 8,
+            0x2E => 9,
+            0x2F => 10,
+            0x30 => 11,
+            0x31 => 12,
+            0x32 => 13,
+            0x33 => 14,
+            0x34 => 15,
+            0x35 => 16,
+            0x36 => 17,
+            0x37 => 18,
+            0x38 => 19,
+            0x39 => 20,
+            0x3A => 21,
+            _ => 0
+        };
+    }
+
+    /// <summary>
+    /// Gets the addresses of LVICCs that are connected in the current mode.
+    /// In ALSF mode, all visible LVICCs are connected.
+    /// In SSALR mode, only odd-numbered LVICCs (1, 3, 5, etc.) are connected.
+    /// </summary>
+    public byte[] GetConnectedAddresses()
+    {
+        if (AlsfMode)
+        {
+            // All visible addresses are connected in ALSF mode
+            return addresses;
+        }
+        else
+        {
+            // Only odd-numbered LVICCs are connected in SSALR mode
+            return addresses.Where(addr => GetIccNumber(addr) % 2 == 1).ToArray();
+        }
+    }
+
+    /// <summary>
+    /// Clears mode errors for disconnected LVICCs when switching to SSALR mode.
+    /// Even-numbered LVICCs (2, 4, 6, etc.) are not connected in SSALR mode.
+    /// Also syncs their message data with CM to avoid false errors when switching back.
+    /// </summary>
+    public void ClearDisconnectedLviccErrors()
+    {
+        // Clear errors for ICC 2 and sync message data
+        _icc2Page.IsCommandErrorVisible = false;
+        _homePage.Lvicc2PgStatus = false;
+        icc2MessageData = cmMessageData;
+
+        // Clear errors for ICC 4 and sync message data
+        _icc4Page.IsCommandErrorVisible = false;
+        _homePage.Lvicc4PgStatus = false;
+        icc4MessageData = cmMessageData;
     }
 
     #region PLCK Addresses
@@ -1859,17 +1940,17 @@ public partial class MainViewModel : ViewModelBase
         {
             while (!cancellationToken.IsCancellationRequested && Sp != null && Sp.IsOpen)
             {
-                // Get current visible addresses (poll all visible, not just connected)
-                byte[] visibleAddresses = addresses;
+                // Get current connected addresses based on mode (ALSF = all, SSALR = odd-numbered only)
+                byte[] connectedAddresses = GetConnectedAddresses();
 
-                if (visibleAddresses.Length == 0)
+                if (connectedAddresses.Length == 0)
                 {
                     await Task.Delay(1000, cancellationToken);
                     continue;
                 }
 
                 // Send Short Data Request to each visible LVICC
-                foreach (byte address in visibleAddresses)
+                foreach (byte address in connectedAddresses)
                 {
                     if (cancellationToken.IsCancellationRequested)
                         break;
@@ -1911,7 +1992,7 @@ public partial class MainViewModel : ViewModelBase
                 // Every 10 complete loops, send 1 Config Data Request to each visible LVICC
                 if (shortDataRequestCount >= 10)
                 {
-                    foreach (byte address in visibleAddresses)
+                    foreach (byte address in connectedAddresses)
                     {
                         if (cancellationToken.IsCancellationRequested)
                             break;
