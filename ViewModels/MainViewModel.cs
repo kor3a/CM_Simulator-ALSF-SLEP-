@@ -99,6 +99,81 @@ public partial class MainViewModel : ViewModelBase
             SendCmCommand(icc2);
             SendCmCommand(icc4);
         }
+        else
+        {
+            // Switching to SSALR mode - set ICC 2 and 4 to OFF visual state
+            // since they are not connected in SSALR mode
+            SetIcc2OffState();
+            SetIcc4OffState();
+        }
+    }
+
+    /// <summary>
+    /// Sets ICC 2 to OFF visual state (used when switching to SSALR mode)
+    /// </summary>
+    private void SetIcc2OffState()
+    {
+        // Reset state flags
+        icc2On = false;
+        icc2Low = false;
+        icc2Med = false;
+        icc2High = false;
+        icc2Rem = false;
+
+        // Update side menu
+        Icc2SideMenu = "OFF";
+
+        // Update borders to black (OFF state)
+        Icc2BorderBrush = new SolidColorBrush(Colors.Black);
+        Icc2BorderBackground = new SolidColorBrush(Colors.Black);
+        Icc2SideBackground = new SolidColorBrush(Colors.LightGray);
+        _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.LightGray);
+
+        // Update buttons to OFF state
+        _icc2Page.OffButton = new SolidColorBrush(Colors.DarkGray);
+        _icc2Page.OffForeground = new SolidColorBrush(Colors.White);
+        _icc2Page.RemButton = new SolidColorBrush(Colors.LightGray);
+        _icc2Page.RemForeground = new SolidColorBrush(Colors.Black);
+        _icc2Page.LowButton = new SolidColorBrush(Colors.LightGray);
+        _icc2Page.LowForeground = new SolidColorBrush(Colors.Black);
+        _icc2Page.MedButton = new SolidColorBrush(Colors.LightGray);
+        _icc2Page.MedForeground = new SolidColorBrush(Colors.Black);
+        _icc2Page.HighButton = new SolidColorBrush(Colors.LightGray);
+        _icc2Page.HighForeground = new SolidColorBrush(Colors.Black);
+    }
+
+    /// <summary>
+    /// Sets ICC 4 to OFF visual state (used when switching to SSALR mode)
+    /// </summary>
+    private void SetIcc4OffState()
+    {
+        // Reset state flags
+        icc4On = false;
+        icc4Low = false;
+        icc4Med = false;
+        icc4High = false;
+        icc4Rem = false;
+
+        // Update side menu
+        Icc4SideMenu = "OFF";
+
+        // Update borders to black (OFF state)
+        Icc4BorderBrush = new SolidColorBrush(Colors.Black);
+        Icc4BorderBackground = new SolidColorBrush(Colors.Black);
+        Icc4SideBackground = new SolidColorBrush(Colors.LightGray);
+        _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGray);
+
+        // Update buttons to OFF state
+        _icc4Page.OffButton = new SolidColorBrush(Colors.DarkGray);
+        _icc4Page.OffForeground = new SolidColorBrush(Colors.White);
+        _icc4Page.RemButton = new SolidColorBrush(Colors.LightGray);
+        _icc4Page.RemForeground = new SolidColorBrush(Colors.Black);
+        _icc4Page.LowButton = new SolidColorBrush(Colors.LightGray);
+        _icc4Page.LowForeground = new SolidColorBrush(Colors.Black);
+        _icc4Page.MedButton = new SolidColorBrush(Colors.LightGray);
+        _icc4Page.MedForeground = new SolidColorBrush(Colors.Black);
+        _icc4Page.HighButton = new SolidColorBrush(Colors.LightGray);
+        _icc4Page.HighForeground = new SolidColorBrush(Colors.Black);
     }
 
     [ObservableProperty]
