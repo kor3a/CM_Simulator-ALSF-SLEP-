@@ -8030,7 +8030,7 @@ public partial class MainViewModel : ViewModelBase
         if (cmMessageData != icc1MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc1MessageData, "ICC1");
-            _homePage.AppendLog("\nMODE ERROR: CM and LVICC 1 do not match." + mismatchInfo);
+            _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 1 do not match." + mismatchInfo);
 
             // activate mode error
             _icc1Page.IsCommandErrorVisible = true;
@@ -8196,7 +8196,7 @@ public partial class MainViewModel : ViewModelBase
         if (AlsfMode && cmMessageData != icc2MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
-            _homePage.AppendLog("\nMODE ERROR: CM and LVICC 2 do not match." + mismatchInfo);
+            _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 2 do not match." + mismatchInfo);
 
             // activate mode error
             _icc2Page.IsCommandErrorVisible = true;
@@ -8357,7 +8357,7 @@ public partial class MainViewModel : ViewModelBase
         if (cmMessageData != icc3MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc3MessageData, "ICC3");
-            _homePage.AppendLog("\nMODE ERROR: CM and LVICC 3 do not match." + mismatchInfo);
+            _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 3 do not match." + mismatchInfo);
 
             // activate mode error
             _icc3Page.IsCommandErrorVisible = true;
@@ -8523,7 +8523,7 @@ public partial class MainViewModel : ViewModelBase
         if (AlsfMode && cmMessageData != icc4MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
-            _homePage.AppendLog("\nMODE ERROR: CM and LVICC 4 do not match." + mismatchInfo);
+            _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 4 do not match." + mismatchInfo);
 
             // activate mode error
             _icc4Page.IsCommandErrorVisible = true;
@@ -11547,7 +11547,7 @@ public partial class MainViewModel : ViewModelBase
         if (cmMessageData != icc1MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc1MessageData, "ICC1");
-            _homePage.AppendLog("\nMODE ERROR: CM and LVICC 1 do not match." + mismatchInfo);
+            _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 1 do not match." + mismatchInfo);
 
             // activate mode error
             _icc1Page.IsCommandErrorVisible = true;
@@ -11815,7 +11815,7 @@ public partial class MainViewModel : ViewModelBase
         if (AlsfMode && cmMessageData != icc2MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
-            _homePage.AppendLog("\nMODE ERROR: CM and LVICC 2 do not match." + mismatchInfo);
+            _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 2 do not match." + mismatchInfo);
 
             // activate mode error
             _icc2Page.IsCommandErrorVisible = true;
@@ -12075,7 +12075,7 @@ public partial class MainViewModel : ViewModelBase
         if (cmMessageData != icc3MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc3MessageData, "ICC3");
-            _homePage.AppendLog("\nMODE ERROR: CM and LVICC 3 do not match." + mismatchInfo);
+            _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 3 do not match." + mismatchInfo);
 
             // activate mode error
             _icc3Page.IsCommandErrorVisible = true;
@@ -12345,7 +12345,7 @@ public partial class MainViewModel : ViewModelBase
         if (AlsfMode && cmMessageData != icc4MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
-            _homePage.AppendLog("\nMODE ERROR: CM and LVICC 4 do not match." + mismatchInfo);
+            _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 4 do not match." + mismatchInfo);
 
             // activate mode error
             _icc4Page.IsCommandErrorVisible = true;
