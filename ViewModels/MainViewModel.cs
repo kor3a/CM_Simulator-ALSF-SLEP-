@@ -3423,6 +3423,8 @@ public partial class MainViewModel : ViewModelBase
                             if (_skipIcc2Comparisons > 0)
                             {
                                 _skipIcc2Comparisons--;
+                                // Re-sync icc2MessageData to cmMessageData during skip period
+                                icc2MessageData = cmMessageData;
                             }
                             else if (AlsfMode && cmMessageData != icc2MessageData)
                             {
@@ -3852,6 +3854,8 @@ public partial class MainViewModel : ViewModelBase
                             if (_skipIcc4Comparisons > 0)
                             {
                                 _skipIcc4Comparisons--;
+                                // Re-sync icc4MessageData to cmMessageData during skip period
+                                icc4MessageData = cmMessageData;
                             }
                             else if (AlsfMode && cmMessageData != icc4MessageData)
                             {
@@ -8017,6 +8021,9 @@ public partial class MainViewModel : ViewModelBase
         if (_skipIcc2Comparisons > 0)
         {
             _skipIcc2Comparisons--;
+            // Re-sync icc2MessageData to cmMessageData during skip period
+            // to align after ICC state drifted while not polled in SSALR mode
+            icc2MessageData = cmMessageData;
             _icc2Page.IsCommandErrorVisible = false;
             _homePage.Lvicc2PgStatus = false;
         }
@@ -8342,6 +8349,8 @@ public partial class MainViewModel : ViewModelBase
         if (_skipIcc4Comparisons > 0)
         {
             _skipIcc4Comparisons--;
+            // Re-sync icc4MessageData to cmMessageData during skip period
+            icc4MessageData = cmMessageData;
             _icc4Page.IsCommandErrorVisible = false;
             _homePage.Lvicc4PgStatus = false;
         }
@@ -11630,6 +11639,8 @@ public partial class MainViewModel : ViewModelBase
         if (_skipIcc2Comparisons > 0)
         {
             _skipIcc2Comparisons--;
+            // Re-sync icc2MessageData to cmMessageData during skip period
+            icc2MessageData = cmMessageData;
             _icc2Page.IsCommandErrorVisible = false;
             _homePage.Lvicc2PgStatus = false;
         }
@@ -12156,6 +12167,8 @@ public partial class MainViewModel : ViewModelBase
         if (_skipIcc4Comparisons > 0)
         {
             _skipIcc4Comparisons--;
+            // Re-sync icc4MessageData to cmMessageData during skip period
+            icc4MessageData = cmMessageData;
             _icc4Page.IsCommandErrorVisible = false;
             _homePage.Lvicc4PgStatus = false;
         }
