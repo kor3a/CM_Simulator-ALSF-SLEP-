@@ -786,11 +786,13 @@ public partial class HomeViewModel : ViewModelBase
             AlsfMode = true;
             AlsfButton = new SolidColorBrush(Colors.LightGreen);
             SsalrButton = new SolidColorBrush(Colors.LightGray);
-            _mainViewModel.AlsfMode = true;
+            // Update cmMessageData mode bits BEFORE setting AlsfMode
+            // so that OnAlsfModeChanged has the correct mode bits when it syncs ICC 2/4
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.alsfModeByte);
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.ssalrModeByte);
+            _mainViewModel.AlsfMode = true;
         }
-        
+
     }
 
     [RelayCommand]
@@ -801,11 +803,13 @@ public partial class HomeViewModel : ViewModelBase
             AlsfMode = false;
             SsalrButton = new SolidColorBrush(Colors.LightGreen);
             AlsfButton = new SolidColorBrush(Colors.LightGray);
-            _mainViewModel.AlsfMode = false;
+            // Update cmMessageData mode bits BEFORE setting AlsfMode
+            // so that OnAlsfModeChanged has the correct mode bits when it syncs ICC 2/4
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.alsfModeByte);
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.ssalrModeByte);
+            _mainViewModel.AlsfMode = false;
         }
-        
+
     }
 
     [RelayCommand]
