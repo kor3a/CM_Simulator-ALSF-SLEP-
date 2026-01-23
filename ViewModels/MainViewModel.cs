@@ -177,6 +177,166 @@ public partial class MainViewModel : ViewModelBase
         _icc4Page.HighForeground = new SolidColorBrush(Colors.Black);
     }
 
+    /// <summary>
+    /// Syncs ICC 2 visual state and message data with CM state.
+    /// Used during skip period after switching back to ALSF mode.
+    /// </summary>
+    private void SyncIcc2VisualWithCm()
+    {
+        // Sync message data
+        icc2MessageData = cmMessageData;
+        _icc2Page.IsCommandErrorVisible = false;
+        _homePage.Lvicc2PgStatus = false;
+
+        // Determine CM state and update ICC 2 visual to match
+        bool cmOn = (cmMessageData & fOnByte) == fOnByte;
+        bool cmLow = (cmMessageData & fLowByte) == fLowByte;
+        bool cmMed = (cmMessageData & fMedByte) == fMedByte;
+        bool cmHigh = (cmMessageData & fHighByte) == fHighByte;
+
+        // Update state flags
+        icc2On = cmOn;
+        icc2Low = cmLow;
+        icc2Med = cmMed;
+        icc2High = cmHigh;
+
+        // Reset all buttons to default
+        _icc2Page.OffButton = new SolidColorBrush(Colors.LightGray);
+        _icc2Page.OffForeground = new SolidColorBrush(Colors.Black);
+        _icc2Page.LowButton = new SolidColorBrush(Colors.LightGray);
+        _icc2Page.LowForeground = new SolidColorBrush(Colors.Black);
+        _icc2Page.MedButton = new SolidColorBrush(Colors.LightGray);
+        _icc2Page.MedForeground = new SolidColorBrush(Colors.Black);
+        _icc2Page.HighButton = new SolidColorBrush(Colors.LightGray);
+        _icc2Page.HighForeground = new SolidColorBrush(Colors.Black);
+
+        if (cmOn)
+        {
+            // ON state - set border and background based on intensity
+            if (cmHigh)
+            {
+                Icc2SideMenu = "HIGH";
+                Icc2BorderBrush = new SolidColorBrush(Colors.OrangeRed);
+                Icc2BorderBackground = new SolidColorBrush(Colors.OrangeRed);
+                _icc2Page.HighButton = new SolidColorBrush(Colors.Green);
+                _icc2Page.HighForeground = new SolidColorBrush(Colors.White);
+            }
+            else if (cmMed)
+            {
+                Icc2SideMenu = "MED";
+                Icc2BorderBrush = new SolidColorBrush(Colors.Orange);
+                Icc2BorderBackground = new SolidColorBrush(Colors.Orange);
+                _icc2Page.MedButton = new SolidColorBrush(Colors.Green);
+                _icc2Page.MedForeground = new SolidColorBrush(Colors.White);
+            }
+            else if (cmLow)
+            {
+                Icc2SideMenu = "LOW";
+                Icc2BorderBrush = new SolidColorBrush(Colors.Green);
+                Icc2BorderBackground = new SolidColorBrush(Colors.Green);
+                _icc2Page.LowButton = new SolidColorBrush(Colors.Green);
+                _icc2Page.LowForeground = new SolidColorBrush(Colors.White);
+            }
+            else
+            {
+                // ON but no intensity - just show green border
+                Icc2BorderBrush = new SolidColorBrush(Colors.Green);
+                Icc2BorderBackground = new SolidColorBrush(Colors.Green);
+            }
+            _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.LightGreen);
+        }
+        else
+        {
+            // OFF state
+            Icc2SideMenu = "OFF";
+            Icc2BorderBrush = new SolidColorBrush(Colors.Black);
+            Icc2BorderBackground = new SolidColorBrush(Colors.Black);
+            _icc2Page.OffButton = new SolidColorBrush(Colors.DarkGray);
+            _icc2Page.OffForeground = new SolidColorBrush(Colors.White);
+            _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.LightGray);
+        }
+    }
+
+    /// <summary>
+    /// Syncs ICC 4 visual state and message data with CM state.
+    /// Used during skip period after switching back to ALSF mode.
+    /// </summary>
+    private void SyncIcc4VisualWithCm()
+    {
+        // Sync message data
+        icc4MessageData = cmMessageData;
+        _icc4Page.IsCommandErrorVisible = false;
+        _homePage.Lvicc4PgStatus = false;
+
+        // Determine CM state and update ICC 4 visual to match
+        bool cmOn = (cmMessageData & fOnByte) == fOnByte;
+        bool cmLow = (cmMessageData & fLowByte) == fLowByte;
+        bool cmMed = (cmMessageData & fMedByte) == fMedByte;
+        bool cmHigh = (cmMessageData & fHighByte) == fHighByte;
+
+        // Update state flags
+        icc4On = cmOn;
+        icc4Low = cmLow;
+        icc4Med = cmMed;
+        icc4High = cmHigh;
+
+        // Reset all buttons to default
+        _icc4Page.OffButton = new SolidColorBrush(Colors.LightGray);
+        _icc4Page.OffForeground = new SolidColorBrush(Colors.Black);
+        _icc4Page.LowButton = new SolidColorBrush(Colors.LightGray);
+        _icc4Page.LowForeground = new SolidColorBrush(Colors.Black);
+        _icc4Page.MedButton = new SolidColorBrush(Colors.LightGray);
+        _icc4Page.MedForeground = new SolidColorBrush(Colors.Black);
+        _icc4Page.HighButton = new SolidColorBrush(Colors.LightGray);
+        _icc4Page.HighForeground = new SolidColorBrush(Colors.Black);
+
+        if (cmOn)
+        {
+            // ON state - set border and background based on intensity
+            if (cmHigh)
+            {
+                Icc4SideMenu = "HIGH";
+                Icc4BorderBrush = new SolidColorBrush(Colors.OrangeRed);
+                Icc4BorderBackground = new SolidColorBrush(Colors.OrangeRed);
+                _icc4Page.HighButton = new SolidColorBrush(Colors.Green);
+                _icc4Page.HighForeground = new SolidColorBrush(Colors.White);
+            }
+            else if (cmMed)
+            {
+                Icc4SideMenu = "MED";
+                Icc4BorderBrush = new SolidColorBrush(Colors.Orange);
+                Icc4BorderBackground = new SolidColorBrush(Colors.Orange);
+                _icc4Page.MedButton = new SolidColorBrush(Colors.Green);
+                _icc4Page.MedForeground = new SolidColorBrush(Colors.White);
+            }
+            else if (cmLow)
+            {
+                Icc4SideMenu = "LOW";
+                Icc4BorderBrush = new SolidColorBrush(Colors.Green);
+                Icc4BorderBackground = new SolidColorBrush(Colors.Green);
+                _icc4Page.LowButton = new SolidColorBrush(Colors.Green);
+                _icc4Page.LowForeground = new SolidColorBrush(Colors.White);
+            }
+            else
+            {
+                // ON but no intensity - just show green border
+                Icc4BorderBrush = new SolidColorBrush(Colors.Green);
+                Icc4BorderBackground = new SolidColorBrush(Colors.Green);
+            }
+            _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGreen);
+        }
+        else
+        {
+            // OFF state
+            Icc4SideMenu = "OFF";
+            Icc4BorderBrush = new SolidColorBrush(Colors.Black);
+            Icc4BorderBackground = new SolidColorBrush(Colors.Black);
+            _icc4Page.OffButton = new SolidColorBrush(Colors.DarkGray);
+            _icc4Page.OffForeground = new SolidColorBrush(Colors.White);
+            _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGray);
+        }
+    }
+
     [ObservableProperty]
     private string _icc1SideMenu = "OFF";
 
@@ -3214,9 +3374,6 @@ public partial class MainViewModel : ViewModelBase
                             }
                             break;
                         case byte s when s == icc2:
-                            // Change the color of the menu item of the ICC
-                            Icc2SideBackground = new SolidColorBrush(Colors.LightGreen);
-                            _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.LightGreen);
                             // Receive configuration (switch) data and update the GUI of the LVICC page
                             if (!icc2Connected)
                             {
@@ -3225,6 +3382,18 @@ public partial class MainViewModel : ViewModelBase
                                 icc2Connected = true;
                                 iccs[1] = true;
                             }
+
+                            // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+                            if (_skipIcc2Comparisons > 0)
+                            {
+                                _skipIcc2Comparisons--;
+                                SyncIcc2VisualWithCm();
+                                break;
+                            }
+
+                            // Change the color of the menu item of the ICC
+                            Icc2SideBackground = new SolidColorBrush(Colors.LightGreen);
+                            _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                             if (icc2Compat)
                             {
@@ -3419,14 +3588,8 @@ public partial class MainViewModel : ViewModelBase
                                 // enhanced mode - 34 bytes
 
                             }
-                            // compare cmMessageData to iccMessageData (skip in SSALR mode or during resync)
-                            if (_skipIcc2Comparisons > 0)
-                            {
-                                _skipIcc2Comparisons--;
-                                // Re-sync icc2MessageData to cmMessageData during skip period
-                                icc2MessageData = cmMessageData;
-                            }
-                            else if (AlsfMode && cmMessageData != icc2MessageData)
+                            // compare cmMessageData to iccMessageData (skip counter is handled at case start)
+                            if (AlsfMode && cmMessageData != icc2MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
                                 Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
@@ -3646,9 +3809,6 @@ public partial class MainViewModel : ViewModelBase
                             }
                             break;
                         case byte s when s == icc4:
-                            // Change the color of the menu item of the ICC
-                            Icc4SideBackground = new SolidColorBrush(Colors.LightGreen);
-                            _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGreen);
                             // Receive configuration (switch) data and update the GUI of the LVICC page
                             if (!icc4Connected)
                             {
@@ -3657,6 +3817,19 @@ public partial class MainViewModel : ViewModelBase
                                 icc4Connected = true;
                                 iccs[3] = true;
                             }
+
+                            // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+                            if (_skipIcc4Comparisons > 0)
+                            {
+                                _skipIcc4Comparisons--;
+                                SyncIcc4VisualWithCm();
+                                break;
+                            }
+
+                            // Change the color of the menu item of the ICC
+                            Icc4SideBackground = new SolidColorBrush(Colors.LightGreen);
+                            _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGreen);
+
                             if (icc4Compat)
                             {
                                 // compatibility mode - 25 bytes
@@ -3850,14 +4023,8 @@ public partial class MainViewModel : ViewModelBase
                                 // enhanced mode - 34 bytes
 
                             }
-                            // compare cmMessageData to iccMessageData (skip in SSALR mode or during resync)
-                            if (_skipIcc4Comparisons > 0)
-                            {
-                                _skipIcc4Comparisons--;
-                                // Re-sync icc4MessageData to cmMessageData during skip period
-                                icc4MessageData = cmMessageData;
-                            }
-                            else if (AlsfMode && cmMessageData != icc4MessageData)
+                            // compare cmMessageData to iccMessageData (skip counter is handled at case start)
+                            if (AlsfMode && cmMessageData != icc4MessageData)
                             {
                                 string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
                                 Avalonia.Threading.Dispatcher.UIThread.Post(() => _homePage.AppendLog(mismatchInfo.TrimEnd()));
@@ -7878,6 +8045,14 @@ public partial class MainViewModel : ViewModelBase
 
     private void ReadIcc2Response(byte message)
     {
+        // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+        if (_skipIcc2Comparisons > 0)
+        {
+            _skipIcc2Comparisons--;
+            SyncIcc2VisualWithCm();
+            return;
+        }
+
         if ((message & fOnByte) == fOnByte)
         {
             if (!icc2On)
@@ -8017,17 +8192,8 @@ public partial class MainViewModel : ViewModelBase
         }
         // Copy mode bits directly from ICC response
         icc2MessageData = (byte)((icc2MessageData & ~(alsfModeByte | ssalrModeByte)) | (message & (alsfModeByte | ssalrModeByte)));
-        // Skip comparison in SSALR mode or during resync after mode switch
-        if (_skipIcc2Comparisons > 0)
-        {
-            _skipIcc2Comparisons--;
-            // Re-sync icc2MessageData to cmMessageData during skip period
-            // to align after ICC state drifted while not polled in SSALR mode
-            icc2MessageData = cmMessageData;
-            _icc2Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc2PgStatus = false;
-        }
-        else if (AlsfMode && cmMessageData != icc2MessageData)
+        // Check for mismatch (skip counter is handled at method start)
+        if (AlsfMode && cmMessageData != icc2MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
             _homePage.AppendLog("\nMODE ERROR: CM and LVICC 2 do not match." + mismatchInfo);
@@ -8206,6 +8372,14 @@ public partial class MainViewModel : ViewModelBase
 
     private void ReadIcc4Response(byte message)
     {
+        // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+        if (_skipIcc4Comparisons > 0)
+        {
+            _skipIcc4Comparisons--;
+            SyncIcc4VisualWithCm();
+            return;
+        }
+
         if ((message & fOnByte) == fOnByte)
         {
             if (!icc4On)
@@ -8345,16 +8519,8 @@ public partial class MainViewModel : ViewModelBase
         }
         // Copy mode bits directly from ICC response
         icc4MessageData = (byte)((icc4MessageData & ~(alsfModeByte | ssalrModeByte)) | (message & (alsfModeByte | ssalrModeByte)));
-        // Skip comparison in SSALR mode or during resync after mode switch
-        if (_skipIcc4Comparisons > 0)
-        {
-            _skipIcc4Comparisons--;
-            // Re-sync icc4MessageData to cmMessageData during skip period
-            icc4MessageData = cmMessageData;
-            _icc4Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc4PgStatus = false;
-        }
-        else if (AlsfMode && cmMessageData != icc4MessageData)
+        // Check for mismatch (skip counter is handled at method start)
+        if (AlsfMode && cmMessageData != icc4MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
             _homePage.AppendLog("\nMODE ERROR: CM and LVICC 4 do not match." + mismatchInfo);
@@ -11394,6 +11560,7 @@ public partial class MainViewModel : ViewModelBase
 
     private void ReadIcc2Config(byte param1, byte param2)
     {
+        // Handle remote status first (important for connection status)
         if ((param2 & remoteConfig) == remoteConfig)
         {
             _icc2Page.RemButton = new SolidColorBrush(Colors.Green);
@@ -11423,6 +11590,15 @@ public partial class MainViewModel : ViewModelBase
             // activate mode error
             _icc2Page.IsCommandErrorVisible = true;
         }
+
+        // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+        if (_skipIcc2Comparisons > 0)
+        {
+            _skipIcc2Comparisons--;
+            SyncIcc2VisualWithCm();
+            return;
+        }
+
         if ((param2 & offConfig) == offConfig)
         {
             if (icc2On)
@@ -11635,16 +11811,8 @@ public partial class MainViewModel : ViewModelBase
             _icc2Page.CompatBackground = new SolidColorBrush(Colors.LightGray);
             _icc2Page.EnhancedBackground = new SolidColorBrush(Colors.LightGreen);
         }
-        // Skip comparison in SSALR mode or during resync after mode switch
-        if (_skipIcc2Comparisons > 0)
-        {
-            _skipIcc2Comparisons--;
-            // Re-sync icc2MessageData to cmMessageData during skip period
-            icc2MessageData = cmMessageData;
-            _icc2Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc2PgStatus = false;
-        }
-        else if (AlsfMode && cmMessageData != icc2MessageData)
+        // Check for mismatch (skip counter is handled at method start)
+        if (AlsfMode && cmMessageData != icc2MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
             _homePage.AppendLog("\nMODE ERROR: CM and LVICC 2 do not match." + mismatchInfo);
@@ -11922,6 +12090,7 @@ public partial class MainViewModel : ViewModelBase
 
     private void ReadIcc4Config(byte param1, byte param2)
     {
+        // Handle remote status first (important for connection status)
         if ((param2 & remoteConfig) == remoteConfig)
         {
             _icc4Page.RemButton = new SolidColorBrush(Colors.Green);
@@ -11951,6 +12120,15 @@ public partial class MainViewModel : ViewModelBase
             // activate mode error
             _icc4Page.IsCommandErrorVisible = true;
         }
+
+        // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+        if (_skipIcc4Comparisons > 0)
+        {
+            _skipIcc4Comparisons--;
+            SyncIcc4VisualWithCm();
+            return;
+        }
+
         if ((param2 & offConfig) == offConfig)
         {
             if (icc4On)
@@ -12163,16 +12341,8 @@ public partial class MainViewModel : ViewModelBase
             _icc4Page.CompatBackground = new SolidColorBrush(Colors.LightGray);
             _icc4Page.EnhancedBackground = new SolidColorBrush(Colors.LightGreen);
         }
-        // Skip comparison in SSALR mode or during resync after mode switch
-        if (_skipIcc4Comparisons > 0)
-        {
-            _skipIcc4Comparisons--;
-            // Re-sync icc4MessageData to cmMessageData during skip period
-            icc4MessageData = cmMessageData;
-            _icc4Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc4PgStatus = false;
-        }
-        else if (AlsfMode && cmMessageData != icc4MessageData)
+        // Check for mismatch (skip counter is handled at method start)
+        if (AlsfMode && cmMessageData != icc4MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
             _homePage.AppendLog("\nMODE ERROR: CM and LVICC 4 do not match." + mismatchInfo);
