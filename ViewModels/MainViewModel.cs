@@ -93,9 +93,10 @@ public partial class MainViewModel : ViewModelBase
         {
             // Switching back to ALSF mode - send CM commands to ICC 2 and 4
             // to set them to the correct state (they may have drifted while not polled)
-            // Skip first 2 comparisons to allow ICC to process commands
-            _skipIcc2Comparisons = 2;
-            _skipIcc4Comparisons = 2;
+            // Skip first 5 comparisons to allow ICC to process commands
+            // (multiple response types can trigger comparisons: SHORT_DATA, COMMANDS, CONFIG)
+            _skipIcc2Comparisons = 5;
+            _skipIcc4Comparisons = 5;
             SendCmCommand(icc2);
             SendCmCommand(icc4);
         }
