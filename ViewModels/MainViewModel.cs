@@ -73,9 +73,11 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _alsfMode = true;
 
-    // Skip comparison counters for ICC 2 and 4 after mode switch
+    // Skip comparison counters for ICCs after mode switch
     // These are decremented each time a comparison would occur, skipping until 0
+    private int _skipIcc1Comparisons = 0;
     private int _skipIcc2Comparisons = 0;
+    private int _skipIcc3Comparisons = 0;
     private int _skipIcc4Comparisons = 0;
 
     /// <summary>
@@ -95,15 +97,25 @@ public partial class MainViewModel : ViewModelBase
             // to set them to the correct state (they may have drifted while not polled)
             // Skip first 5 comparisons to allow ICC to process commands
             // (multiple response types can trigger comparisons: SHORT_DATA, COMMANDS, CONFIG)
+            _skipIcc1Comparisons = 5;
             _skipIcc2Comparisons = 5;
+            _skipIcc3Comparisons = 5;
             _skipIcc4Comparisons = 5;
+            SendCmCommand(icc1);
             SendCmCommand(icc2);
+            SendCmCommand(icc3);
             SendCmCommand(icc4);
         }
         else
         {
-            // Switching to SSALR mode - set ICC 2 and 4 to OFF visual state
-            // since they are not connected in SSALR mode
+            // Switching to SSALR mode - ICC 1 and 3 will receive new command state
+            // Skip first 5 comparisons to allow them to process the command
+            _skipIcc1Comparisons = 5;
+            _skipIcc3Comparisons = 5;
+            SendCmCommand(icc1);
+            SendCmCommand(icc3);
+
+            // Set ICC 2 and 4 to OFF visual state since they are not connected in SSALR mode
             SetIcc2OffState();
             SetIcc4OffState();
         }
@@ -334,6 +346,166 @@ public partial class MainViewModel : ViewModelBase
             _icc4Page.OffButton = new SolidColorBrush(Colors.DarkGray);
             _icc4Page.OffForeground = new SolidColorBrush(Colors.White);
             _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGray);
+        }
+    }
+
+    /// <summary>
+    /// Syncs ICC 1 visual state and message data with CM state.
+    /// Used during skip period after switching between ALSF/SSALR modes.
+    /// </summary>
+    private void SyncIcc1VisualWithCm()
+    {
+        // Sync message data
+        icc1MessageData = cmMessageData;
+        _icc1Page.IsCommandErrorVisible = false;
+        _homePage.Lvicc1PgStatus = false;
+
+        // Determine CM state and update ICC 1 visual to match
+        bool cmOn = (cmMessageData & fOnByte) == fOnByte;
+        bool cmLow = (cmMessageData & fLowByte) == fLowByte;
+        bool cmMed = (cmMessageData & fMedByte) == fMedByte;
+        bool cmHigh = (cmMessageData & fHighByte) == fHighByte;
+
+        // Update state flags
+        icc1On = cmOn;
+        icc1Low = cmLow;
+        icc1Med = cmMed;
+        icc1High = cmHigh;
+
+        // Reset all buttons to default
+        _icc1Page.OffButton = new SolidColorBrush(Colors.LightGray);
+        _icc1Page.OffForeground = new SolidColorBrush(Colors.Black);
+        _icc1Page.LowButton = new SolidColorBrush(Colors.LightGray);
+        _icc1Page.LowForeground = new SolidColorBrush(Colors.Black);
+        _icc1Page.MedButton = new SolidColorBrush(Colors.LightGray);
+        _icc1Page.MedForeground = new SolidColorBrush(Colors.Black);
+        _icc1Page.HighButton = new SolidColorBrush(Colors.LightGray);
+        _icc1Page.HighForeground = new SolidColorBrush(Colors.Black);
+
+        if (cmOn)
+        {
+            // ON state - set border and background based on intensity
+            if (cmHigh)
+            {
+                Icc1SideMenu = "HIGH";
+                Icc1BorderBrush = new SolidColorBrush(Colors.OrangeRed);
+                Icc1BorderBackground = new SolidColorBrush(Colors.OrangeRed);
+                _icc1Page.HighButton = new SolidColorBrush(Colors.Green);
+                _icc1Page.HighForeground = new SolidColorBrush(Colors.White);
+            }
+            else if (cmMed)
+            {
+                Icc1SideMenu = "MED";
+                Icc1BorderBrush = new SolidColorBrush(Colors.Orange);
+                Icc1BorderBackground = new SolidColorBrush(Colors.Orange);
+                _icc1Page.MedButton = new SolidColorBrush(Colors.Green);
+                _icc1Page.MedForeground = new SolidColorBrush(Colors.White);
+            }
+            else if (cmLow)
+            {
+                Icc1SideMenu = "LOW";
+                Icc1BorderBrush = new SolidColorBrush(Colors.Green);
+                Icc1BorderBackground = new SolidColorBrush(Colors.Green);
+                _icc1Page.LowButton = new SolidColorBrush(Colors.Green);
+                _icc1Page.LowForeground = new SolidColorBrush(Colors.White);
+            }
+            else
+            {
+                // ON but no intensity - just show green border
+                Icc1BorderBrush = new SolidColorBrush(Colors.Green);
+                Icc1BorderBackground = new SolidColorBrush(Colors.Green);
+            }
+            _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.LightGreen);
+        }
+        else
+        {
+            // OFF state
+            Icc1SideMenu = "OFF";
+            Icc1BorderBrush = new SolidColorBrush(Colors.Black);
+            Icc1BorderBackground = new SolidColorBrush(Colors.Black);
+            _icc1Page.OffButton = new SolidColorBrush(Colors.DarkGray);
+            _icc1Page.OffForeground = new SolidColorBrush(Colors.White);
+            _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.LightGray);
+        }
+    }
+
+    /// <summary>
+    /// Syncs ICC 3 visual state and message data with CM state.
+    /// Used during skip period after switching between ALSF/SSALR modes.
+    /// </summary>
+    private void SyncIcc3VisualWithCm()
+    {
+        // Sync message data
+        icc3MessageData = cmMessageData;
+        _icc3Page.IsCommandErrorVisible = false;
+        _homePage.Lvicc3PgStatus = false;
+
+        // Determine CM state and update ICC 3 visual to match
+        bool cmOn = (cmMessageData & fOnByte) == fOnByte;
+        bool cmLow = (cmMessageData & fLowByte) == fLowByte;
+        bool cmMed = (cmMessageData & fMedByte) == fMedByte;
+        bool cmHigh = (cmMessageData & fHighByte) == fHighByte;
+
+        // Update state flags
+        icc3On = cmOn;
+        icc3Low = cmLow;
+        icc3Med = cmMed;
+        icc3High = cmHigh;
+
+        // Reset all buttons to default
+        _icc3Page.OffButton = new SolidColorBrush(Colors.LightGray);
+        _icc3Page.OffForeground = new SolidColorBrush(Colors.Black);
+        _icc3Page.LowButton = new SolidColorBrush(Colors.LightGray);
+        _icc3Page.LowForeground = new SolidColorBrush(Colors.Black);
+        _icc3Page.MedButton = new SolidColorBrush(Colors.LightGray);
+        _icc3Page.MedForeground = new SolidColorBrush(Colors.Black);
+        _icc3Page.HighButton = new SolidColorBrush(Colors.LightGray);
+        _icc3Page.HighForeground = new SolidColorBrush(Colors.Black);
+
+        if (cmOn)
+        {
+            // ON state - set border and background based on intensity
+            if (cmHigh)
+            {
+                Icc3SideMenu = "HIGH";
+                Icc3BorderBrush = new SolidColorBrush(Colors.OrangeRed);
+                Icc3BorderBackground = new SolidColorBrush(Colors.OrangeRed);
+                _icc3Page.HighButton = new SolidColorBrush(Colors.Green);
+                _icc3Page.HighForeground = new SolidColorBrush(Colors.White);
+            }
+            else if (cmMed)
+            {
+                Icc3SideMenu = "MED";
+                Icc3BorderBrush = new SolidColorBrush(Colors.Orange);
+                Icc3BorderBackground = new SolidColorBrush(Colors.Orange);
+                _icc3Page.MedButton = new SolidColorBrush(Colors.Green);
+                _icc3Page.MedForeground = new SolidColorBrush(Colors.White);
+            }
+            else if (cmLow)
+            {
+                Icc3SideMenu = "LOW";
+                Icc3BorderBrush = new SolidColorBrush(Colors.Green);
+                Icc3BorderBackground = new SolidColorBrush(Colors.Green);
+                _icc3Page.LowButton = new SolidColorBrush(Colors.Green);
+                _icc3Page.LowForeground = new SolidColorBrush(Colors.White);
+            }
+            else
+            {
+                // ON but no intensity - just show green border
+                Icc3BorderBrush = new SolidColorBrush(Colors.Green);
+                Icc3BorderBackground = new SolidColorBrush(Colors.Green);
+            }
+            _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.LightGreen);
+        }
+        else
+        {
+            // OFF state
+            Icc3SideMenu = "OFF";
+            Icc3BorderBrush = new SolidColorBrush(Colors.Black);
+            Icc3BorderBackground = new SolidColorBrush(Colors.Black);
+            _icc3Page.OffButton = new SolidColorBrush(Colors.DarkGray);
+            _icc3Page.OffForeground = new SolidColorBrush(Colors.White);
+            _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.LightGray);
         }
     }
 
@@ -3158,9 +3330,6 @@ public partial class MainViewModel : ViewModelBase
                     switch (source)
                     {
                         case byte s when s == icc1:
-                            // Change the color of the menu item of the ICC
-                            Icc1SideBackground = new SolidColorBrush(Colors.LightGreen);
-                            _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.LightGreen);
                             // Receive configuration (switch) data and update the GUI of the LVICC page
                             if (!icc1Connected)
                             {
@@ -3169,6 +3338,18 @@ public partial class MainViewModel : ViewModelBase
                                 icc1Connected = true;
                                 iccs[0] = true;
                             }
+
+                            // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+                            if (_skipIcc1Comparisons > 0)
+                            {
+                                _skipIcc1Comparisons--;
+                                SyncIcc1VisualWithCm();
+                                break;
+                            }
+
+                            // Change the color of the menu item of the ICC
+                            Icc1SideBackground = new SolidColorBrush(Colors.LightGreen);
+                            _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                             if (icc1Compat)
                             {
@@ -3597,9 +3778,6 @@ public partial class MainViewModel : ViewModelBase
                             }
                             break;
                         case byte s when s == icc3:
-                            // Change the color of the menu item of the ICC
-                            Icc3SideBackground = new SolidColorBrush(Colors.LightGreen);
-                            _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.LightGreen);
                             // Receive configuration (switch) data and update the GUI of the LVICC page
                             if (!icc3Connected)
                             {
@@ -3608,6 +3786,19 @@ public partial class MainViewModel : ViewModelBase
                                 icc3Connected = true;
                                 iccs[2] = true;
                             }
+
+                            // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+                            if (_skipIcc3Comparisons > 0)
+                            {
+                                _skipIcc3Comparisons--;
+                                SyncIcc3VisualWithCm();
+                                break;
+                            }
+
+                            // Change the color of the menu item of the ICC
+                            Icc3SideBackground = new SolidColorBrush(Colors.LightGreen);
+                            _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.LightGreen);
+
                             if (icc3Compat)
                             {
                                 // compatibility mode - 25 bytes
@@ -7884,6 +8075,14 @@ public partial class MainViewModel : ViewModelBase
     
     private void ReadIcc1Response(byte message)
     {
+        // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+        if (_skipIcc1Comparisons > 0)
+        {
+            _skipIcc1Comparisons--;
+            SyncIcc1VisualWithCm();
+            return;
+        }
+
         if ((message & fOnByte) == fOnByte)
         {
             if (!icc1On)
@@ -8211,6 +8410,14 @@ public partial class MainViewModel : ViewModelBase
 
     private void ReadIcc3Response(byte message)
     {
+        // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+        if (_skipIcc3Comparisons > 0)
+        {
+            _skipIcc3Comparisons--;
+            SyncIcc3VisualWithCm();
+            return;
+        }
+
         if ((message & fOnByte) == fOnByte)
         {
             if (!icc3On)
@@ -11335,6 +11542,15 @@ public partial class MainViewModel : ViewModelBase
             // activate mode error
             _icc1Page.IsCommandErrorVisible = true;
         }
+
+        // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+        if (_skipIcc1Comparisons > 0)
+        {
+            _skipIcc1Comparisons--;
+            SyncIcc1VisualWithCm();
+            return;
+        }
+
         if ((param2 & offConfig) == offConfig)
         {
             if (icc1On)
@@ -11858,8 +12074,17 @@ public partial class MainViewModel : ViewModelBase
             }
             // activate mode error
             _icc3Page.IsCommandErrorVisible = true;
-            
+
         }
+
+        // During skip period after ALSF mode switch, sync visual and data with CM instead of ICC response
+        if (_skipIcc3Comparisons > 0)
+        {
+            _skipIcc3Comparisons--;
+            SyncIcc3VisualWithCm();
+            return;
+        }
+
         if ((param2 & offConfig) == offConfig)
         {
             if (icc3On)
