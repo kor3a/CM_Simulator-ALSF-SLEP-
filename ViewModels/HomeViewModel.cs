@@ -34,7 +34,7 @@ public partial class HomeViewModel : ViewModelBase
 
     // Computed properties for navigation visibility
     public bool CanNavigateLeft => CurrentStartIndex > 1;
-    public bool CanNavigateRight => CurrentStartIndex + 2 < 21;
+    public bool CanNavigateRight => CurrentStartIndex + 2 < 4;
 
     // Computed properties for visible LVICC numbers (1-based)
     public int VisibleLvicc1Number => CurrentStartIndex;
@@ -241,11 +241,13 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     private IBrush _cautionForeground = new SolidColorBrush(Colors.Black);
 
+    /*
     [ObservableProperty]
     private IBrush _commFault = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
     private IBrush _commFaultForeground = new SolidColorBrush(Colors.Black);
+    */
 
     [ObservableProperty]
     private IBrush _failure = new SolidColorBrush(Colors.LightGray);
@@ -784,11 +786,13 @@ public partial class HomeViewModel : ViewModelBase
             AlsfMode = true;
             AlsfButton = new SolidColorBrush(Colors.LightGreen);
             SsalrButton = new SolidColorBrush(Colors.LightGray);
-            _mainViewModel.AlsfMode = true;
+            // Update cmMessageData mode bits BEFORE setting AlsfMode
+            // so that OnAlsfModeChanged has the correct mode bits when it syncs ICC 2/4
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.alsfModeByte);
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.ssalrModeByte);
+            _mainViewModel.AlsfMode = true;
         }
-        
+
     }
 
     [RelayCommand]
@@ -799,11 +803,13 @@ public partial class HomeViewModel : ViewModelBase
             AlsfMode = false;
             SsalrButton = new SolidColorBrush(Colors.LightGreen);
             AlsfButton = new SolidColorBrush(Colors.LightGray);
-            _mainViewModel.AlsfMode = false;
+            // Update cmMessageData mode bits BEFORE setting AlsfMode
+            // so that OnAlsfModeChanged has the correct mode bits when it syncs ICC 2/4
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.alsfModeByte);
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.ssalrModeByte);
+            _mainViewModel.AlsfMode = false;
         }
-        
+
     }
 
     [RelayCommand]
