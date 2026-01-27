@@ -2311,7 +2311,7 @@ public partial class MainViewModel : ViewModelBase
 
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
-            _homePage.AppendLog("Continuous data polling started.");
+            _homePage.AppendLog("Continuous data polling started.\n");
         });
     }
 
@@ -2328,7 +2328,7 @@ public partial class MainViewModel : ViewModelBase
 
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
-            _homePage.AppendLog("Continuous data polling stopped.");
+            _homePage.AppendLog("Continuous data polling stopped.\n");
         });
     }
 
@@ -2373,10 +2373,6 @@ public partial class MainViewModel : ViewModelBase
                         await SendConfigDataRequestAsync(address, cancellationToken);
                         await WaitForResponseAsync(address, 1000);
                         await Task.Delay(200, cancellationToken);
-
-                        // Now send another short data request - LVICC should be ready
-                        await SendShortDataRequestAsync(address, cancellationToken);
-                        await WaitForResponseAsync(address, 1000);
 
                         _initializedAddresses.Add(address);
                         await Task.Delay(200, cancellationToken);
@@ -2425,32 +2421,13 @@ public partial class MainViewModel : ViewModelBase
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
-                _homePage.AppendLog($"Continuous polling error: {ex.Message}");
+                _homePage.AppendLog($"Continuous polling error: {ex.Message}\n");
             });
         }
         finally
         {
             _continuousPollingActive = false;
         }
-    }
-
-    /// <summary>
-    /// Gets a list of ICC addresses that are currently connected from the visible set.
-    /// Only returns addresses from the current addresses[] array that are connected.
-    /// </summary>
-    private List<byte> GetConnectedAddresses()
-    {
-        List<byte> connected = new List<byte>();
-
-        foreach (byte address in addresses)
-        {
-            if (IsIccConnected(address))
-            {
-                connected.Add(address);
-            }
-        }
-
-        return connected;
     }
 
     /// <summary>
@@ -2543,7 +2520,7 @@ public partial class MainViewModel : ViewModelBase
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    _homePage.AppendLog($"[Poll] Sent Short Data Request to ICC {destString}: {BitConverter.ToString(shortDataRequestTx)}");
+                    _homePage.AppendLog($"[Poll] Sent Short Data Request to ICC {destString}: {BitConverter.ToString(shortDataRequestTx)}\n");
                     _homePage.TxStatus = new SolidColorBrush(Colors.Green);
                     _homePage.ShortButton = new SolidColorBrush(Colors.LightGreen);
                 });
@@ -2605,7 +2582,7 @@ public partial class MainViewModel : ViewModelBase
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    _homePage.AppendLog($"[Poll] Sent Config Data Request to ICC {destString}: {BitConverter.ToString(configDataRequestTx)}");
+                    _homePage.AppendLog($"[Poll] Sent Config Data Request to ICC {destString}: {BitConverter.ToString(configDataRequestTx)}\n");
                     _homePage.TxStatus = new SolidColorBrush(Colors.Green);
                     _homePage.ConfigButton = new SolidColorBrush(Colors.LightGreen);
                 });
@@ -2667,7 +2644,7 @@ public partial class MainViewModel : ViewModelBase
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    _homePage.AppendLog($"Sent CM to global command message: {BitConverter.ToString(cmCommandTx)}");
+                    _homePage.AppendLog($"Sent CM to global command message: {BitConverter.ToString(cmCommandTx)}\n");
                     _homePage.TxStatus = new SolidColorBrush(Colors.Green);
                 });
 
@@ -2735,7 +2712,7 @@ public partial class MainViewModel : ViewModelBase
         }
 
         string bitList = string.Join(", ", mismatchedBits);
-        return $"{iccName} Message Data Mismatch: CM=0x{cmData:X2} ({Convert.ToString(cmData, 2).PadLeft(8, '0')}), ICC=0x{iccData:X2} ({Convert.ToString(iccData, 2).PadLeft(8, '0')}), Mismatched bits: [{bitList}]";
+        return $"{iccName} Message Data Mismatch: CM=0x{cmData:X2} ({Convert.ToString(cmData, 2).PadLeft(8, '0')}), ICC=0x{iccData:X2} ({Convert.ToString(iccData, 2).PadLeft(8, '0')}), Mismatched bits: [{bitList}]\n";
     }
 
     private void SerialDataReceivedEventHandler(object sender, SerialDataReceivedEventArgs e)
@@ -2899,7 +2876,7 @@ public partial class MainViewModel : ViewModelBase
             
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
-                _homePage.AppendLog("Received: " + BitConverter.ToString(message));
+                _homePage.AppendLog("Received: " + BitConverter.ToString(message) + "\n");
                 _homePage.RxStatus = new SolidColorBrush(Colors.Green);
             });
             
@@ -2916,7 +2893,7 @@ public partial class MainViewModel : ViewModelBase
             {
                 Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                 {
-                    _homePage.AppendLog("Error: Invalid message format");
+                    _homePage.AppendLog("Error: Invalid message format\n");
                 });
                 
                 return;
@@ -3159,11 +3136,10 @@ public partial class MainViewModel : ViewModelBase
             switch (messageID)
             {
                 case byte n when n == RESET_COMMAND: // 0x41
-                    _homePage.AppendLog("RECEIVED RESET COMMAND (Message ID: 0x41)");
+                    _homePage.AppendLog("RECEIVED RESET COMMAND (Message ID: 0x41)\n");
                     
                     break;
                 case byte n when n == RESET_RESULTS: // 0xC0
-                    _homePage.AppendLog("POST RESULTS (Message ID: 0xC0)");
                     // Process payload
                     if ((message[6] & cpuTest) == 0)
                     {
@@ -3255,7 +3231,6 @@ public partial class MainViewModel : ViewModelBase
                     }
                     break;
                 case byte n when n == COMMANDS_RESPONSE: // 0x42
-                    _homePage.AppendLog("COMMANDS_RESPONSE (Message ID: 0x42)");
                     switch (source)
                     {
                         case byte s when s == icc1:
@@ -3326,7 +3301,6 @@ public partial class MainViewModel : ViewModelBase
                     }
                     break;
                 case byte n when n == SHORT_DATA_RESPONSE: // 0x43
-                    _homePage.AppendLog("SHORT DATA RESPONSE (Message ID: 0x43)");
                     switch (source)
                     {
                         case byte s when s == icc1:
@@ -7721,7 +7695,6 @@ public partial class MainViewModel : ViewModelBase
                     }
                     break;
                 case byte n when n == CONFIG_RESPONSE: // 0x47
-                    _homePage.AppendLog("CONFIG_RESPONSE (Message ID: 0x47)");
                     switch (source)
                     {
                         case byte s when s == icc1:
@@ -8063,13 +8036,13 @@ public partial class MainViewModel : ViewModelBase
 
                     break;
                 default:
-                    _homePage.AppendLog($"Unknown Message ID: 0x{messageID:X2}");
+                    _homePage.AppendLog($"Unknown Message ID: 0x{messageID:X2}\n");
                     break;
             }
         }
         catch (Exception e)
         {
-            _homePage.AppendLog($"Error processing message: {e.Message}");
+            _homePage.AppendLog($"Error processing message: {e.Message}\n");
         }
     }
     
@@ -11760,18 +11733,18 @@ public partial class MainViewModel : ViewModelBase
             _icc1Page.CompatBackground = new SolidColorBrush(Colors.LightGray);
             _icc1Page.EnhancedBackground = new SolidColorBrush(Colors.LightGreen);
         }
-        if (cmMessageData != icc1MessageData)
-        {
-            string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc1MessageData, "ICC1");
-            _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 1 do not match." + mismatchInfo);
+        //if (cmMessageData != icc1MessageData)
+        //{
+        //    string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc1MessageData, "ICC1");
+        //    _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 1 do not match." + mismatchInfo);
 
-            // activate mode error
-            _icc1Page.IsCommandErrorVisible = true;
-        }
-        else
-        {
-            _icc1Page.IsCommandErrorVisible = false;
-        }
+        //    // activate mode error
+        //    _icc1Page.IsCommandErrorVisible = true;
+        //}
+        //else
+        //{
+        //    _icc1Page.IsCommandErrorVisible = false;
+        //}
     }
 
     private void ReadIcc2Config(byte param1, byte param2)
@@ -12028,20 +12001,20 @@ public partial class MainViewModel : ViewModelBase
             _icc2Page.EnhancedBackground = new SolidColorBrush(Colors.LightGreen);
         }
         // Check for mismatch (skip counter is handled at method start)
-        if (AlsfMode && cmMessageData != icc2MessageData)
-        {
-            string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
-            _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 2 do not match." + mismatchInfo);
+        //if (AlsfMode && cmMessageData != icc2MessageData)
+        //{
+        //    string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
+        //    _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 2 do not match." + mismatchInfo);
 
-            // activate mode error
-            _icc2Page.IsCommandErrorVisible = true;
-            _homePage.Lvicc2PgStatus = true;
-        }
-        else if (AlsfMode)
-        {
-            _icc2Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc2PgStatus = false;
-        }
+        //    // activate mode error
+        //    _icc2Page.IsCommandErrorVisible = true;
+        //    _homePage.Lvicc2PgStatus = true;
+        //}
+        //else if (AlsfMode)
+        //{
+        //    _icc2Page.IsCommandErrorVisible = false;
+        //    _homePage.Lvicc2PgStatus = false;
+        //}
     }
 
     private void ReadIcc3Config(byte param1, byte param2)
@@ -12297,20 +12270,20 @@ public partial class MainViewModel : ViewModelBase
             _icc3Page.CompatBackground = new SolidColorBrush(Colors.LightGray);
             _icc3Page.EnhancedBackground = new SolidColorBrush(Colors.LightGreen);
         }
-        if (cmMessageData != icc3MessageData)
-        {
-            string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc3MessageData, "ICC3");
-            _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 3 do not match." + mismatchInfo);
+        //if (cmMessageData != icc3MessageData)
+        //{
+        //    string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc3MessageData, "ICC3");
+        //    _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 3 do not match." + mismatchInfo);
 
-            // activate mode error
-            _icc3Page.IsCommandErrorVisible = true;
-            _homePage.Lvicc3PgStatus = true;
-        }
-        else
-        {
-            _icc3Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc3PgStatus = false;
-        }
+        //    // activate mode error
+        //    _icc3Page.IsCommandErrorVisible = true;
+        //    _homePage.Lvicc3PgStatus = true;
+        //}
+        //else
+        //{
+        //    _icc3Page.IsCommandErrorVisible = false;
+        //    _homePage.Lvicc3PgStatus = false;
+        //}
     }
 
     private void ReadIcc4Config(byte param1, byte param2)
@@ -12567,20 +12540,20 @@ public partial class MainViewModel : ViewModelBase
             _icc4Page.EnhancedBackground = new SolidColorBrush(Colors.LightGreen);
         }
         // Check for mismatch (skip counter is handled at method start)
-        if (AlsfMode && cmMessageData != icc4MessageData)
-        {
-            string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
-            _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 4 do not match." + mismatchInfo);
+        //if (AlsfMode && cmMessageData != icc4MessageData)
+        //{
+        //    string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
+        //    _homePage.AppendLog("\n[CONFIG] SETTING ERROR: CM and LVICC 4 do not match." + mismatchInfo);
 
-            // activate mode error
-            _icc4Page.IsCommandErrorVisible = true;
-            _homePage.Lvicc4PgStatus = true;
-        }
-        else if (AlsfMode)
-        {
-            _icc4Page.IsCommandErrorVisible = false;
-            _homePage.Lvicc4PgStatus = false;
-        }
+        //    // activate mode error
+        //    _icc4Page.IsCommandErrorVisible = true;
+        //    _homePage.Lvicc4PgStatus = true;
+        //}
+        //else if (AlsfMode)
+        //{
+        //    _icc4Page.IsCommandErrorVisible = false;
+        //    _homePage.Lvicc4PgStatus = false;
+        //}
     }
 
     private void ReadIcc5Config(byte param1, byte param2)
