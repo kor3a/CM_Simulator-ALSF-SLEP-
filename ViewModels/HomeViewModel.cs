@@ -10,7 +10,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CM_Simulator.ViewModels;
@@ -264,17 +263,17 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     public string _logText = "";
 
-    // StringBuilder for efficient log accumulation
-    private readonly StringBuilder _logBuilder = new StringBuilder();
+    private const int MaxLogLines = 1000;
+    private readonly List<string> _logLines = new List<string>();
 
-    /// <summary>
-    /// Appends a message to the log efficiently using StringBuilder.
-    /// Use this method instead of LogText += for better performance.
-    /// </summary>
     public void AppendLog(string message)
     {
-        _logBuilder.AppendLine(message);
-        LogText = _logBuilder.ToString();
+        _logLines.Add(message);
+        if (_logLines.Count > MaxLogLines)
+        {
+            _logLines.RemoveRange(0, _logLines.Count - MaxLogLines);
+        }
+        LogText = string.Join(Environment.NewLine, _logLines);
     }
 
     public bool stopCautionBeep = false;
