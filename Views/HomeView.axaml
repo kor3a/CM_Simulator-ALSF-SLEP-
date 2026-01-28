@@ -274,12 +274,12 @@
               <Flyout Placement="BottomEdgeAlignedRight">
                 <StackPanel Background="White" Width="180">
                   <!-- NOTE: no CommandParameter bindings here -->
-                  <Button Content="Scan ICCs"
+                  <!--  <Button Content="Scan ICCs"
                             FontSize="16"
                             Background="Transparent"
                             HorizontalAlignment="Left"
                             Padding="10,8"
-                            Click="Scan_Click"/>
+                            Click="Scan_Click"/> -->
                   <Button Content="Change Port"
                           FontSize="16"
                           Background="Transparent"

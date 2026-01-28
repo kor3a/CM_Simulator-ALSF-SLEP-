@@ -1584,7 +1584,7 @@ public partial class MainViewModel : ViewModelBase
 
     /* END OF THE FLASHING */
 
-    // Send ENQ message to the ICCs
+    // Send ENQ message to the ICCs (Not being used)
     public async Task ScanIcc()
     {
         disableButtons();
@@ -2457,38 +2457,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Checks if a given ICC address is connected.
-    /// </summary>
-    private bool IsIccConnected(byte address)
-    {
-        return address switch
-        {
-            0x26 => icc1Connected,
-            0x27 => icc2Connected,
-            0x28 => icc3Connected,
-            0x29 => icc4Connected,
-            0x2A => icc5Connected,
-            0x2B => icc6Connected,
-            0x2C => icc7Connected,
-            0x2D => icc8Connected,
-            0x2E => icc9Connected,
-            0x2F => icc10Connected,
-            0x30 => icc11Connected,
-            0x31 => icc12Connected,
-            0x32 => icc13Connected,
-            0x33 => icc14Connected,
-            0x34 => icc15Connected,
-            0x35 => icc16Connected,
-            0x36 => icc17Connected,
-            0x37 => icc18Connected,
-            0x38 => icc19Connected,
-            0x39 => icc20Connected,
-            0x3A => icc21Connected,
-            _ => false
-        };
-    }
-
+   
     /// <summary>
     /// Async version of SendShortDataRequest that acquires the serial semaphore.
     /// </summary>
@@ -2528,7 +2497,7 @@ public partial class MainViewModel : ViewModelBase
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    _homePage.AppendLog($"[Poll] Sent Short Data Request to ICC {destString}: {BitConverter.ToString(shortDataRequestTx)}\n");
+                    //_homePage.AppendLog($"[Poll] Sent Short Data Request to ICC {destString}: {BitConverter.ToString(shortDataRequestTx)}\n");
                     _homePage.TxStatus = new SolidColorBrush(Colors.Green);
                     _homePage.ShortButton = new SolidColorBrush(Colors.LightGreen);
                 });
@@ -2590,7 +2559,7 @@ public partial class MainViewModel : ViewModelBase
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    _homePage.AppendLog($"[Poll] Sent Config Data Request to ICC {destString}: {BitConverter.ToString(configDataRequestTx)}\n");
+                    //_homePage.AppendLog($"[Poll] Sent Config Data Request to ICC {destString}: {BitConverter.ToString(configDataRequestTx)}\n");
                     _homePage.TxStatus = new SolidColorBrush(Colors.Green);
                     _homePage.ConfigButton = new SolidColorBrush(Colors.LightGreen);
                 });
@@ -2652,7 +2621,7 @@ public partial class MainViewModel : ViewModelBase
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    _homePage.AppendLog($"Sent CM to global command message: {BitConverter.ToString(cmCommandTx)}\n");
+                    //_homePage.AppendLog($"Sent CM to global command message: {BitConverter.ToString(cmCommandTx)}\n");
                     _homePage.TxStatus = new SolidColorBrush(Colors.Green);
                 });
 
@@ -3367,7 +3336,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc1Page.HighButton = new SolidColorBrush(Colors.LightGray);
                                             _icc1Page.HighForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                        //CheckAndStartSequentialFlash();
                                     }
                                 }
                                 if ((message[6] & 0x02) == 0x02) // MED
@@ -3399,7 +3368,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc1Page.HighButton = new SolidColorBrush(Colors.LightGray);
                                             _icc1Page.HighForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                        //CheckAndStartSequentialFlash();
                                     }
                                 }
                                 if ((message[6] & 0x04) == 0x04) // HIGH
@@ -3431,7 +3400,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc1Page.MedButton = new SolidColorBrush(Colors.LightGray);
                                             _icc1Page.MedForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 // Copy mode bit from SHORT_DATA_RESPONSE (bit 4) to iccMessageData (bits 5/6)
@@ -3490,7 +3459,7 @@ public partial class MainViewModel : ViewModelBase
                                             icc1MessageData = (byte)(icc1MessageData ^ fHighByte);
                                             icc1High = false;
                                         }
-                                        CheckAndStopSequentialFlash();
+                                        //CheckAndStopSequentialFlash();
                                     }
                                 }
                                 string vac240V = ((message[7] << 8) | message[8]).ToString() + "V";
@@ -3591,7 +3560,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc2Page.HighButton = new SolidColorBrush(Colors.LightGray);
                                             _icc2Page.HighForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 if ((message[6] & 0x02) == 0x02) // MED
@@ -3623,7 +3592,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc2Page.HighButton = new SolidColorBrush(Colors.LightGray);
                                             _icc2Page.HighForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 if ((message[6] & 0x04) == 0x04) // HIGH
@@ -3655,7 +3624,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc2Page.MedButton = new SolidColorBrush(Colors.LightGray);
                                             _icc2Page.MedForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 // Copy mode bit from SHORT_DATA_RESPONSE (bit 4) to iccMessageData (bits 5/6)
@@ -3713,7 +3682,7 @@ public partial class MainViewModel : ViewModelBase
                                             icc2MessageData = (byte)(icc2MessageData ^ fHighByte);
                                             icc2High = false;
                                         }
-                                        CheckAndStopSequentialFlash();
+                                       // CheckAndStopSequentialFlash();
                                     }
                                 }
                                 string vac240V = ((message[7] << 8) | message[8]).ToString() + "V";
@@ -3814,7 +3783,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc3Page.HighButton = new SolidColorBrush(Colors.LightGray);
                                             _icc3Page.HighForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 if ((message[6] & 0x02) == 0x02) // MED
@@ -3846,7 +3815,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc3Page.HighButton = new SolidColorBrush(Colors.LightGray);
                                             _icc3Page.HighForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 if ((message[6] & 0x04) == 0x04) // HIGH
@@ -3878,7 +3847,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc3Page.MedButton = new SolidColorBrush(Colors.LightGray);
                                             _icc3Page.MedForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 // Copy mode bit from SHORT_DATA_RESPONSE (bit 4) to iccMessageData (bits 5/6)
@@ -3935,7 +3904,7 @@ public partial class MainViewModel : ViewModelBase
                                             icc3MessageData = (byte)(icc3MessageData ^ fHighByte);
                                             icc3High = false;
                                         }
-                                        CheckAndStopSequentialFlash();
+                                       // CheckAndStopSequentialFlash();
                                     }
                                 }
                                 string vac240V = ((message[7] << 8) | message[8]).ToString() + "V";
@@ -4036,7 +4005,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc4Page.HighButton = new SolidColorBrush(Colors.LightGray);
                                             _icc4Page.HighForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 if ((message[6] & 0x02) == 0x02) // MED
@@ -4068,7 +4037,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc4Page.HighButton = new SolidColorBrush(Colors.LightGray);
                                             _icc4Page.HighForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 if ((message[6] & 0x04) == 0x04) // HIGH
@@ -4100,7 +4069,7 @@ public partial class MainViewModel : ViewModelBase
                                             _icc4Page.MedButton = new SolidColorBrush(Colors.LightGray);
                                             _icc4Page.MedForeground = new SolidColorBrush(Colors.Black);
                                         }
-                                        CheckAndStartSequentialFlash();
+                                       // CheckAndStartSequentialFlash();
                                     }
                                 }
                                 // Copy mode bit from SHORT_DATA_RESPONSE (bit 4) to iccMessageData (bits 5/6)
@@ -4158,7 +4127,7 @@ public partial class MainViewModel : ViewModelBase
                                             icc4MessageData = (byte)(icc4MessageData ^ fHighByte);
                                             icc4High = false;
                                         }
-                                        CheckAndStopSequentialFlash();
+                                        //CheckAndStopSequentialFlash();
                                     }
                                 }
                                 string vac240V = ((message[7] << 8) | message[8]).ToString() + "V";
@@ -8210,7 +8179,7 @@ public partial class MainViewModel : ViewModelBase
         if (cmMessageData != icc1MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc1MessageData, "ICC1");
-            _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 1 do not match." + mismatchInfo);
+            //_homePage.AppendLog("\nSETTING ERROR: CM and LVICC 1 do not match." + mismatchInfo);
 
             // activate mode error
             _icc1Page.IsCommandErrorVisible = true;
@@ -8376,7 +8345,7 @@ public partial class MainViewModel : ViewModelBase
         if (AlsfMode && cmMessageData != icc2MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc2MessageData, "ICC2");
-            _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 2 do not match." + mismatchInfo);
+            //_homePage.AppendLog("\nSETTING ERROR: CM and LVICC 2 do not match." + mismatchInfo);
 
             // activate mode error
             _icc2Page.IsCommandErrorVisible = true;
@@ -8545,7 +8514,7 @@ public partial class MainViewModel : ViewModelBase
         if (cmMessageData != icc3MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc3MessageData, "ICC3");
-            _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 3 do not match." + mismatchInfo);
+           // _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 3 do not match." + mismatchInfo);
 
             // activate mode error
             _icc3Page.IsCommandErrorVisible = true;
@@ -8711,7 +8680,7 @@ public partial class MainViewModel : ViewModelBase
         if (AlsfMode && cmMessageData != icc4MessageData)
         {
             string mismatchInfo = GetBitMismatchInfo(cmMessageData, icc4MessageData, "ICC4");
-            _homePage.AppendLog("\nSETTING ERROR: CM and LVICC 4 do not match." + mismatchInfo);
+            //_homePage.AppendLog("\nSETTING ERROR: CM and LVICC 4 do not match." + mismatchInfo);
 
             // activate mode error
             _icc4Page.IsCommandErrorVisible = true;
@@ -11518,7 +11487,7 @@ public partial class MainViewModel : ViewModelBase
             }
                 
             
-            _homePage.AppendLog("\nMODE ERROR: LVICC 1 remote is turned OFF.");
+           // _homePage.AppendLog("\nMODE ERROR: LVICC 1 remote is turned OFF.");
 
             // activate mode error
             _icc1Page.IsCommandErrorVisible = true;
@@ -11776,7 +11745,7 @@ public partial class MainViewModel : ViewModelBase
             _icc2Page.RemButton = new SolidColorBrush(Colors.LightGray);
             _icc2Page.RemForeground = new SolidColorBrush(Colors.Black);
             icc2Rem = false;
-            _homePage.AppendLog("\nMODE ERROR: LVICC 2 remote is turned OFF.");
+            //_homePage.AppendLog("\nMODE ERROR: LVICC 2 remote is turned OFF.");
 
             if (icc2Connected)
             {
@@ -12045,7 +12014,7 @@ public partial class MainViewModel : ViewModelBase
             _icc3Page.RemButton = new SolidColorBrush(Colors.LightGray);
             _icc3Page.RemForeground = new SolidColorBrush(Colors.Black);
             icc3Rem = false;
-            _homePage.AppendLog("\nMODE ERROR: LVICC 3 remote is turned OFF.");
+            //_homePage.AppendLog("\nMODE ERROR: LVICC 3 remote is turned OFF.");
 
             if (icc3Connected)
             {
@@ -12315,7 +12284,7 @@ public partial class MainViewModel : ViewModelBase
             _icc4Page.RemButton = new SolidColorBrush(Colors.LightGray);
             _icc4Page.RemForeground = new SolidColorBrush(Colors.Black);
             icc4Rem = false;
-            _homePage.AppendLog("\nMODE ERROR: LVICC 4 remote is turned OFF.");
+           // _homePage.AppendLog("\nMODE ERROR: LVICC 4 remote is turned OFF.");
 
             if (icc4Connected)
             {

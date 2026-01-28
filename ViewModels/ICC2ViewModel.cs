@@ -211,7 +211,7 @@ public partial class ICC2ViewModel : ViewModelBase
             {
                 FlasherMisfires = misfires.ToString(); // Update property
                 FlasherMisfireBackground = new SolidColorBrush(Colors.White); // Reset background
-                _homeViewModel.AppendLog($"ICC2 FlasherMisfires updated to {misfires}.");
+                //_homeViewModel.AppendLog($"ICC2 FlasherMisfires updated to {misfires}.");
 
                 // Update cmMessageData or other logic if needed
 
