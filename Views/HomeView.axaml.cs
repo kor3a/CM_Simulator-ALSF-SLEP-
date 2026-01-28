@@ -23,6 +23,10 @@ public partial class HomeView : Window
     {
         InitializeComponent();
 
+        // Subscribe to events before setting DataContext so handlers fire
+        this.DataContextChanged += OnDataContextChanged;
+        this.Opened += HomeView_Opened;
+
         // Create MainViewModel and use its HomePage instance
         _mainViewModel = new MainViewModel();
         DataContext = _mainViewModel.HomePage;
@@ -34,9 +38,6 @@ public partial class HomeView : Window
         };
 
         LogTextBox.PointerPressed += LogTextBox_PointerPressed;
-
-        this.DataContextChanged += OnDataContextChanged;
-        this.Opened += HomeView_Opened;
     }
 
     private async void HomeView_Opened(object? sender, EventArgs e)
