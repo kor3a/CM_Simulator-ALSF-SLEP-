@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -16,6 +17,7 @@ public partial class HomeView : Window
 {
     private ScrollViewer? _scrollViewer;
     private MainViewModel? _mainViewModel;
+    private bool _autoScroll = true;
 
     public HomeView()
     {
@@ -29,8 +31,9 @@ public partial class HomeView : Window
         {
             // Find ScrollViewer inside the TextBox template
             _scrollViewer = LogTextBox.FindDescendantOfType<ScrollViewer>();
-
         };
+
+        LogTextBox.PointerPressed += LogTextBox_PointerPressed;
 
         this.DataContextChanged += OnDataContextChanged;
         this.Opened += HomeView_Opened;
@@ -53,20 +56,42 @@ public partial class HomeView : Window
         }
     }
 
+    private void LogTextBox_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (_autoScroll)
+        {
+            // User clicked while auto-scroll is active — pause it so they can read
+            _autoScroll = false;
+        }
+        else
+        {
+            // User clicked again — scroll to bottom and re-enable auto-scroll
+            _autoScroll = true;
+            ScrollToBottom();
+        }
+    }
+
+    private void ScrollToBottom()
+    {
+        LogTextBox.CaretIndex = LogTextBox.Text?.Length ?? 0;
+
+        if (_scrollViewer != null)
+        {
+            _scrollViewer.Offset = new Avalonia.Vector(
+                _scrollViewer.Offset.X,
+                _scrollViewer.Extent.Height);
+        }
+    }
+
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(HomeViewModel.LogText))
         {
             Dispatcher.UIThread.Post(() =>
             {
-                LogTextBox.CaretIndex = LogTextBox.Text?.Length ?? 0;
-
-                // Use ScrollViewer to scroll to bottom if available
-                if (_scrollViewer != null)
+                if (_autoScroll)
                 {
-                    _scrollViewer.Offset = new Avalonia.Vector(
-                        _scrollViewer.Offset.X,
-                        _scrollViewer.Extent.Height);
+                    ScrollToBottom();
                 }
             });
         }
