@@ -3496,7 +3496,19 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                _icc1Page.SubmitFlasherMisfires(misfires);
+
+                                // Update misfire error indicator (don't call SubmitFlasherMisfires
+                                // as that relay command also sends a CM command meant for user input only)
+                                if (message[29] > 7)
+                                {
+                                    _icc1Page.FlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                    _icc1Page.IsMisfireErrorVisible = true;
+                                }
+                                else
+                                {
+                                    _icc1Page.FlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                    _icc1Page.IsMisfireErrorVisible = false;
+                                }
 
                                 _icc1Page.Vac240V = vac240V;
                                 _icc1Page.Vac240A = vac240A;
@@ -3719,7 +3731,19 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                _icc2Page.SubmitFlasherMisfires(misfires);
+
+                                // Update misfire error indicator (don't call SubmitFlasherMisfires
+                                // as that relay command also sends a CM command meant for user input only)
+                                if (message[29] > 7)
+                                {
+                                    _icc2Page.FlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                    _icc2Page.IsMisfireErrorVisible = true;
+                                }
+                                else
+                                {
+                                    _icc2Page.FlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                    _icc2Page.IsMisfireErrorVisible = false;
+                                }
 
                                 _icc2Page.Vac240V = vac240V;
                                 _icc2Page.Vac240A = vac240A;
@@ -3941,7 +3965,19 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                _icc3Page.SubmitFlasherMisfires(misfires);
+
+                                // Update misfire error indicator (don't call SubmitFlasherMisfires
+                                // as that relay command also sends a CM command meant for user input only)
+                                if (message[29] > 7)
+                                {
+                                    _icc3Page.FlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                    _icc3Page.IsMisfireErrorVisible = true;
+                                }
+                                else
+                                {
+                                    _icc3Page.FlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                    _icc3Page.IsMisfireErrorVisible = false;
+                                }
 
                                 _icc3Page.Vac240V = vac240V;
                                 _icc3Page.Vac240A = vac240A;
@@ -4164,7 +4200,19 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                _icc4Page.SubmitFlasherMisfires(misfires);
+
+                                // Update misfire error indicator (don't call SubmitFlasherMisfires
+                                // as that relay command also sends a CM command meant for user input only)
+                                if (message[29] > 7)
+                                {
+                                    _icc4Page.FlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                    _icc4Page.IsMisfireErrorVisible = true;
+                                }
+                                else
+                                {
+                                    _icc4Page.FlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                    _icc4Page.IsMisfireErrorVisible = false;
+                                }
 
                                 _icc4Page.Vac240V = vac240V;
                                 _icc4Page.Vac240A = vac240A;
