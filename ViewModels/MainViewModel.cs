@@ -1940,6 +1940,13 @@ public partial class MainViewModel : ViewModelBase
             Sp.RtsEnable = true;
             Sp.Write(cmCommandTx, 0, cmCommandTx.Length);
             Sp.RtsEnable = false;
+
+            // Skip first 5 comparisons to allow ICCs to process the new command
+            _skipIcc1Comparisons = 5;
+            _skipIcc2Comparisons = 5;
+            _skipIcc3Comparisons = 5;
+            _skipIcc4Comparisons = 5;
+
             _homePage.AppendLog($"Sent CM to global command message: {BitConverter.ToString(cmCommandTx)}");
 
             // Set TX indicator ON
@@ -2059,6 +2066,13 @@ public partial class MainViewModel : ViewModelBase
             Sp.RtsEnable = true;
             Sp.Write(cmCommandTx, 0, cmCommandTx.Length);
             Sp.RtsEnable = false;
+
+            // Skip first 5 comparisons for this ICC to allow it to process the resent command
+            if (destination == icc1) _skipIcc1Comparisons = 5;
+            else if (destination == icc2) _skipIcc2Comparisons = 5;
+            else if (destination == icc3) _skipIcc3Comparisons = 5;
+            else if (destination == icc4) _skipIcc4Comparisons = 5;
+
             _homePage.AppendLog($"Sent CM Command Message to the ICC {destString}: {BitConverter.ToString(cmCommandTx)}");
 
             // Set TX indicator ON
