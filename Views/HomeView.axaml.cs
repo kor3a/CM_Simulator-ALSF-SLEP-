@@ -37,7 +37,8 @@ public partial class HomeView : Window
             _scrollViewer = LogTextBox.FindDescendantOfType<ScrollViewer>();
         };
 
-        LogTextBox.PointerPressed += LogTextBox_PointerPressed;
+        LogTextBox.AddHandler(PointerPressedEvent, LogTextBox_PointerPressed,
+            RoutingStrategies.Bubble, handledEventsToo: true);
     }
 
     private async void HomeView_Opened(object? sender, EventArgs e)
