@@ -87,13 +87,15 @@ public partial class HomeView : Window
     {
         if (e.PropertyName == nameof(HomeViewModel.LogText))
         {
+            // Use Background priority so the scroll runs after the layout pass
+            // has updated the TextBox extent with the new content
             Dispatcher.UIThread.Post(() =>
             {
                 if (_autoScroll)
                 {
                     ScrollToBottom();
                 }
-            });
+            }, DispatcherPriority.Background);
         }
     }
 
