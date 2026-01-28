@@ -3221,7 +3221,7 @@ public partial class MainViewModel : ViewModelBase
                     }
                     if ((message[5] & ledDisplayTest) == 0)
                     {
-                        _homePage.AppendLog("LED Display Test - Passed");
+                        _homePage.AppendLog("LED Display Test - Passed\n");
                     }
                     else if ((message[5] ^ ledDisplayTest) == 0)
                     {
