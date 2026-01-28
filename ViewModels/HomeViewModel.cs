@@ -261,7 +261,7 @@ public partial class HomeViewModel : ViewModelBase
     private IBrush _rxStatus = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
-    public string _logText = "";
+    private string _logText = "";
 
     private const int MaxLogLines = 1000;
     private readonly List<string> _logLines = new List<string>();
