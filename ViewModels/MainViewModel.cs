@@ -3211,7 +3211,7 @@ public partial class MainViewModel : ViewModelBase
                     }
                     else if ((message[5] ^ ledDisplayTest) == 0)
                     {
-                        _homePage.AppendLog("LED Display Test - Failed");
+                        _homePage.AppendLog("LED Display Test - Failed\n");
                     }
                     break;
                 case byte n when n == COMMANDS_RESPONSE: // 0x42
