@@ -73,7 +73,7 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _alsfMode = true;
 
-    // Skip comparison counters for ICCs after mode switch
+    // Skip comparison counters for ICCs after commands or mode switches
     // These are decremented each time a comparison would occur, skipping until 0
     private int _skipIcc1Comparisons = 0;
     private int _skipIcc2Comparisons = 0;
@@ -2618,6 +2618,13 @@ public partial class MainViewModel : ViewModelBase
                 Sp.RtsEnable = true;
                 Sp.Write(cmCommandTx, 0, cmCommandTx.Length);
                 Sp.RtsEnable = false;
+
+                // Skip first 5 comparisons to allow ICCs to process the new command
+                // (multiple response types can trigger comparisons: SHORT_DATA, COMMANDS, CONFIG)
+                _skipIcc1Comparisons = 5;
+                _skipIcc2Comparisons = 5;
+                _skipIcc3Comparisons = 5;
+                _skipIcc4Comparisons = 5;
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
