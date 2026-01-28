@@ -2360,6 +2360,10 @@ public partial class MainViewModel : ViewModelBase
                     if (cancellationToken.IsCancellationRequested)
                         break;
 
+                    // Re-check if this address should still be polled (mode may have changed mid-loop)
+                    if (!AlsfMode && GetIccNumber(address) % 2 == 0)
+                        continue;
+
                     bool isNewAddress = !_initializedAddresses.Contains(address);
 
                     if (isNewAddress)
@@ -2398,6 +2402,10 @@ public partial class MainViewModel : ViewModelBase
                         if (cancellationToken.IsCancellationRequested)
                             break;
 
+                        // Re-check if this address should still be polled (mode may have changed mid-loop)
+                        if (!AlsfMode && GetIccNumber(address) % 2 == 0)
+                            continue;
+
                         await SendConfigDataRequestAsync(address, cancellationToken);
 
                         // Wait for response with timeout
@@ -2435,7 +2443,7 @@ public partial class MainViewModel : ViewModelBase
     /// In ALSF mode, returns all visible addresses.
     /// In SSALR mode, returns only odd-numbered LVICCs (1, 3, 5, etc.).
     /// </summary>
-    private List<byte> GetAddressesToPoll()
+    public List<byte> GetAddressesToPoll()
     {
         if (AlsfMode)
         {

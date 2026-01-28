@@ -1051,11 +1051,12 @@ public partial class HomeViewModel : ViewModelBase
     {
         _mainViewModel.disableButtons();
 
-        for(int i = 0; i < 3; i++)
+        List<byte> addressesToPoll = _mainViewModel.GetAddressesToPoll();
+        foreach (byte address in addressesToPoll)
         {
-            await _mainViewModel.SendShortDataRequestAsync(_mainViewModel.addresses[i]);
+            await _mainViewModel.SendShortDataRequestAsync(address);
             // Wait for response
-            await _mainViewModel.WaitForResponseAsync(_mainViewModel.addresses[i], 500);
+            await _mainViewModel.WaitForResponseAsync(address, 500);
             await Task.Delay(100);
         }
 
@@ -1067,11 +1068,12 @@ public partial class HomeViewModel : ViewModelBase
     {
         _mainViewModel.disableButtons();
 
-        for(int i = 0; i < 3; i++)
+        List<byte> addressesToPoll = _mainViewModel.GetAddressesToPoll();
+        foreach (byte address in addressesToPoll)
         {
-            await _mainViewModel.SendConfigDataRequestAsync(_mainViewModel.addresses[i]);
+            await _mainViewModel.SendConfigDataRequestAsync(address);
             // Wait for response
-            await _mainViewModel.WaitForResponseAsync(_mainViewModel.addresses[i], 500);
+            await _mainViewModel.WaitForResponseAsync(address, 500);
             await Task.Delay(100);
         }
 
