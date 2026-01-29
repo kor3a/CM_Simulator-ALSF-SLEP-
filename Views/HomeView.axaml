@@ -304,7 +304,7 @@
                    VerticalAlignment="Center"/>
           </Button>
         </StackPanel>
-        <StackPanel Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+        <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
 			<StackPanel Orientation="Horizontal" Margin="0,0,10,0">
 				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TxStatus}" Margin="10,0"/>
                 <TextBlock Text="TX" VerticalAlignment="Center" FontSize="16" />
