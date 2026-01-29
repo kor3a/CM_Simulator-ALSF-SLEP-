@@ -263,6 +263,16 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     private IBrush _twoHzSyncStatus = new SolidColorBrush(Colors.LightGray);
 
+    // 2Hz Flash overlay properties for visible LVICCs
+    [ObservableProperty]
+    private bool _visibleLvicc1FlashActive = false;
+
+    [ObservableProperty]
+    private bool _visibleLvicc2FlashActive = false;
+
+    [ObservableProperty]
+    private bool _visibleLvicc3FlashActive = false;
+
     [ObservableProperty]
     private string _logText = "";
 

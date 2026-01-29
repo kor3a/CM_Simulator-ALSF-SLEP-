@@ -80,6 +80,9 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isSyncPortConnected = false;
 
+    // 2Hz Flash loop cancellation token
+    private CancellationTokenSource _twoHzFlashCts;
+
     [ObservableProperty]
     private bool _alsfMode = true;
 
@@ -16887,6 +16890,9 @@ public partial class MainViewModel : ViewModelBase
 
         try
         {
+            // Stop existing flash loop if running
+            StopTwoHzFlashLoop();
+
             // Disconnect existing sync port if connected
             if (SyncSerialPort != null && SyncSerialPort.IsOpen)
             {
@@ -16906,6 +16912,15 @@ public partial class MainViewModel : ViewModelBase
 
             IsSyncPortConnected = true;
             _homePage.AppendLog($"2Hz Sync port connected: {SelectedSyncPort}");
+
+            // Turn on the 2Hz indicator (keep it green while connected)
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.Green);
+            });
+
+            // Start the 2Hz flash loop
+            StartTwoHzFlashLoop();
         }
         catch (Exception ex)
         {
@@ -16917,6 +16932,9 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     public void DisconnectSyncPort(Window popupWindow)
     {
+        // Stop the flash loop first
+        StopTwoHzFlashLoop();
+
         if (SyncSerialPort != null)
         {
             if (SyncSerialPort.IsOpen)
@@ -16930,10 +16948,13 @@ public partial class MainViewModel : ViewModelBase
         IsSyncPortConnected = false;
         _homePage.AppendLog("2Hz Sync port disconnected");
 
-        // Reset indicator to gray
+        // Reset indicator to gray and clear all flash overlays
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.LightGray);
+            _homePage.VisibleLvicc1FlashActive = false;
+            _homePage.VisibleLvicc2FlashActive = false;
+            _homePage.VisibleLvicc3FlashActive = false;
         });
     }
 
@@ -16944,26 +16965,93 @@ public partial class MainViewModel : ViewModelBase
             var sp = sender as SerialPort;
             if (sp == null || !sp.IsOpen) return;
 
-            // Read all available bytes (we don't care about the content, just the signal)
+            // Read all available bytes to clear the buffer
             int bytesToRead = sp.BytesToRead;
             if (bytesToRead > 0)
             {
                 byte[] buffer = new byte[bytesToRead];
                 sp.Read(buffer, 0, bytesToRead);
-
-                // Flash the 2Hz indicator green when signal is received
-                Dispatcher.UIThread.InvokeAsync(async () =>
-                {
-                    _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.Green);
-                    await Task.Delay(100); // Brief flash
-                    _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.LightGray);
-                });
             }
         }
         catch (Exception)
         {
             // Ignore errors during sync port reading
         }
+    }
+
+    private void StartTwoHzFlashLoop()
+    {
+        _twoHzFlashCts = new CancellationTokenSource();
+        var token = _twoHzFlashCts.Token;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                int currentIndex = 0; // 0, 1, 2 for the three visible LVICCs
+
+                while (!token.IsCancellationRequested)
+                {
+                    // Turn on current LVICC flash, turn off others
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _homePage.VisibleLvicc1FlashActive = (currentIndex == 0);
+                        _homePage.VisibleLvicc2FlashActive = (currentIndex == 1);
+                        _homePage.VisibleLvicc3FlashActive = (currentIndex == 2);
+                    });
+
+                    // Send 2Hz signal data out the sync port if connected
+                    if (SyncSerialPort != null && SyncSerialPort.IsOpen)
+                    {
+                        try
+                        {
+                            // Send a byte indicating which LVICC is flashing (1, 2, or 3 based on visible position)
+                            byte[] syncData = new byte[] { (byte)(currentIndex + 1) };
+                            SyncSerialPort.Write(syncData, 0, syncData.Length);
+                        }
+                        catch (Exception)
+                        {
+                            // Ignore write errors
+                        }
+                    }
+
+                    // Wait 250ms (flash on duration)
+                    await Task.Delay(250, token);
+
+                    // Move to next LVICC in sequence
+                    currentIndex = (currentIndex + 1) % 3;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Normal cancellation, do nothing
+            }
+            catch (Exception ex)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _homePage.AppendLog($"2Hz flash loop error: {ex.Message}");
+                });
+            }
+        }, token);
+    }
+
+    private void StopTwoHzFlashLoop()
+    {
+        if (_twoHzFlashCts != null)
+        {
+            _twoHzFlashCts.Cancel();
+            _twoHzFlashCts.Dispose();
+            _twoHzFlashCts = null;
+        }
+
+        // Clear all flash overlays
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _homePage.VisibleLvicc1FlashActive = false;
+            _homePage.VisibleLvicc2FlashActive = false;
+            _homePage.VisibleLvicc3FlashActive = false;
+        });
     }
 
     [RelayCommand]
