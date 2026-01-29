@@ -261,6 +261,9 @@ public partial class HomeViewModel : ViewModelBase
     private IBrush _rxStatus = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
+    private IBrush _twoHzSyncStatus = new SolidColorBrush(Colors.LightGray);
+
+    [ObservableProperty]
     private string _logText = "";
 
     private const int MaxLogLines = 1000;

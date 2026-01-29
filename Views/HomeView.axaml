@@ -309,9 +309,13 @@
 				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TxStatus}" Margin="10,0"/>
                 <TextBlock Text="TX" VerticalAlignment="Center" FontSize="16" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,10,20">
+            <StackPanel Orientation="Horizontal" Margin="0,5,10,0">
 				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding RxStatus}" Margin="10,0"/>
                 <TextBlock Text="RX" VerticalAlignment="Center" FontSize="16" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,10,20">
+				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TwoHzSyncStatus}" Margin="10,0"/>
+                <TextBlock Text="2Hz" VerticalAlignment="Center" FontSize="16" />
             </StackPanel>
         </StackPanel>
 

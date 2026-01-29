@@ -70,6 +70,16 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private SerialPort _sp;
 
+    // 2Hz Sync Port properties
+    [ObservableProperty]
+    private string _selectedSyncPort;
+
+    [ObservableProperty]
+    private SerialPort _syncSerialPort;
+
+    [ObservableProperty]
+    private bool _isSyncPortConnected = false;
+
     [ObservableProperty]
     private bool _alsfMode = true;
 
@@ -16856,6 +16866,104 @@ public partial class MainViewModel : ViewModelBase
         }
         popupWindow.Close();
 
+    }
+
+    // 2Hz Sync Port Methods
+    [RelayCommand]
+    public void ConnectSyncPort(Window popupWindow)
+    {
+        if (string.IsNullOrEmpty(SelectedSyncPort))
+        {
+            _homePage.AppendLog("No sync port selected");
+            return;
+        }
+
+        // Don't allow same port as main communication port
+        if (SelectedSyncPort == SelectedPort && Sp != null && Sp.IsOpen)
+        {
+            _homePage.AppendLog("Sync port cannot be the same as the communication port");
+            return;
+        }
+
+        try
+        {
+            // Disconnect existing sync port if connected
+            if (SyncSerialPort != null && SyncSerialPort.IsOpen)
+            {
+                SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
+                SyncSerialPort.Close();
+                SyncSerialPort.Dispose();
+            }
+
+            SyncSerialPort = new SerialPort(SelectedSyncPort, 9600)
+            {
+                ReadBufferSize = 128,
+                ReadTimeout = 200,
+                WriteTimeout = 200,
+            };
+            SyncSerialPort.DataReceived += SyncPortDataReceivedHandler;
+            SyncSerialPort.Open();
+
+            IsSyncPortConnected = true;
+            _homePage.AppendLog($"2Hz Sync port connected: {SelectedSyncPort}");
+        }
+        catch (Exception ex)
+        {
+            _homePage.AppendLog($"Error connecting sync port: {ex.Message}");
+            IsSyncPortConnected = false;
+        }
+    }
+
+    [RelayCommand]
+    public void DisconnectSyncPort(Window popupWindow)
+    {
+        if (SyncSerialPort != null)
+        {
+            if (SyncSerialPort.IsOpen)
+            {
+                SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
+                SyncSerialPort.Close();
+            }
+            SyncSerialPort.Dispose();
+            SyncSerialPort = null;
+        }
+        IsSyncPortConnected = false;
+        _homePage.AppendLog("2Hz Sync port disconnected");
+
+        // Reset indicator to gray
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.LightGray);
+        });
+    }
+
+    private void SyncPortDataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+    {
+        try
+        {
+            var sp = sender as SerialPort;
+            if (sp == null || !sp.IsOpen) return;
+
+            // Read all available bytes (we don't care about the content, just the signal)
+            int bytesToRead = sp.BytesToRead;
+            if (bytesToRead > 0)
+            {
+                byte[] buffer = new byte[bytesToRead];
+                sp.Read(buffer, 0, bytesToRead);
+
+                // Flash the 2Hz indicator green when signal is received
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.Green);
+                    await Task.Delay(100); // Brief flash
+                    _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.LightGray);
+                });
+            }
+        }
+        catch (Exception)
+        {
+            // Ignore errors during sync port reading
+        }
     }
 
     [RelayCommand]

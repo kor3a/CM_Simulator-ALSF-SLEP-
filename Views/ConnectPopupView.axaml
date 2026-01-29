@@ -2,8 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
-        Width="300" Height="200"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="380"
+        Width="300" Height="380"
         x:Class="CM_Simulator.ConnectPopupView"
         xmlns:vm="clr-namespace:CM_Simulator.ViewModels;assembly=CM_Simulator"
         x:DataType="vm:MainViewModel"
@@ -12,8 +12,9 @@
         Background="White"
         Title="Connect">
 
-  <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,10,0">
-    <TextBlock Text="Select COM Port:" Foreground="Black" FontSize="15" Margin="0,5"/>
+  <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,10,0">
+    <!-- Main COM Port Section -->
+    <TextBlock Text="Communication Port:" Foreground="Black" FontSize="15" FontWeight="Bold" Margin="0,5"/>
     <StackPanel Orientation="Horizontal">
       <ComboBox ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort}" Width="220" HorizontalAlignment="Stretch" MaxWidth="220" Margin="0,0,5,0"/>
       <Button Command="{Binding RefreshPortsCommand}" Background="Gray" >
@@ -21,7 +22,7 @@
       </Button>
     </StackPanel>
 
-    <Button x:Name="connectBtn" Classes="connect" Foreground="Black" Background="LightGreen" MaxWidth="280" HorizontalAlignment="Stretch" Margin="0,15,0,0" Command="{Binding ConnectCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+    <Button x:Name="connectBtn" Classes="connect" Foreground="Black" Background="LightGreen" MaxWidth="280" HorizontalAlignment="Stretch" Margin="0,10,0,0" Command="{Binding ConnectCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
       <StackPanel Orientation="Horizontal">
         <Image Source="{SvgImage /Assets/Images/plugs-connected-fill.svg}" Width="16"></Image>
         <Label Content="Connect"></Label>
@@ -34,5 +35,39 @@
         <Label Content="Disconnect"></Label>
       </StackPanel>
     </Button>
+
+    <!-- Separator -->
+    <Border Height="1" Background="LightGray" Margin="0,15,0,10"/>
+
+    <!-- 2Hz Sync Port Section -->
+    <TextBlock Text="2Hz Sync Port:" Foreground="Black" FontSize="15" FontWeight="Bold" Margin="0,5"/>
+    <StackPanel Orientation="Horizontal">
+      <ComboBox ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedSyncPort}" Width="220" HorizontalAlignment="Stretch" MaxWidth="220" Margin="0,0,5,0"/>
+      <Button Command="{Binding RefreshPortsCommand}" Background="Gray" >
+        <Image Source="{SvgImage /Assets/Images/refresh.svg}" Width="16" />
+      </Button>
+    </StackPanel>
+
+    <Button x:Name="connectSyncBtn" Foreground="Black" Background="LightBlue" MaxWidth="280" HorizontalAlignment="Stretch" Margin="0,10,0,0" Command="{Binding ConnectSyncPortCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+      <StackPanel Orientation="Horizontal">
+        <Image Source="{SvgImage /Assets/Images/plugs-connected-fill.svg}" Width="16"></Image>
+        <Label Content="Connect 2Hz Sync"></Label>
+      </StackPanel>
+    </Button>
+
+    <Button x:Name="disconnectSyncBtn" Foreground="Black" Background="LightCoral" MaxWidth="280" HorizontalAlignment="Stretch" Command="{Binding DisconnectSyncPortCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+      <StackPanel Orientation="Horizontal">
+        <Image Source="{SvgImage /Assets/Images/plugs-disconnected-fill.svg}" Width="16"></Image>
+        <Label Content="Disconnect 2Hz Sync"></Label>
+      </StackPanel>
+    </Button>
+
+    <!-- Sync Port Status -->
+    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+      <Ellipse Width="12" Height="12" Stroke="Black" StrokeThickness="1" Margin="0,0,5,0" Fill="Green" IsVisible="{Binding IsSyncPortConnected}"/>
+      <Ellipse Width="12" Height="12" Stroke="Black" StrokeThickness="1" Margin="0,0,5,0" Fill="LightGray" IsVisible="{Binding !IsSyncPortConnected}"/>
+      <TextBlock Text="Connected" Foreground="Green" FontSize="12" VerticalAlignment="Center" IsVisible="{Binding IsSyncPortConnected}"/>
+      <TextBlock Text="Disconnected" Foreground="Gray" FontSize="12" VerticalAlignment="Center" IsVisible="{Binding !IsSyncPortConnected}"/>
+    </StackPanel>
   </StackPanel>
 </Window>
