@@ -1099,6 +1099,7 @@ public partial class MainViewModel : ViewModelBase
     }
 
     #region PLCK Addresses
+    private byte plck0 = 0x22;
     private byte plck1 = 0x26;
     private byte plck2 = 0x27;
     private byte plck3 = 0x28;
