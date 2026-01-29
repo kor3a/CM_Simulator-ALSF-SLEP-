@@ -80,6 +80,9 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isSyncPortConnected = false;
 
+    // 2Hz signal loop cancellation token
+    private CancellationTokenSource _twoHzSignalCts;
+
     [ObservableProperty]
     private bool _alsfMode = true;
 
@@ -16887,6 +16890,9 @@ public partial class MainViewModel : ViewModelBase
 
         try
         {
+            // Stop existing signal loop if running
+            StopTwoHzSignalLoop();
+
             // Disconnect existing sync port if connected
             if (SyncSerialPort != null && SyncSerialPort.IsOpen)
             {
@@ -16912,6 +16918,9 @@ public partial class MainViewModel : ViewModelBase
             {
                 _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.Green);
             });
+
+            // Start sending 2Hz signal pulses
+            StartTwoHzSignalLoop();
         }
         catch (Exception ex)
         {
@@ -16923,6 +16932,9 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     public void DisconnectSyncPort(Window popupWindow)
     {
+        // Stop the signal loop first
+        StopTwoHzSignalLoop();
+
         if (SyncSerialPort != null)
         {
             if (SyncSerialPort.IsOpen)
@@ -16941,6 +16953,60 @@ public partial class MainViewModel : ViewModelBase
         {
             _homePage.TwoHzSyncStatus = new SolidColorBrush(Colors.LightGray);
         });
+    }
+
+    private void StartTwoHzSignalLoop()
+    {
+        _twoHzSignalCts = new CancellationTokenSource();
+        var token = _twoHzSignalCts.Token;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    // Send 2Hz pulse signal out the sync port
+                    if (SyncSerialPort != null && SyncSerialPort.IsOpen)
+                    {
+                        try
+                        {
+                            // Send a sync pulse byte
+                            byte[] syncPulse = new byte[] { 0x01 };
+                            SyncSerialPort.Write(syncPulse, 0, syncPulse.Length);
+                        }
+                        catch (Exception)
+                        {
+                            // Ignore write errors, port may have been disconnected
+                        }
+                    }
+
+                    // Wait 500ms for 2Hz rate (2 pulses per second)
+                    await Task.Delay(500, token);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Normal cancellation, do nothing
+            }
+            catch (Exception ex)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _homePage.AppendLog($"2Hz signal loop error: {ex.Message}");
+                });
+            }
+        }, token);
+    }
+
+    private void StopTwoHzSignalLoop()
+    {
+        if (_twoHzSignalCts != null)
+        {
+            _twoHzSignalCts.Cancel();
+            _twoHzSignalCts.Dispose();
+            _twoHzSignalCts = null;
+        }
     }
 
     private void SyncPortDataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
