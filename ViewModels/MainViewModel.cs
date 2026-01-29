@@ -73,7 +73,7 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _alsfMode = true;
 
-    // Skip comparison counters for ICCs after mode switch
+    // Skip comparison counters for ICCs after commands or mode switches
     // These are decremented each time a comparison would occur, skipping until 0
     private int _skipIcc1Comparisons = 0;
     private int _skipIcc2Comparisons = 0;
@@ -1099,6 +1099,7 @@ public partial class MainViewModel : ViewModelBase
     }
 
     #region PLCK Addresses
+    private byte plck0 = 0x22;
     private byte plck1 = 0x26;
     private byte plck2 = 0x27;
     private byte plck3 = 0x28;
@@ -1940,6 +1941,13 @@ public partial class MainViewModel : ViewModelBase
             Sp.RtsEnable = true;
             Sp.Write(cmCommandTx, 0, cmCommandTx.Length);
             Sp.RtsEnable = false;
+
+            // Skip first 5 comparisons to allow ICCs to process the new command
+            _skipIcc1Comparisons = 5;
+            _skipIcc2Comparisons = 5;
+            _skipIcc3Comparisons = 5;
+            _skipIcc4Comparisons = 5;
+
             _homePage.AppendLog($"Sent CM to global command message: {BitConverter.ToString(cmCommandTx)}");
 
             // Set TX indicator ON
@@ -2059,6 +2067,13 @@ public partial class MainViewModel : ViewModelBase
             Sp.RtsEnable = true;
             Sp.Write(cmCommandTx, 0, cmCommandTx.Length);
             Sp.RtsEnable = false;
+
+            // Skip first 5 comparisons for this ICC to allow it to process the resent command
+            if (destination == icc1) _skipIcc1Comparisons = 5;
+            else if (destination == icc2) _skipIcc2Comparisons = 5;
+            else if (destination == icc3) _skipIcc3Comparisons = 5;
+            else if (destination == icc4) _skipIcc4Comparisons = 5;
+
             _homePage.AppendLog($"Sent CM Command Message to the ICC {destString}: {BitConverter.ToString(cmCommandTx)}");
 
             // Set TX indicator ON
@@ -2618,6 +2633,13 @@ public partial class MainViewModel : ViewModelBase
                 Sp.RtsEnable = true;
                 Sp.Write(cmCommandTx, 0, cmCommandTx.Length);
                 Sp.RtsEnable = false;
+
+                // Skip first 5 comparisons to allow ICCs to process the new command
+                // (multiple response types can trigger comparisons: SHORT_DATA, COMMANDS, CONFIG)
+                _skipIcc1Comparisons = 5;
+                _skipIcc2Comparisons = 5;
+                _skipIcc3Comparisons = 5;
+                _skipIcc4Comparisons = 5;
 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -3200,11 +3222,11 @@ public partial class MainViewModel : ViewModelBase
                     }
                     if ((message[5] & ledDisplayTest) == 0)
                     {
-                        _homePage.AppendLog("LED Display Test - Passed");
+                        _homePage.AppendLog("LED Display Test - Passed\n");
                     }
                     else if ((message[5] ^ ledDisplayTest) == 0)
                     {
-                        _homePage.AppendLog("LED Display Test - Failed");
+                        _homePage.AppendLog("LED Display Test - Failed\n");
                     }
                     break;
                 case byte n when n == COMMANDS_RESPONSE: // 0x42
@@ -3475,7 +3497,19 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                _icc1Page.SubmitFlasherMisfires(misfires);
+
+                                // Update misfire error indicator (don't call SubmitFlasherMisfires
+                                // as that relay command also sends a CM command meant for user input only)
+                                if (message[29] > 7)
+                                {
+                                    _icc1Page.FlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                    _icc1Page.IsMisfireErrorVisible = true;
+                                }
+                                else
+                                {
+                                    _icc1Page.FlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                    _icc1Page.IsMisfireErrorVisible = false;
+                                }
 
                                 _icc1Page.Vac240V = vac240V;
                                 _icc1Page.Vac240A = vac240A;
@@ -3698,7 +3732,19 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                _icc2Page.SubmitFlasherMisfires(misfires);
+
+                                // Update misfire error indicator (don't call SubmitFlasherMisfires
+                                // as that relay command also sends a CM command meant for user input only)
+                                if (message[29] > 7)
+                                {
+                                    _icc2Page.FlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                    _icc2Page.IsMisfireErrorVisible = true;
+                                }
+                                else
+                                {
+                                    _icc2Page.FlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                    _icc2Page.IsMisfireErrorVisible = false;
+                                }
 
                                 _icc2Page.Vac240V = vac240V;
                                 _icc2Page.Vac240A = vac240A;
@@ -3920,7 +3966,19 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                _icc3Page.SubmitFlasherMisfires(misfires);
+
+                                // Update misfire error indicator (don't call SubmitFlasherMisfires
+                                // as that relay command also sends a CM command meant for user input only)
+                                if (message[29] > 7)
+                                {
+                                    _icc3Page.FlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                    _icc3Page.IsMisfireErrorVisible = true;
+                                }
+                                else
+                                {
+                                    _icc3Page.FlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                    _icc3Page.IsMisfireErrorVisible = false;
+                                }
 
                                 _icc3Page.Vac240V = vac240V;
                                 _icc3Page.Vac240A = vac240A;
@@ -4143,7 +4201,19 @@ public partial class MainViewModel : ViewModelBase
                                 string anodePulseDelay = ((message[25] << 8) | message[26]).ToString();
                                 string bleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
                                 string misfires = message[29].ToString();
-                                _icc4Page.SubmitFlasherMisfires(misfires);
+
+                                // Update misfire error indicator (don't call SubmitFlasherMisfires
+                                // as that relay command also sends a CM command meant for user input only)
+                                if (message[29] > 7)
+                                {
+                                    _icc4Page.FlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                    _icc4Page.IsMisfireErrorVisible = true;
+                                }
+                                else
+                                {
+                                    _icc4Page.FlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                    _icc4Page.IsMisfireErrorVisible = false;
+                                }
 
                                 _icc4Page.Vac240V = vac240V;
                                 _icc4Page.Vac240A = vac240A;
