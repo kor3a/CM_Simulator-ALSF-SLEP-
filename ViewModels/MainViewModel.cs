@@ -16939,6 +16939,7 @@ public partial class MainViewModel : ViewModelBase
         {
             if (SyncSerialPort.IsOpen)
             {
+                SyncSerialPort.DtrEnable = false; // Ensure DTR is LOW before closing
                 SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
                 SyncSerialPort.Close();
             }
@@ -16962,16 +16963,11 @@ public partial class MainViewModel : ViewModelBase
 
         _ = Task.Run(async () =>
         {
-            bool sendLow = true;
+            bool signalHigh = false;
             try
             {
-                // At 9600 baud: 10 bits/byte = ~1.04ms/byte
-                // For 250ms LOW period, need ~240 bytes of 0x00
-                // The brief stop bits (~104µs) between bytes are negligible
-                byte[] lowBuffer = new byte[240];
-                Array.Fill(lowBuffer, (byte)0x00);
-
                 // Use PeriodicTimer for precise 250ms intervals
+                // Toggle DTR every 250ms = 2Hz square wave (HIGH 250ms, LOW 250ms)
                 using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
 
                 while (await timer.WaitForNextTickAsync(token))
@@ -16980,13 +16976,9 @@ public partial class MainViewModel : ViewModelBase
                     {
                         try
                         {
-                            if (sendLow)
-                            {
-                                // Send 0x00 bytes for LOW period (~250ms of transmission)
-                                SyncSerialPort.Write(lowBuffer, 0, lowBuffer.Length);
-                            }
-                            // For HIGH period: don't send anything, TX line idles HIGH
-                            sendLow = !sendLow;
+                            // Toggle DTR line for 2Hz square wave output
+                            signalHigh = !signalHigh;
+                            SyncSerialPort.DtrEnable = signalHigh;
                         }
                         catch (Exception)
                         {
@@ -16997,7 +16989,11 @@ public partial class MainViewModel : ViewModelBase
             }
             catch (OperationCanceledException)
             {
-                // Normal cancellation, line will idle HIGH
+                // Normal cancellation, ensure DTR is LOW
+                if (SyncSerialPort != null && SyncSerialPort.IsOpen)
+                {
+                    try { SyncSerialPort.DtrEnable = false; } catch { }
+                }
             }
             catch (Exception ex)
             {
