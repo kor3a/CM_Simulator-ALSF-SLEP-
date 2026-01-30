@@ -16939,7 +16939,7 @@ public partial class MainViewModel : ViewModelBase
         {
             if (SyncSerialPort.IsOpen)
             {
-                SyncSerialPort.DtrEnable = false; // Ensure DTR is LOW before closing
+                SyncSerialPort.BreakState = false; // Ensure TX is idle (HIGH) before closing
                 SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
                 SyncSerialPort.Close();
             }
@@ -16967,7 +16967,7 @@ public partial class MainViewModel : ViewModelBase
             try
             {
                 // Use PeriodicTimer for precise 250ms intervals
-                // Toggle DTR every 250ms = 2Hz square wave (HIGH 250ms, LOW 250ms)
+                // Toggle every 250ms = 2Hz square wave (HIGH 250ms, LOW 250ms)
                 using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
 
                 while (await timer.WaitForNextTickAsync(token))
@@ -16976,9 +16976,10 @@ public partial class MainViewModel : ViewModelBase
                     {
                         try
                         {
-                            // Toggle DTR line for 2Hz square wave output
+                            // Toggle TX line using BreakState for 2Hz square wave
+                            // BreakState=true = TX LOW, BreakState=false = TX HIGH
                             signalHigh = !signalHigh;
-                            SyncSerialPort.DtrEnable = signalHigh;
+                            SyncSerialPort.BreakState = !signalHigh;
                         }
                         catch (Exception)
                         {
@@ -16989,10 +16990,10 @@ public partial class MainViewModel : ViewModelBase
             }
             catch (OperationCanceledException)
             {
-                // Normal cancellation, ensure DTR is LOW
+                // Normal cancellation, ensure TX is idle (HIGH)
                 if (SyncSerialPort != null && SyncSerialPort.IsOpen)
                 {
-                    try { SyncSerialPort.DtrEnable = false; } catch { }
+                    try { SyncSerialPort.BreakState = false; } catch { }
                 }
             }
             catch (Exception ex)
