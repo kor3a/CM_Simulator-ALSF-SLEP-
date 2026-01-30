@@ -16962,32 +16962,42 @@ public partial class MainViewModel : ViewModelBase
 
         _ = Task.Run(async () =>
         {
+            bool sendLow = true;
             try
             {
-                while (!token.IsCancellationRequested)
+                // At 9600 baud: 10 bits/byte = ~1.04ms/byte
+                // For 250ms LOW period, need ~240 bytes of 0x00
+                // The brief stop bits (~104µs) between bytes are negligible
+                byte[] lowBuffer = new byte[240];
+                Array.Fill(lowBuffer, (byte)0x00);
+
+                // Use PeriodicTimer for precise 250ms intervals
+                using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
+
+                while (await timer.WaitForNextTickAsync(token))
                 {
-                    // Send 2Hz pulse signal out the sync port
                     if (SyncSerialPort != null && SyncSerialPort.IsOpen)
                     {
                         try
                         {
-                            // Send a sync pulse byte
-                            byte[] syncPulse = new byte[] { 0x01 };
-                            SyncSerialPort.Write(syncPulse, 0, syncPulse.Length);
+                            if (sendLow)
+                            {
+                                // Send 0x00 bytes for LOW period (~250ms of transmission)
+                                SyncSerialPort.Write(lowBuffer, 0, lowBuffer.Length);
+                            }
+                            // For HIGH period: don't send anything, TX line idles HIGH
+                            sendLow = !sendLow;
                         }
                         catch (Exception)
                         {
                             // Ignore write errors, port may have been disconnected
                         }
                     }
-
-                    // Wait 500ms for 2Hz rate (2 pulses per second)
-                    await Task.Delay(500, token);
                 }
             }
             catch (OperationCanceledException)
             {
-                // Normal cancellation, do nothing
+                // Normal cancellation, line will idle HIGH
             }
             catch (Exception ex)
             {
