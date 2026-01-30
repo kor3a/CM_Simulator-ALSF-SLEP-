@@ -16964,7 +16964,12 @@ public partial class MainViewModel : ViewModelBase
         {
             try
             {
-                while (!token.IsCancellationRequested)
+                // Use PeriodicTimer for precise 2Hz timing (500ms intervals)
+                // Unlike Task.Delay, PeriodicTimer fires at exact intervals
+                // regardless of execution time between ticks
+                using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(500));
+
+                while (await timer.WaitForNextTickAsync(token))
                 {
                     // Send 2Hz pulse signal out the sync port
                     if (SyncSerialPort != null && SyncSerialPort.IsOpen)
@@ -16980,9 +16985,6 @@ public partial class MainViewModel : ViewModelBase
                             // Ignore write errors, port may have been disconnected
                         }
                     }
-
-                    // Wait 500ms for 2Hz rate (2 pulses per second)
-                    await Task.Delay(500, token);
                 }
             }
             catch (OperationCanceledException)
