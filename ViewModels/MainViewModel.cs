@@ -16939,7 +16939,6 @@ public partial class MainViewModel : ViewModelBase
         {
             if (SyncSerialPort.IsOpen)
             {
-                SyncSerialPort.BreakState = false; // Ensure TX is idle (HIGH) before closing
                 SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
                 SyncSerialPort.Close();
             }
@@ -16963,11 +16962,16 @@ public partial class MainViewModel : ViewModelBase
 
         _ = Task.Run(async () =>
         {
-            bool signalHigh = false;
+            bool sendLow = true;
             try
             {
+                // At 9600 baud: 10 bits/byte = ~1.04ms/byte
+                // For 250ms LOW period, need ~240 bytes of 0x00
+                // The brief stop bits (~104µs) between bytes are negligible
+                byte[] lowBuffer = new byte[240];
+                Array.Fill(lowBuffer, (byte)0x00);
+
                 // Use PeriodicTimer for precise 250ms intervals
-                // Toggle every 250ms = 2Hz square wave (HIGH 250ms, LOW 250ms)
                 using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
 
                 while (await timer.WaitForNextTickAsync(token))
@@ -16976,10 +16980,13 @@ public partial class MainViewModel : ViewModelBase
                     {
                         try
                         {
-                            // Toggle TX line using BreakState for 2Hz square wave
-                            // BreakState=true = TX LOW, BreakState=false = TX HIGH
-                            signalHigh = !signalHigh;
-                            SyncSerialPort.BreakState = !signalHigh;
+                            if (sendLow)
+                            {
+                                // Send 0x00 bytes for LOW period (~250ms of transmission)
+                                SyncSerialPort.Write(lowBuffer, 0, lowBuffer.Length);
+                            }
+                            // For HIGH period: don't send anything, TX line idles HIGH
+                            sendLow = !sendLow;
                         }
                         catch (Exception)
                         {
@@ -16990,11 +16997,7 @@ public partial class MainViewModel : ViewModelBase
             }
             catch (OperationCanceledException)
             {
-                // Normal cancellation, ensure TX is idle (HIGH)
-                if (SyncSerialPort != null && SyncSerialPort.IsOpen)
-                {
-                    try { SyncSerialPort.BreakState = false; } catch { }
-                }
+                // Normal cancellation, line will idle HIGH
             }
             catch (Exception ex)
             {
