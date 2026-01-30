@@ -16939,6 +16939,7 @@ public partial class MainViewModel : ViewModelBase
         {
             if (SyncSerialPort.IsOpen)
             {
+                SyncSerialPort.RtsEnable = false; // Ensure RTS is LOW before closing
                 SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
                 SyncSerialPort.Close();
             }
@@ -16962,23 +16963,22 @@ public partial class MainViewModel : ViewModelBase
 
         _ = Task.Run(async () =>
         {
+            bool rtsState = false;
             try
             {
-                // Use PeriodicTimer for precise 2Hz timing (500ms intervals)
-                // Unlike Task.Delay, PeriodicTimer fires at exact intervals
-                // regardless of execution time between ticks
-                using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(500));
+                // Use PeriodicTimer for precise 250ms intervals
+                // Toggle RTS every 250ms = 2Hz square wave (HIGH 250ms, LOW 250ms)
+                using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
 
                 while (await timer.WaitForNextTickAsync(token))
                 {
-                    // Send 2Hz pulse signal out the sync port
                     if (SyncSerialPort != null && SyncSerialPort.IsOpen)
                     {
                         try
                         {
-                            // Send a sync pulse byte
-                            byte[] syncPulse = new byte[] { 0x01 };
-                            SyncSerialPort.Write(syncPulse, 0, syncPulse.Length);
+                            // Toggle RTS line for 2Hz square wave output
+                            rtsState = !rtsState;
+                            SyncSerialPort.RtsEnable = rtsState;
                         }
                         catch (Exception)
                         {
@@ -16989,7 +16989,11 @@ public partial class MainViewModel : ViewModelBase
             }
             catch (OperationCanceledException)
             {
-                // Normal cancellation, do nothing
+                // Normal cancellation, ensure RTS is LOW
+                if (SyncSerialPort != null && SyncSerialPort.IsOpen)
+                {
+                    try { SyncSerialPort.RtsEnable = false; } catch { }
+                }
             }
             catch (Exception ex)
             {
