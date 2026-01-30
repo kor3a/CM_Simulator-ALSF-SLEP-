@@ -16909,6 +16909,7 @@ public partial class MainViewModel : ViewModelBase
             };
             SyncSerialPort.DataReceived += SyncPortDataReceivedHandler;
             SyncSerialPort.Open();
+            SetSyncSignalState(true);
 
             IsSyncPortConnected = true;
             _homePage.AppendLog($"2Hz Sync port connected: {SelectedSyncPort}");
@@ -16939,7 +16940,7 @@ public partial class MainViewModel : ViewModelBase
         {
             if (SyncSerialPort.IsOpen)
             {
-                SyncSerialPort.BreakState = false; // Ensure TX is idle (HIGH) before closing
+                ReleaseSyncSignal(); // Ensure TX is idle (HIGH) before closing
                 SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
                 SyncSerialPort.Close();
             }
@@ -16956,6 +16957,42 @@ public partial class MainViewModel : ViewModelBase
         });
     }
 
+    private void SetSyncSignalState(bool signalHigh)
+    {
+        if (SyncSerialPort == null || !SyncSerialPort.IsOpen)
+            return;
+
+        try
+        {
+            // Keep RTS asserted so adapters don't tri-state the line and create low-edge spikes.
+            if (!SyncSerialPort.RtsEnable)
+            {
+                SyncSerialPort.RtsEnable = true;
+            }
+            SyncSerialPort.BreakState = !signalHigh;
+        }
+        catch (Exception)
+        {
+            // Ignore write errors, port may have been disconnected
+        }
+    }
+
+    private void ReleaseSyncSignal()
+    {
+        if (SyncSerialPort == null || !SyncSerialPort.IsOpen)
+            return;
+
+        try
+        {
+            SyncSerialPort.BreakState = false;
+            SyncSerialPort.RtsEnable = false;
+        }
+        catch (Exception)
+        {
+            // Ignore write errors, port may have been disconnected
+        }
+    }
+
     private void StartTwoHzSignalLoop()
     {
         _twoHzSignalCts = new CancellationTokenSource();
@@ -16966,6 +17003,8 @@ public partial class MainViewModel : ViewModelBase
             bool signalHigh = false;
             try
             {
+                SetSyncSignalState(true);
+
                 // Use PeriodicTimer for precise 250ms intervals
                 // Toggle every 250ms = 2Hz square wave (HIGH 250ms, LOW 250ms)
                 using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
@@ -16979,7 +17018,7 @@ public partial class MainViewModel : ViewModelBase
                             // Toggle TX line using BreakState for 2Hz square wave
                             // BreakState=true = TX LOW, BreakState=false = TX HIGH
                             signalHigh = !signalHigh;
-                            SyncSerialPort.BreakState = !signalHigh;
+                            SetSyncSignalState(signalHigh);
                         }
                         catch (Exception)
                         {
@@ -16991,10 +17030,7 @@ public partial class MainViewModel : ViewModelBase
             catch (OperationCanceledException)
             {
                 // Normal cancellation, ensure TX is idle (HIGH)
-                if (SyncSerialPort != null && SyncSerialPort.IsOpen)
-                {
-                    try { SyncSerialPort.BreakState = false; } catch { }
-                }
+                SetSyncSignalState(true);
             }
             catch (Exception ex)
             {
