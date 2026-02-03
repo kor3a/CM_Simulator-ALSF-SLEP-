@@ -1205,6 +1205,14 @@ public partial class MainViewModel : ViewModelBase
     public byte ledDisplayTest = 0x04;
     #endregion
 
+    //TODO: Implement PLCK Reset Results parsing
+    #region PLCK Reset Message Data Bytes
+
+    #endregion
+
+
+
+
     #region Commands Response Message Data Bytes
     public byte COMMANDS_RESPONSE = 0x42;
     public byte fOnByte = 0x01;
