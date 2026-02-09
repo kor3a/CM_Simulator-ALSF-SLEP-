@@ -83,12 +83,6 @@ public partial class MainViewModel : ViewModelBase
     // 2Hz signal loop cancellation token
     private CancellationTokenSource _twoHzSignalCts;
 
-    // Pre-allocated buffer of 0x00 bytes used to hold the TX line LOW for one
-    // half-period (250ms) of the 2Hz square wave.  At 115200 baud / 8N1 each
-    // byte takes ~86.8µs, so 3000 bytes ≈ 260ms — enough to cover the full
-    // 250ms LOW period before DiscardOutBuffer truncates the remainder.
-    private static readonly byte[] _twoHzLowBuffer = new byte[3000];
-
     [ObservableProperty]
     private bool _alsfMode = true;
 
@@ -16910,17 +16904,20 @@ public partial class MainViewModel : ViewModelBase
             // Disconnect existing sync port if connected
             if (SyncSerialPort != null && SyncSerialPort.IsOpen)
             {
+                SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
+                SyncSerialPort.ErrorReceived -= SyncPortErrorReceivedHandler;
                 SyncSerialPort.Close();
                 SyncSerialPort.Dispose();
             }
 
-            SyncSerialPort = new SerialPort(SelectedSyncPort, 115200)
+            SyncSerialPort = new SerialPort(SelectedSyncPort, 9600)
             {
                 ReadBufferSize = 128,
-                WriteBufferSize = 4096,
                 ReadTimeout = 200,
-                WriteTimeout = 500,
+                WriteTimeout = 200,
             };
+            SyncSerialPort.DataReceived += SyncPortDataReceivedHandler;
+            SyncSerialPort.ErrorReceived += SyncPortErrorReceivedHandler;
             SyncSerialPort.Open();
 
             IsSyncPortConnected = true;
@@ -16952,7 +16949,9 @@ public partial class MainViewModel : ViewModelBase
         {
             if (SyncSerialPort.IsOpen)
             {
-                SyncSerialPort.DiscardOutBuffer(); // Stop any pending TX so line idles HIGH
+                SyncSerialPort.BreakState = false; // Ensure TX is idle (HIGH) before closing
+                SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
+                SyncSerialPort.ErrorReceived -= SyncPortErrorReceivedHandler;
                 SyncSerialPort.Close();
             }
             SyncSerialPort.Dispose();
@@ -16980,12 +16979,6 @@ public partial class MainViewModel : ViewModelBase
             {
                 // Use PeriodicTimer for precise 250ms intervals
                 // Toggle every 250ms = 2Hz square wave (HIGH 250ms, LOW 250ms)
-                //
-                // Instead of BreakState (which causes FTDI rising-edge spikes),
-                // the LOW period is produced by flooding TX with 0x00 bytes and
-                // the HIGH period by discarding the buffer so TX idles HIGH.
-                // At 115200 baud the stop bits between 0x00 bytes are only
-                // ~8.7µs — invisible at 2Hz timebase.
                 using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
 
                 while (await timer.WaitForNextTickAsync(token))
@@ -16994,19 +16987,17 @@ public partial class MainViewModel : ViewModelBase
                     {
                         try
                         {
+                            // Toggle TX line using BreakState for 2Hz square wave
+                            // BreakState=true = TX LOW, BreakState=false = TX HIGH
                             signalHigh = !signalHigh;
+                            SyncSerialPort.BreakState = !signalHigh;
 
                             if (signalHigh)
                             {
-                                // Rising edge (LOW → HIGH): discard pending 0x00
-                                // bytes so the UART returns to idle HIGH.
-                                SyncSerialPort.DiscardOutBuffer();
-                            }
-                            else
-                            {
-                                // Falling edge (HIGH → LOW): flood TX with 0x00
-                                // bytes to hold the line LOW for the full 250ms.
-                                SyncSerialPort.Write(_twoHzLowBuffer, 0, _twoHzLowBuffer.Length);
+                                // After rising edge (break release): the FTDI chip
+                                // produces an erroneous byte / framing error. Flush
+                                // the receive buffer so it doesn't accumulate.
+                                SyncSerialPort.DiscardInBuffer();
                             }
                         }
                         catch (Exception)
@@ -17021,7 +17012,7 @@ public partial class MainViewModel : ViewModelBase
                 // Normal cancellation, ensure TX is idle (HIGH)
                 if (SyncSerialPort != null && SyncSerialPort.IsOpen)
                 {
-                    try { SyncSerialPort.DiscardOutBuffer(); } catch { }
+                    try { SyncSerialPort.BreakState = false; } catch { }
                 }
             }
             catch (Exception ex)
@@ -17051,7 +17042,9 @@ public partial class MainViewModel : ViewModelBase
             var sp = sender as SerialPort;
             if (sp == null || !sp.IsOpen) return;
 
-            // Read all available bytes to clear the buffer
+            // Discard all received bytes — this is an output-only sync port.
+            // Any data here is the erroneous byte produced by the FTDI chip
+            // when BreakState is released (break-release artifact).
             int bytesToRead = sp.BytesToRead;
             if (bytesToRead > 0)
             {
@@ -17062,6 +17055,25 @@ public partial class MainViewModel : ViewModelBase
         catch (Exception)
         {
             // Ignore errors during sync port reading
+        }
+    }
+
+    private void SyncPortErrorReceivedHandler(object sender, SerialErrorReceivedEventArgs e)
+    {
+        // Suppress framing errors caused by the FTDI chip's break-release spike.
+        // When BreakState transitions from true to false, the FTDI produces a
+        // brief erroneous byte that the receiving UART interprets as a framing
+        // error. We discard the corrupt data so it doesn't accumulate.
+        try
+        {
+            var sp = sender as SerialPort;
+            if (sp == null || !sp.IsOpen) return;
+
+            sp.DiscardInBuffer();
+        }
+        catch (Exception)
+        {
+            // Ignore errors during sync port error handling
         }
     }
 
