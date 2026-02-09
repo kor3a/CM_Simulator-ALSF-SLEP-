@@ -16904,7 +16904,6 @@ public partial class MainViewModel : ViewModelBase
             // Disconnect existing sync port if connected
             if (SyncSerialPort != null && SyncSerialPort.IsOpen)
             {
-                SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
                 SyncSerialPort.Close();
                 SyncSerialPort.Dispose();
             }
@@ -16915,7 +16914,6 @@ public partial class MainViewModel : ViewModelBase
                 ReadTimeout = 200,
                 WriteTimeout = 200,
             };
-            SyncSerialPort.DataReceived += SyncPortDataReceivedHandler;
             SyncSerialPort.Open();
 
             IsSyncPortConnected = true;
@@ -16948,7 +16946,6 @@ public partial class MainViewModel : ViewModelBase
             if (SyncSerialPort.IsOpen)
             {
                 SyncSerialPort.BreakState = false; // Ensure TX is idle (HIGH) before closing
-                SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
                 SyncSerialPort.Close();
             }
             SyncSerialPort.Dispose();
@@ -16984,10 +16981,27 @@ public partial class MainViewModel : ViewModelBase
                     {
                         try
                         {
-                            // Toggle TX line using BreakState for 2Hz square wave
-                            // BreakState=true = TX LOW, BreakState=false = TX HIGH
                             signalHigh = !signalHigh;
-                            SyncSerialPort.BreakState = !signalHigh;
+
+                            if (signalHigh)
+                            {
+                                // Rising edge (LOW → HIGH): Queue a 0x00 "bridge byte"
+                                // before releasing BreakState. When break is released, the
+                                // UART transmits this byte instead of abruptly transitioning
+                                // to idle. Since 0x00 = start(LOW) + 8 data bits(LOW) +
+                                // stop(HIGH), the line stays LOW through the byte and rises
+                                // cleanly at the stop bit — eliminating the hardware spike
+                                // caused by an abrupt break release.
+                                SyncSerialPort.DiscardOutBuffer();
+                                SyncSerialPort.Write(new byte[] { 0x00 }, 0, 1);
+                                SyncSerialPort.BreakState = false;
+                            }
+                            else
+                            {
+                                // Falling edge (HIGH → LOW): BreakState forces TX LOW
+                                // immediately — no spike on this transition.
+                                SyncSerialPort.BreakState = true;
+                            }
                         }
                         catch (Exception)
                         {
