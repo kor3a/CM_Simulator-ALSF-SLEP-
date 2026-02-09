@@ -16985,15 +16985,10 @@ public partial class MainViewModel : ViewModelBase
 
                             if (signalHigh)
                             {
-                                // Rising edge (LOW → HIGH): Queue a 0x00 "bridge byte"
-                                // before releasing BreakState. When break is released, the
-                                // UART transmits this byte instead of abruptly transitioning
-                                // to idle. Since 0x00 = start(LOW) + 8 data bits(LOW) +
-                                // stop(HIGH), the line stays LOW through the byte and rises
-                                // cleanly at the stop bit — eliminating the hardware spike
-                                // caused by an abrupt break release.
+                                // Rising edge (LOW → HIGH): Discard any pending output
+                                // data before releasing break to prevent stale bytes from
+                                // being transmitted during the transition (causes spikes).
                                 SyncSerialPort.DiscardOutBuffer();
-                                SyncSerialPort.Write(new byte[] { 0x00 }, 0, 1);
                                 SyncSerialPort.BreakState = false;
                             }
                             else
