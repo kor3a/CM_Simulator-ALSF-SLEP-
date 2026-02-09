@@ -83,6 +83,12 @@ public partial class MainViewModel : ViewModelBase
     // 2Hz signal loop cancellation token
     private CancellationTokenSource _twoHzSignalCts;
 
+    // Pre-allocated buffer of 0x00 bytes used to hold the TX line LOW for one
+    // half-period (250ms) of the 2Hz square wave.  At 115200 baud / 8N1 each
+    // byte takes ~86.8µs, so 3000 bytes ≈ 260ms — enough to cover the full
+    // 250ms LOW period before DiscardOutBuffer truncates the remainder.
+    private static readonly byte[] _twoHzLowBuffer = new byte[3000];
+
     [ObservableProperty]
     private bool _alsfMode = true;
 
@@ -16911,8 +16917,9 @@ public partial class MainViewModel : ViewModelBase
             SyncSerialPort = new SerialPort(SelectedSyncPort, 115200)
             {
                 ReadBufferSize = 128,
+                WriteBufferSize = 4096,
                 ReadTimeout = 200,
-                WriteTimeout = 200,
+                WriteTimeout = 500,
             };
             SyncSerialPort.Open();
 
@@ -16945,7 +16952,7 @@ public partial class MainViewModel : ViewModelBase
         {
             if (SyncSerialPort.IsOpen)
             {
-                SyncSerialPort.BreakState = false; // Ensure TX is idle (HIGH) before closing
+                SyncSerialPort.DiscardOutBuffer(); // Stop any pending TX so line idles HIGH
                 SyncSerialPort.Close();
             }
             SyncSerialPort.Dispose();
@@ -16973,6 +16980,12 @@ public partial class MainViewModel : ViewModelBase
             {
                 // Use PeriodicTimer for precise 250ms intervals
                 // Toggle every 250ms = 2Hz square wave (HIGH 250ms, LOW 250ms)
+                //
+                // Instead of BreakState (which causes FTDI rising-edge spikes),
+                // the LOW period is produced by flooding TX with 0x00 bytes and
+                // the HIGH period by discarding the buffer so TX idles HIGH.
+                // At 115200 baud the stop bits between 0x00 bytes are only
+                // ~8.7µs — invisible at 2Hz timebase.
                 using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(250));
 
                 while (await timer.WaitForNextTickAsync(token))
@@ -16985,17 +16998,15 @@ public partial class MainViewModel : ViewModelBase
 
                             if (signalHigh)
                             {
-                                // Rising edge (LOW → HIGH): Discard any pending output
-                                // data before releasing break to prevent stale bytes from
-                                // being transmitted during the transition (causes spikes).
+                                // Rising edge (LOW → HIGH): discard pending 0x00
+                                // bytes so the UART returns to idle HIGH.
                                 SyncSerialPort.DiscardOutBuffer();
-                                SyncSerialPort.BreakState = false;
                             }
                             else
                             {
-                                // Falling edge (HIGH → LOW): BreakState forces TX LOW
-                                // immediately — no spike on this transition.
-                                SyncSerialPort.BreakState = true;
+                                // Falling edge (HIGH → LOW): flood TX with 0x00
+                                // bytes to hold the line LOW for the full 250ms.
+                                SyncSerialPort.Write(_twoHzLowBuffer, 0, _twoHzLowBuffer.Length);
                             }
                         }
                         catch (Exception)
@@ -17010,7 +17021,7 @@ public partial class MainViewModel : ViewModelBase
                 // Normal cancellation, ensure TX is idle (HIGH)
                 if (SyncSerialPort != null && SyncSerialPort.IsOpen)
                 {
-                    try { SyncSerialPort.BreakState = false; } catch { }
+                    try { SyncSerialPort.DiscardOutBuffer(); } catch { }
                 }
             }
             catch (Exception ex)
