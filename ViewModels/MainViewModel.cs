@@ -16908,7 +16908,7 @@ public partial class MainViewModel : ViewModelBase
                 SyncSerialPort.Dispose();
             }
 
-            SyncSerialPort = new SerialPort(SelectedSyncPort, 9600)
+            SyncSerialPort = new SerialPort(SelectedSyncPort, 115200)
             {
                 ReadBufferSize = 128,
                 ReadTimeout = 200,
