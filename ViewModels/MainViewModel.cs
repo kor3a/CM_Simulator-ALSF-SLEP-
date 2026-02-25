@@ -8784,6 +8784,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    #region ICC5 through ICC21 response not used
     private void ReadIcc5Response(byte message)
     {
         if ((message & fOnByte) == fOnByte)
@@ -11548,7 +11549,7 @@ public partial class MainViewModel : ViewModelBase
             _homePage.Lvicc21PgStatus = false;
         }
     }
-
+    #endregion
     private void ReadIcc1Config(byte param1, byte param2)
     {
         if ((param2 & remoteConfig) == remoteConfig)
@@ -12624,6 +12625,7 @@ public partial class MainViewModel : ViewModelBase
         //}
     }
 
+    #region ICC5 through ICC21 not used
     private void ReadIcc5Config(byte param1, byte param2)
     {
         if ((param2 & remoteConfig) == remoteConfig)
@@ -16860,7 +16862,7 @@ public partial class MainViewModel : ViewModelBase
             _homePage.Lvicc21PgStatus = false;
         }
     }
-
+    #endregion
 
     [RelayCommand]
     public void Disconnect(Window popupWindow)
