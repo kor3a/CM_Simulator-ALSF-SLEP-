@@ -17127,6 +17127,7 @@ public partial class MainViewModel : ViewModelBase
         UpdateSideMenuItemWidth();
     }
 
+    #region Navigation Relay Commands
     [RelayCommand]
     public void GoToHome() => CurrentPage = _homePage;
 
@@ -17173,4 +17174,5 @@ public partial class MainViewModel : ViewModelBase
     public void GoToICC20() => CurrentPage = _icc20Page;
     [RelayCommand]
     public void GoToICC21() => CurrentPage = _icc21Page;
+    #endregion
 }

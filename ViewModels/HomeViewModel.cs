@@ -41,9 +41,9 @@ public partial class HomeViewModel : ViewModelBase
     public int VisibleLvicc3Number => CurrentStartIndex + 2;
 
     // Computed properties for visible LVICC headers
-    public string VisibleLvicc1Header => $"LVICC {VisibleLvicc1Number}";
-    public string VisibleLvicc2Header => $"LVICC {VisibleLvicc2Number}";
-    public string VisibleLvicc3Header => $"LVICC {VisibleLvicc3Number}";
+    public string VisibleLvicc1Header => $"PLCK-LVICC {VisibleLvicc1Number}";
+    public string VisibleLvicc2Header => $"PLCK-LVICC {VisibleLvicc2Number}";
+    public string VisibleLvicc3Header => $"PLCK-LVICC {VisibleLvicc3Number}";
 
     // Computed properties for visible LVICC backgrounds
     public IBrush VisibleLvicc1Background => GetLviccBackground(VisibleLvicc1Number);
