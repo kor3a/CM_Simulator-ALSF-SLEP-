@@ -119,40 +119,6 @@ public partial class ICC3ViewModel : ViewModelBase
     [ObservableProperty]
     private string _controlType = "Serial";
 
-    // PLCK Reset Test Result Backgrounds
-    [ObservableProperty]
-    private IBrush _cpuTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _epromTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _sramTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _digitalTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _adConverterTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _watchdogTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _idleTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _rs485_1TestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _rs485_2TestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _rs232TestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _ledDisplayTestBackground = new SolidColorBrush(Colors.LightGray);
-
     [ObservableProperty]
     private string _startByte = "";
 
