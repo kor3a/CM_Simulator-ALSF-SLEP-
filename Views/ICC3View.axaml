@@ -190,7 +190,82 @@
           </HeaderedContentControl>
         </StackPanel>
         <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="30,0,0,0">
-          <HeaderedContentControl Header="LVICC SWITCH" Height="100" Margin="30" HorizontalAlignment="Center" Background="White">
+          <HeaderedContentControl Header="PLCK" Height="160" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" Margin="0,10,0,0">
+            <StackPanel>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding CpuTestBackground}" />
+                    <TextBlock Text="CPU" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding EpromTestBackground}" />
+                    <TextBlock Text="EPROM" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding SramTestBackground}" />
+                    <TextBlock Text="SRAM" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding DigitalTestBackground}" />
+                    <TextBlock Text="Digital I/O" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="11" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding AdConverterTestBackground}" />
+                    <TextBlock Text="A/D Conv" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="11" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding WatchdogTestBackground}" />
+                    <TextBlock Text="Watchdog" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="11" Foreground="Black"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding IdleTestBackground}" />
+                    <TextBlock Text="Idle Task" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="11" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding Rs485_1TestBackground}" />
+                    <TextBlock Text="RS-485 #1" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="11" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding Rs485_2TestBackground}" />
+                    <TextBlock Text="RS-485 #2" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="11" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding Rs232TestBackground}" />
+                    <TextBlock Text="RS-232 MT" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="11" Foreground="Black"/>
+                  </Grid>
+                </Border>
+                <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="35">
+                  <Grid Width="70" Height="25">
+                    <Rectangle Width="70" Height="25" Fill="{Binding LedDisplayTestBackground}" />
+                    <TextBlock Text="LED Display" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="11" Foreground="Black"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </StackPanel>
+          </HeaderedContentControl>
+
+          <HeaderedContentControl Header="LVICC SWITCH" Height="100" Margin="30,10,30,30" HorizontalAlignment="Center" Background="White">
             <StackPanel Orientation="Horizontal">
               <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
                 <Grid Width="60" Height="60">
@@ -224,8 +299,6 @@
               </Border>
             </StackPanel>
           </HeaderedContentControl>
-
-
         </StackPanel>
         <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,30,8,0">
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
