@@ -23,6 +23,7 @@ public partial class HomeViewModel : ViewModelBase
     // Forwarding properties to enable proper change notification for nested bindings
     public bool IsHomePageActive => _mainViewModel.HomePageIsActive;
     public ViewModelBase CurrentIccPage => _mainViewModel.CurrentPage;
+    public double WindowWidth => CurrentIccPage is ICC1ViewModel or ICC2ViewModel or ICC3ViewModel or ICC4ViewModel ? 1350.0 : 850.0;
 
     [ObservableProperty]
     private bool _alsfMode = true;
@@ -41,9 +42,9 @@ public partial class HomeViewModel : ViewModelBase
     public int VisibleLvicc3Number => CurrentStartIndex + 2;
 
     // Computed properties for visible LVICC headers
-    public string VisibleLvicc1Header => $"LVICC {VisibleLvicc1Number}";
-    public string VisibleLvicc2Header => $"LVICC {VisibleLvicc2Number}";
-    public string VisibleLvicc3Header => $"LVICC {VisibleLvicc3Number}";
+    public string VisibleLvicc1Header => $"PLCK-LVICC {VisibleLvicc1Number}";
+    public string VisibleLvicc2Header => $"PLCK-LVICC {VisibleLvicc2Number}";
+    public string VisibleLvicc3Header => $"PLCK-LVICC {VisibleLvicc3Number}";
 
     // Computed properties for visible LVICC backgrounds
     public IBrush VisibleLvicc1Background => GetLviccBackground(VisibleLvicc1Number);
@@ -319,6 +320,7 @@ public partial class HomeViewModel : ViewModelBase
             else if (e.PropertyName == nameof(MainViewModel.CurrentPage))
             {
                 OnPropertyChanged(nameof(CurrentIccPage));
+                OnPropertyChanged(nameof(WindowWidth));
             }
             // Forward property changes for all ICC pages to update visible LVICC bindings
             else if (e.PropertyName?.StartsWith("Icc") == true)

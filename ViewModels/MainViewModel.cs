@@ -4264,6 +4264,170 @@ public partial class MainViewModel : ViewModelBase
                                 SendCmCommand(icc4);
                             }
                             break;
+                        case byte s when s == plck1:
+                            {
+                                // PLCK-LVICC1 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc1Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc1Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc1Page.PlckVac240V = plckVac240V;
+                                _icc1Page.PlckVac240A = plckVac240A;
+                                _icc1Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc1Page.PlckVdc24V = plckVdc24V;
+                                _icc1Page.PlckVdc24A = plckVdc24A;
+                                _icc1Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc1Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc1Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc1Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc1Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc1Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc1Page.PlckBleederV = plckBleederV;
+                                _icc1Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck2:
+                            {
+                                // PLCK-LVICC2 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc2Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc2Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc2Page.PlckVac240V = plckVac240V;
+                                _icc2Page.PlckVac240A = plckVac240A;
+                                _icc2Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc2Page.PlckVdc24V = plckVdc24V;
+                                _icc2Page.PlckVdc24A = plckVdc24A;
+                                _icc2Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc2Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc2Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc2Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc2Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc2Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc2Page.PlckBleederV = plckBleederV;
+                                _icc2Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck3:
+                            {
+                                // PLCK-LVICC3 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc3Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc3Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc3Page.PlckVac240V = plckVac240V;
+                                _icc3Page.PlckVac240A = plckVac240A;
+                                _icc3Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc3Page.PlckVdc24V = plckVdc24V;
+                                _icc3Page.PlckVdc24A = plckVdc24A;
+                                _icc3Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc3Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc3Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc3Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc3Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc3Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc3Page.PlckBleederV = plckBleederV;
+                                _icc3Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck4:
+                            {
+                                // PLCK-LVICC4 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc4Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc4Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc4Page.PlckVac240V = plckVac240V;
+                                _icc4Page.PlckVac240A = plckVac240A;
+                                _icc4Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc4Page.PlckVdc24V = plckVdc24V;
+                                _icc4Page.PlckVdc24A = plckVdc24A;
+                                _icc4Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc4Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc4Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc4Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc4Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc4Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc4Page.PlckBleederV = plckBleederV;
+                                _icc4Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
                         case byte s when s == icc5:
                             if (icc5Compat)
                             {
@@ -8784,6 +8948,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    #region ICC5 through ICC21 response not used
     private void ReadIcc5Response(byte message)
     {
         if ((message & fOnByte) == fOnByte)
@@ -11548,7 +11713,7 @@ public partial class MainViewModel : ViewModelBase
             _homePage.Lvicc21PgStatus = false;
         }
     }
-
+    #endregion
     private void ReadIcc1Config(byte param1, byte param2)
     {
         if ((param2 & remoteConfig) == remoteConfig)
@@ -12624,6 +12789,7 @@ public partial class MainViewModel : ViewModelBase
         //}
     }
 
+    #region ICC5 through ICC21 not used
     private void ReadIcc5Config(byte param1, byte param2)
     {
         if ((param2 & remoteConfig) == remoteConfig)
@@ -16860,7 +17026,7 @@ public partial class MainViewModel : ViewModelBase
             _homePage.Lvicc21PgStatus = false;
         }
     }
-
+    #endregion
 
     [RelayCommand]
     public void Disconnect(Window popupWindow)
@@ -16905,6 +17071,7 @@ public partial class MainViewModel : ViewModelBase
             if (SyncSerialPort != null && SyncSerialPort.IsOpen)
             {
                 SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
+                SyncSerialPort.ErrorReceived -= SyncPortErrorReceivedHandler;
                 SyncSerialPort.Close();
                 SyncSerialPort.Dispose();
             }
@@ -16916,6 +17083,7 @@ public partial class MainViewModel : ViewModelBase
                 WriteTimeout = 200,
             };
             SyncSerialPort.DataReceived += SyncPortDataReceivedHandler;
+            SyncSerialPort.ErrorReceived += SyncPortErrorReceivedHandler;
             SyncSerialPort.Open();
 
             IsSyncPortConnected = true;
@@ -16949,6 +17117,7 @@ public partial class MainViewModel : ViewModelBase
             {
                 SyncSerialPort.BreakState = false; // Ensure TX is idle (HIGH) before closing
                 SyncSerialPort.DataReceived -= SyncPortDataReceivedHandler;
+                SyncSerialPort.ErrorReceived -= SyncPortErrorReceivedHandler;
                 SyncSerialPort.Close();
             }
             SyncSerialPort.Dispose();
@@ -16988,6 +17157,14 @@ public partial class MainViewModel : ViewModelBase
                             // BreakState=true = TX LOW, BreakState=false = TX HIGH
                             signalHigh = !signalHigh;
                             SyncSerialPort.BreakState = !signalHigh;
+
+                            if (signalHigh)
+                            {
+                                // After rising edge (break release): the FTDI chip
+                                // produces an erroneous byte / framing error. Flush
+                                // the receive buffer so it doesn't accumulate.
+                                SyncSerialPort.DiscardInBuffer();
+                            }
                         }
                         catch (Exception)
                         {
@@ -17031,7 +17208,9 @@ public partial class MainViewModel : ViewModelBase
             var sp = sender as SerialPort;
             if (sp == null || !sp.IsOpen) return;
 
-            // Read all available bytes to clear the buffer
+            // Discard all received bytes — this is an output-only sync port.
+            // Any data here is the erroneous byte produced by the FTDI chip
+            // when BreakState is released (break-release artifact).
             int bytesToRead = sp.BytesToRead;
             if (bytesToRead > 0)
             {
@@ -17042,6 +17221,25 @@ public partial class MainViewModel : ViewModelBase
         catch (Exception)
         {
             // Ignore errors during sync port reading
+        }
+    }
+
+    private void SyncPortErrorReceivedHandler(object sender, SerialErrorReceivedEventArgs e)
+    {
+        // Suppress framing errors caused by the FTDI chip's break-release spike.
+        // When BreakState transitions from true to false, the FTDI produces a
+        // brief erroneous byte that the receiving UART interprets as a framing
+        // error. We discard the corrupt data so it doesn't accumulate.
+        try
+        {
+            var sp = sender as SerialPort;
+            if (sp == null || !sp.IsOpen) return;
+
+            sp.DiscardInBuffer();
+        }
+        catch (Exception)
+        {
+            // Ignore errors during sync port error handling
         }
     }
 
@@ -17095,6 +17293,7 @@ public partial class MainViewModel : ViewModelBase
         UpdateSideMenuItemWidth();
     }
 
+    #region Navigation Relay Commands
     [RelayCommand]
     public void GoToHome() => CurrentPage = _homePage;
 
@@ -17141,4 +17340,5 @@ public partial class MainViewModel : ViewModelBase
     public void GoToICC20() => CurrentPage = _icc20Page;
     [RelayCommand]
     public void GoToICC21() => CurrentPage = _icc21Page;
+    #endregion
 }
