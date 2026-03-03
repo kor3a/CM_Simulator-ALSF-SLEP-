@@ -23,7 +23,7 @@
         <StackPanel Grid.Row="0" Grid.RowSpan="2" Margin="0,20,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
           <HeaderedContentControl Header="LVICC 4" Height="400" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-              <HeaderedContentControl Background="White" Height="340" Width="130" Margin="5">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,5">
                     <Label Margin="0,5" Width="65">
@@ -58,7 +58,7 @@
                 </StackPanel>
               </HeaderedContentControl>
 
-              <HeaderedContentControl Background="White" Height="340" Width="130" Margin="5">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
                     <Label Margin="0,5" Width="65">
@@ -92,7 +92,7 @@
                   </StackPanel>
                 </StackPanel>
               </HeaderedContentControl>
-              <HeaderedContentControl Background="White" Height="340" Width="130" Margin="5">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
                     <Label Margin="0,5" Width="65">
@@ -129,9 +129,9 @@
             </StackPanel>
           </HeaderedContentControl>
 
-          <HeaderedContentControl Header="PLCK-LVICC 4" Height="400" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
+          <HeaderedContentControl Header="PLCK 4" Height="400" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-              <HeaderedContentControl Background="White" Height="340" Width="130" Margin="5">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,5">
                     <Label Margin="0,5" Width="65">
@@ -166,7 +166,7 @@
                 </StackPanel>
               </HeaderedContentControl>
 
-              <HeaderedContentControl Background="White" Height="340" Width="130" Margin="5">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
                     <Label Margin="0,5" Width="65">
@@ -200,7 +200,7 @@
                   </StackPanel>
                 </StackPanel>
               </HeaderedContentControl>
-              <HeaderedContentControl Background="White" Height="340" Width="130" Margin="5">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
                     <Label Margin="0,5" Width="65">
