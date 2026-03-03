@@ -7,7 +7,7 @@
         x:Name="HomeViewRoot"
         x:DataType="vm:HomeViewModel"
         mc:Ignorable="d" d:DesignWidth="850" d:DesignHeight="720"
-        Width="850" Height="720"
+        Width="{Binding WindowWidth}" Height="720"
         x:Class="CM_Simulator.Views.HomeView"
         WindowStartupLocation="CenterScreen"
         CanResize="False"
