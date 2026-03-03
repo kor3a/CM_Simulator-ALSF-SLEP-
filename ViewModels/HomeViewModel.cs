@@ -23,6 +23,7 @@ public partial class HomeViewModel : ViewModelBase
     // Forwarding properties to enable proper change notification for nested bindings
     public bool IsHomePageActive => _mainViewModel.HomePageIsActive;
     public ViewModelBase CurrentIccPage => _mainViewModel.CurrentPage;
+    public double WindowWidth => CurrentIccPage is ICC1ViewModel or ICC2ViewModel or ICC3ViewModel or ICC4ViewModel ? 1350.0 : 850.0;
 
     [ObservableProperty]
     private bool _alsfMode = true;
@@ -319,6 +320,7 @@ public partial class HomeViewModel : ViewModelBase
             else if (e.PropertyName == nameof(MainViewModel.CurrentPage))
             {
                 OnPropertyChanged(nameof(CurrentIccPage));
+                OnPropertyChanged(nameof(WindowWidth));
             }
             // Forward property changes for all ICC pages to update visible LVICC bindings
             else if (e.PropertyName?.StartsWith("Icc") == true)
