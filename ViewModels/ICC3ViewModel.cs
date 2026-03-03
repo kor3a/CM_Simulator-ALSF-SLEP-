@@ -59,6 +59,46 @@ public partial class ICC3ViewModel : ViewModelBase
     [ObservableProperty]
     public IBrush _flasherMisfireBackground;
 
+    // PLCK Short Data Response fields
+    [ObservableProperty]
+    public string _plckVac240V;
+    [ObservableProperty]
+    public string _plckVac240A;
+    [ObservableProperty]
+    public string _plckFlashTriggerV;
+    [ObservableProperty]
+    public string _plckVdc33V;
+    [ObservableProperty]
+    public string _plckVdc5V;
+    [ObservableProperty]
+    public string _plckVdc8V;
+    [ObservableProperty]
+    public string _plckVdc8A;
+    [ObservableProperty]
+    public string _plckVdc18V;
+    [ObservableProperty]
+    public string _plckVdc24V;
+    [ObservableProperty]
+    public string _plckVdc24A;
+    [ObservableProperty]
+    public string _plckTriggerPulseWidth;
+    [ObservableProperty]
+    public string _plckTriggerPulseDelay;
+    [ObservableProperty]
+    public string _plckTriggerPeriod;
+    [ObservableProperty]
+    public string _plckTriggerCurrent;
+    [ObservableProperty]
+    public string _plckAnodePulseWidth;
+    [ObservableProperty]
+    public string _plckAnodePulseDelay;
+    [ObservableProperty]
+    public string _plckBleederV;
+    [ObservableProperty]
+    public string _plckFlasherMisfires;
+    [ObservableProperty]
+    public IBrush _plckFlasherMisfireBackground;
+
     [ObservableProperty]
     private IBrush _offButton = new SolidColorBrush(Colors.DarkGray);
 
@@ -118,40 +158,6 @@ public partial class ICC3ViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _controlType = "Serial";
-
-    // PLCK Reset Test Result Backgrounds
-    [ObservableProperty]
-    private IBrush _cpuTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _epromTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _sramTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _digitalTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _adConverterTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _watchdogTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _idleTestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _rs485_1TestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _rs485_2TestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _rs232TestBackground = new SolidColorBrush(Colors.LightGray);
-
-    [ObservableProperty]
-    private IBrush _ledDisplayTestBackground = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
     private string _startByte = "";
@@ -228,6 +234,8 @@ public partial class ICC3ViewModel : ViewModelBase
         IsEndByteErrorVisible = false;
         FlasherMisfireBackground = new SolidColorBrush(Colors.White);
         FlasherMisfires = "0";
+        PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+        PlckFlasherMisfires = "0";
     }
 
     [RelayCommand]
