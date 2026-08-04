@@ -493,7 +493,7 @@ public partial class HomeViewModel : ViewModelBase
         for (int i = 1; i <= Ft2400LviccCount; i++)
         {
             // Home page card: ON at LOW intensity
-            SetLviccPgBackground(i, new SolidColorBrush(Colors.Green));
+            SetLviccPgBackground(i, new SolidColorBrush(Colors.LightGreen));
             _mainViewModel?.SetIccSideMenu(i, "LOW");
 
             var page = _mainViewModel?.GetIccPage(i);

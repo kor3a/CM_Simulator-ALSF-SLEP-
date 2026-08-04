@@ -12595,7 +12595,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc1SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc1BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc1BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc1Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc1Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -12859,7 +12859,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc2SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc2BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc2BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc2Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc2Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -13129,7 +13129,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc3SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc3BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc3BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc3Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc3Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -13398,7 +13398,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc4SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc4BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc4BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc4Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc4Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -13649,7 +13649,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc5SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc5BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc5BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc5PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc5PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc5Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc5Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -13898,7 +13898,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc6SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc6BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc6BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc6PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc6PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc6Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc6Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -14147,7 +14147,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc7SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc7BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc7BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc7PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc7PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc7Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc7Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -14397,7 +14397,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc8SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc8BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc8BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc8PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc8PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc8Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc8Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -14646,7 +14646,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc9SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc9BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc9BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc9PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc9PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc9Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc9Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -14895,7 +14895,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc10SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc10BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc10BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc10PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc10PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc10Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc10Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -15144,7 +15144,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc11SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc11BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc11BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc11PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc11PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc11Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc11Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -15393,7 +15393,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc12SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc12BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc12BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc12PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc12PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc12Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc12Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -15642,7 +15642,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc13SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc13BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc13BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc13PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc13PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc13Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc13Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -15891,7 +15891,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc14SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc14BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc14BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc14PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc14PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc14Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc14Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -16140,7 +16140,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc15SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc15BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc15BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc15PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc15PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc15Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc15Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -16389,7 +16389,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc16SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc16BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc16BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc16PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc16PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc16Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc16Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -16638,7 +16638,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc17SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc17BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc17BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc17PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc17PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc17Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc17Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -16887,7 +16887,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc18SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc18BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc18BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc18PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc18PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc18Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc18Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -17136,7 +17136,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc19SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc19BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc19BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc19PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc19PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc19Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc19Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -17388,7 +17388,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc20SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc20BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc20BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc20PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc20PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc20Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc20Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -17637,7 +17637,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc21SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc21BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc21BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc21PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc21PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc21Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc21Page.LowForeground = new SolidColorBrush(Colors.White);
