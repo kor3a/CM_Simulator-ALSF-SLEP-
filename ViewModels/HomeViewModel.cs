@@ -583,7 +583,74 @@ public partial class HomeViewModel : ViewModelBase
             page.IsModeErrorVisible = false;
         }
 
+        // A fresh picture has no active alarm
+        Caution = new SolidColorBrush(Colors.LightGray);
+        CautionForeground = new SolidColorBrush(Colors.Black);
+        Failure = new SolidColorBrush(Colors.LightGray);
+        FailureForeground = new SolidColorBrush(Colors.Black);
+
         // Pull the new page state into the home page cards
+        RefreshVisibleLviccs();
+    }
+
+    private enum TestFault
+    {
+        ModeError,
+        MisfireError
+    }
+
+    private readonly Random _testFaultRandom = new Random();
+
+    /// <summary>
+    /// The LVICCs that are currently lit, i.e. the ones that can fault:
+    /// all of them in ALSF, only the odd-numbered ones in SSALR.
+    /// </summary>
+    private List<int> LitLviccs()
+    {
+        var lit = new List<int>();
+        for (int i = 1; i <= Ft3000LviccCount; i++)
+        {
+            if (IsLitInTestMode(i))
+            {
+                lit.Add(i);
+            }
+        }
+        return lit;
+    }
+
+    private List<int> PickRandom(List<int> pool, int count)
+    {
+        return pool.OrderBy(_ => _testFaultRandom.Next()).Take(Math.Min(count, pool.Count)).ToList();
+    }
+
+    /// <summary>
+    /// Repaints the demo with the given LVICCs knocked out. Starts from a healthy
+    /// picture each time, so repeated clicks show one fault set rather than piling up.
+    /// </summary>
+    private void ApplyTestModeFaults(List<(int Number, TestFault Fault)> faults)
+    {
+        ApplyTestModeState();
+
+        foreach (var (number, fault) in faults)
+        {
+            SetLviccPgBackground(number, new SolidColorBrush(Colors.LightGray));
+            _mainViewModel?.SetIccSideMenu(number, "OFF");
+
+            var page = _mainViewModel?.GetIccPage(number);
+            if (page == null)
+                continue;
+
+            page.RemButton = new SolidColorBrush(Colors.LightGray);
+            page.RemForeground = new SolidColorBrush(Colors.Black);
+            page.LowButton = new SolidColorBrush(Colors.LightGray);
+            page.LowForeground = new SolidColorBrush(Colors.Black);
+            page.OffButton = new SolidColorBrush(Colors.DarkGray);
+            page.OffForeground = new SolidColorBrush(Colors.White);
+
+            page.IsModeErrorVisible = fault == TestFault.ModeError;
+            page.IsMisfireErrorVisible = fault == TestFault.MisfireError;
+        }
+
         RefreshVisibleLviccs();
     }
 
@@ -1454,9 +1521,72 @@ Sent: 01-21-27-43-09-03-00-03-04-8E-00-00-00-71-03";
         failureBtnPressed = false;
     }
 
+    /// <summary>
+    /// In test mode, knocks out LVICCs to mimic a CAUTION condition:
+    /// two of them in ALSF, one of the odd-numbered ones in SSALR, each showing
+    /// a mode error. Outside test mode the indicator is driven by the polling loop.
+    /// </summary>
+    [RelayCommand]
+    public void CautionClicked()
+    {
+        if (!TestModeActive)
+            return;
+
+        int count = AlsfMode ? 2 : 1;
+        var faults = PickRandom(LitLviccs(), count)
+            .Select(n => (n, TestFault.ModeError))
+            .ToList();
+
+        ApplyTestModeFaults(faults);
+
+        Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
+        CautionForeground = new SolidColorBrush(Colors.White);
+    }
+
+    /// <summary>
+    /// In test mode, knocks out LVICCs to mimic a FAILURE condition. In ALSF that is
+    /// either two consecutive LVICCs with misfire errors or three scattered ones with
+    /// a mix of misfire and mode errors; in SSALR it is two of the odd-numbered LVICCs.
+    /// </summary>
+    private void SimulateFailure()
+    {
+        var pool = LitLviccs();
+        var faults = new List<(int, TestFault)>();
+
+        if (AlsfMode && pool.Count >= 2 && _testFaultRandom.Next(2) == 0)
+        {
+            // Two consecutive LVICCs out, both misfiring
+            int first = _testFaultRandom.Next(pool.Count - 1);
+            faults.Add((pool[first], TestFault.MisfireError));
+            faults.Add((pool[first + 1], TestFault.MisfireError));
+        }
+        else if (AlsfMode)
+        {
+            // Three scattered LVICCs out, each misfiring or in mode error
+            faults.AddRange(PickRandom(pool, 3)
+                .Select(n => (n, _testFaultRandom.Next(2) == 0 ? TestFault.MisfireError : TestFault.ModeError)));
+        }
+        else
+        {
+            // SSALR: two of the odd-numbered LVICCs out
+            faults.AddRange(PickRandom(pool, 2).Select(n => (n, TestFault.MisfireError)));
+        }
+
+        ApplyTestModeFaults(faults);
+
+        Failure = new SolidColorBrush(Colors.Red);
+        FailureForeground = new SolidColorBrush(Colors.White);
+    }
+
     [RelayCommand]
     public void FailureClicked()
     {
+        if (TestModeActive)
+        {
+            SimulateFailure();
+            return;
+        }
+
         failureBtnPressed = true;
         _mainViewModel.StopContinuousBeep();
         if (!_mainViewModel.commFault)

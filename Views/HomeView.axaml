@@ -148,10 +148,11 @@
                 <HeaderedContentControl Header="STATUS" Height="100" Margin="50,0" HorizontalAlignment="Center" Background="White">
                   <StackPanel Orientation="Horizontal">
                     <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                      <Grid Width="80" Height="50">
-                        <Rectangle Width="80" Height="50" Fill="{Binding Caution}" />
-                        <TextBlock Text="CAUTION" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="{Binding CautionForeground}"/>
-                      </Grid>
+                      <Button Width="80" Height="50" Background="{Binding Caution}" Command="{Binding CautionClickedCommand}">
+                        <Grid Width="80" Height="50">
+                          <TextBlock Text="CAUTION" FontSize="16" TextWrapping="Wrap" Foreground="{Binding CautionForeground}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                      </Button>
                     </Border>
                       <!--
                     <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
