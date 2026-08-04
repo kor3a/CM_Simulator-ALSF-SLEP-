@@ -25,8 +25,24 @@ public partial class HomeViewModel : ViewModelBase
     public ViewModelBase CurrentIccPage => _mainViewModel.CurrentPage;
     public double WindowWidth => 1350.0;
 
-    // Cards for all 21 PLCK-LVICCs shown on the home page
+    // Cards for all 21 PLCK-LVICCs, and the subset currently shown on the home page
     public ObservableCollection<LviccCardViewModel> LviccCards { get; } = new();
+    public ObservableCollection<LviccCardViewModel> VisibleLviccCards { get; } = new();
+
+    // Runway length mode: 2400ft uses PLCK 1-15, 3000ft uses PLCK 1-21
+    public const int Ft2400LviccCount = 15;
+    public const int Ft3000LviccCount = 21;
+
+    [ObservableProperty]
+    private bool _ft3000Mode = false;
+
+    public int ActiveLviccCount => Ft3000Mode ? Ft3000LviccCount : Ft2400LviccCount;
+
+    [ObservableProperty]
+    private IBrush _ft2400Background = new SolidColorBrush(Colors.LightGreen);
+
+    [ObservableProperty]
+    private IBrush _ft3000Background = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
     private bool _alsfMode = true;
@@ -277,20 +293,51 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     private bool _visibleLvicc3FlashActive = false;
 
-    [ObservableProperty]
-    private string _logText = "";
+    // Log lines shown in the log panel. Bound directly by the ListBox, so every
+    // mutation has to happen on the UI thread.
+    public ObservableCollection<string> LogLines { get; } = new();
 
     private const int MaxLogLines = 1000;
-    private readonly List<string> _logLines = new List<string>();
+
+    /// <summary>
+    /// The whole log as a single string. Reading it joins the lines (used by the
+    /// export command); assigning it replaces the log with the given text.
+    /// </summary>
+    public string LogText
+    {
+        get => string.Join(Environment.NewLine, LogLines);
+        set => OnUIThread(() =>
+        {
+            LogLines.Clear();
+            foreach (var line in (value ?? "").Split('\n'))
+            {
+                LogLines.Add(line.TrimEnd('\r'));
+            }
+        });
+    }
 
     public void AppendLog(string message)
     {
-        _logLines.Add(message);
-        if (_logLines.Count > MaxLogLines)
+        OnUIThread(() =>
         {
-            _logLines.RemoveRange(0, _logLines.Count - MaxLogLines);
+            LogLines.Add(message);
+            while (LogLines.Count > MaxLogLines)
+            {
+                LogLines.RemoveAt(0);
+            }
+        });
+    }
+
+    private static void OnUIThread(Action action)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            action();
         }
-        LogText = string.Join(Environment.NewLine, _logLines);
+        else
+        {
+            Dispatcher.UIThread.Post(action);
+        }
     }
 
     public bool stopCautionBeep = false;
@@ -302,10 +349,7 @@ public partial class HomeViewModel : ViewModelBase
         if (Design.IsDesignMode)
         {
             _mainViewModel = null; // Or provide a mock MainViewModel if needed
-            for (int i = 1; i <= 21; i++)
-            {
-                LviccCards.Add(new LviccCardViewModel(this, i));
-            }
+            CreateLviccCards();
         }
         else
         {
@@ -317,10 +361,7 @@ public partial class HomeViewModel : ViewModelBase
     {
         _mainViewModel = mainViewModel;
 
-        for (int i = 1; i <= 21; i++)
-        {
-            LviccCards.Add(new LviccCardViewModel(this, i));
-        }
+        CreateLviccCards();
 
         // Refresh the cards when one of the LviccXPgBackground properties changes
         PropertyChanged += (sender, e) =>
@@ -352,6 +393,58 @@ public partial class HomeViewModel : ViewModelBase
                 NotifyVisibleLviccPropertiesChanged();
             }
         };
+    }
+
+    private void CreateLviccCards()
+    {
+        for (int i = 1; i <= Ft3000LviccCount; i++)
+        {
+            LviccCards.Add(new LviccCardViewModel(this, i));
+        }
+        UpdateVisibleLviccCards();
+    }
+
+    /// <summary>
+    /// Rebuilds the card list shown on the home page so it holds exactly the
+    /// LVICCs active for the current runway length (15 for 2400ft, 21 for 3000ft).
+    /// </summary>
+    private void UpdateVisibleLviccCards()
+    {
+        int count = ActiveLviccCount;
+
+        while (VisibleLviccCards.Count > count)
+        {
+            VisibleLviccCards.RemoveAt(VisibleLviccCards.Count - 1);
+        }
+        while (VisibleLviccCards.Count < count)
+        {
+            VisibleLviccCards.Add(LviccCards[VisibleLviccCards.Count]);
+        }
+    }
+
+    // Called when Ft3000Mode changes - update the visible cards and the polled addresses
+    partial void OnFt3000ModeChanged(bool value)
+    {
+        Ft2400Background = new SolidColorBrush(value ? Colors.LightGray : Colors.LightGreen);
+        Ft3000Background = new SolidColorBrush(value ? Colors.LightGreen : Colors.LightGray);
+
+        OnPropertyChanged(nameof(ActiveLviccCount));
+        UpdateVisibleLviccCards();
+
+        // Only poll the LVICCs that exist for this runway length
+        _mainViewModel?.SetActiveLviccCount(ActiveLviccCount);
+    }
+
+    [RelayCommand]
+    private void Ft2400Clicked()
+    {
+        Ft3000Mode = false;
+    }
+
+    [RelayCommand]
+    private void Ft3000Clicked()
+    {
+        Ft3000Mode = true;
     }
 
     // Called when CurrentStartIndex changes - notify all computed properties

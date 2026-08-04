@@ -8,6 +8,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using CM_Simulator.ViewModels;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -15,7 +16,6 @@ namespace CM_Simulator.Views;
 
 public partial class HomeView : Window
 {
-    private ScrollViewer? _scrollViewer;
     private MainViewModel? _mainViewModel;
     private bool _autoScroll = true;
 
@@ -31,13 +31,7 @@ public partial class HomeView : Window
         _mainViewModel = new MainViewModel();
         DataContext = _mainViewModel.HomePage;
 
-        this.AttachedToVisualTree += (_, _) =>
-        {
-            // Find ScrollViewer inside the TextBox template
-            _scrollViewer = LogTextBox.FindDescendantOfType<ScrollViewer>();
-        };
-
-        LogTextBox.AddHandler(PointerPressedEvent, LogTextBox_PointerPressed,
+        LogListBox.AddHandler(PointerPressedEvent, LogListBox_PointerPressed,
             RoutingStrategies.Bubble, handledEventsToo: true);
     }
 
@@ -54,11 +48,11 @@ public partial class HomeView : Window
     {
         if (DataContext is HomeViewModel vm)
         {
-            vm.PropertyChanged += OnViewModelPropertyChanged;
+            vm.LogLines.CollectionChanged += OnLogLinesChanged;
         }
     }
 
-    private void LogTextBox_PointerPressed(object? sender, PointerPressedEventArgs e)
+    private void LogListBox_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (_autoScroll)
         {
@@ -75,30 +69,23 @@ public partial class HomeView : Window
 
     private void ScrollToBottom()
     {
-        LogTextBox.CaretIndex = LogTextBox.Text?.Length ?? 0;
-
-        if (_scrollViewer != null)
+        if (DataContext is HomeViewModel vm && vm.LogLines.Count > 0)
         {
-            _scrollViewer.Offset = new Avalonia.Vector(
-                _scrollViewer.Offset.X,
-                _scrollViewer.Extent.Height);
+            LogListBox.ScrollIntoView(vm.LogLines.Count - 1);
         }
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnLogLinesChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(HomeViewModel.LogText))
+        // Use Background priority so the scroll runs after the layout pass
+        // has realized the newly added log line
+        Dispatcher.UIThread.Post(() =>
         {
-            // Use Background priority so the scroll runs after the layout pass
-            // has updated the TextBox extent with the new content
-            Dispatcher.UIThread.Post(() =>
+            if (_autoScroll)
             {
-                if (_autoScroll)
-                {
-                    ScrollToBottom();
-                }
-            }, DispatcherPriority.Background);
-        }
+                ScrollToBottom();
+            }
+        }, DispatcherPriority.Background);
     }
 
     private void Scan_Click(object? sender, RoutedEventArgs e)

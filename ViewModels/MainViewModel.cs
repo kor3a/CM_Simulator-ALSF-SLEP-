@@ -1019,6 +1019,15 @@ public partial class MainViewModel : ViewModelBase
     /// Called when navigating through LVICCs in the home view carousel.
     /// </summary>
     /// <param name="startIndex">1-based index of the first visible LVICC (1-2)</param>
+    /// <summary>
+    /// Sets the addresses array to LVICC 1..count, matching the runway length
+    /// selected on the home page (15 for 2400ft, 21 for 3000ft).
+    /// </summary>
+    public void SetActiveLviccCount(int count)
+    {
+        addresses = Enumerable.Range(1, count).Select(GetIccAddress).ToArray();
+    }
+
     public void UpdateVisibleAddresses(int startIndex)
     {
         addresses = new byte[]
@@ -1412,8 +1421,9 @@ public partial class MainViewModel : ViewModelBase
         CurrentPage = _homePage;
         AvailablePorts = new ObservableCollection<string>(SerialPort.GetPortNames().OrderBy(p => p));
         SelectedPort = AvailablePorts.FirstOrDefault();
-        addresses = new byte[] {icc1, icc2, icc3, icc4, icc5, icc6, icc7, icc8, icc9, icc10, icc11,
-                                icc12, icc13, icc14, icc15, icc16, icc17, icc18, icc19, icc20, icc21};
+        // Default to the 2400ft configuration (LVICC 1-15); the home page
+        // switches this to 21 addresses in 3000ft mode.
+        SetActiveLviccCount(HomeViewModel.Ft2400LviccCount);
 
         // disable all the buttons
         disableButtons();
