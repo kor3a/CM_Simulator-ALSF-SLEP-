@@ -1020,6 +1020,69 @@ public partial class MainViewModel : ViewModelBase
     /// </summary>
     /// <param name="startIndex">1-based index of the first visible LVICC (1-2)</param>
     /// <summary>
+    /// Gets the page view model for a given LVICC number (1-21).
+    /// </summary>
+    public ILviccPage? GetIccPage(int iccNumber)
+    {
+        return iccNumber switch
+        {
+            1 => _icc1Page,
+            2 => _icc2Page,
+            3 => _icc3Page,
+            4 => _icc4Page,
+            5 => _icc5Page,
+            6 => _icc6Page,
+            7 => _icc7Page,
+            8 => _icc8Page,
+            9 => _icc9Page,
+            10 => _icc10Page,
+            11 => _icc11Page,
+            12 => _icc12Page,
+            13 => _icc13Page,
+            14 => _icc14Page,
+            15 => _icc15Page,
+            16 => _icc16Page,
+            17 => _icc17Page,
+            18 => _icc18Page,
+            19 => _icc19Page,
+            20 => _icc20Page,
+            21 => _icc21Page,
+            _ => null
+        };
+    }
+
+    /// <summary>
+    /// Sets the side menu status text ("OFF"/"LOW"/"MED"/"HIGH") for a given LVICC number (1-21).
+    /// </summary>
+    public void SetIccSideMenu(int iccNumber, string status)
+    {
+        switch (iccNumber)
+        {
+            case 1: Icc1SideMenu = status; break;
+            case 2: Icc2SideMenu = status; break;
+            case 3: Icc3SideMenu = status; break;
+            case 4: Icc4SideMenu = status; break;
+            case 5: Icc5SideMenu = status; break;
+            case 6: Icc6SideMenu = status; break;
+            case 7: Icc7SideMenu = status; break;
+            case 8: Icc8SideMenu = status; break;
+            case 9: Icc9SideMenu = status; break;
+            case 10: Icc10SideMenu = status; break;
+            case 11: Icc11SideMenu = status; break;
+            case 12: Icc12SideMenu = status; break;
+            case 13: Icc13SideMenu = status; break;
+            case 14: Icc14SideMenu = status; break;
+            case 15: Icc15SideMenu = status; break;
+            case 16: Icc16SideMenu = status; break;
+            case 17: Icc17SideMenu = status; break;
+            case 18: Icc18SideMenu = status; break;
+            case 19: Icc19SideMenu = status; break;
+            case 20: Icc20SideMenu = status; break;
+            case 21: Icc21SideMenu = status; break;
+        }
+    }
+
+    /// <summary>
     /// Sets the addresses array to LVICC 1..count, matching the runway length
     /// selected on the home page (15 for 2400ft, 21 for 3000ft).
     /// </summary>

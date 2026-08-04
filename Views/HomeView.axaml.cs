@@ -155,6 +155,19 @@ public partial class HomeView : Window
         dlg.ShowDialog(window);
     }
 
+    private void TestMode_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is HomeViewModel vm)
+        {
+            vm.EnterTestModeCommand.Execute(null);
+
+            // Park the log at the first line so it reads from the top. This is
+            // queued after the auto-scroll posts raised while filling the log,
+            // so it wins.
+            Dispatcher.UIThread.Post(() => LogListBox.ScrollIntoView(0), DispatcherPriority.Background);
+        }
+    }
+
     private void ExportLog_Click(object? sender, RoutedEventArgs e)
     {
         var window = this.VisualRoot as Window;

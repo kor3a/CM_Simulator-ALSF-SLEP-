@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CM_Simulator.ViewModels;
 
-public partial class ICC4ViewModel : ViewModelBase
+public partial class ICC4ViewModel : ViewModelBase, ILviccPage
 {
     private readonly MainViewModel _mainViewModel;
     private readonly HomeViewModel _homeViewModel;

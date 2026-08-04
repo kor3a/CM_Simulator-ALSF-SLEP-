@@ -435,6 +435,145 @@ public partial class HomeViewModel : ViewModelBase
         _mainViewModel?.SetActiveLviccCount(ActiveLviccCount);
     }
 
+    private void SetLviccPgBackground(int lviccNumber, IBrush brush)
+    {
+        switch (lviccNumber)
+        {
+            case 1: Lvicc1PgBackground = brush; break;
+            case 2: Lvicc2PgBackground = brush; break;
+            case 3: Lvicc3PgBackground = brush; break;
+            case 4: Lvicc4PgBackground = brush; break;
+            case 5: Lvicc5PgBackground = brush; break;
+            case 6: Lvicc6PgBackground = brush; break;
+            case 7: Lvicc7PgBackground = brush; break;
+            case 8: Lvicc8PgBackground = brush; break;
+            case 9: Lvicc9PgBackground = brush; break;
+            case 10: Lvicc10PgBackground = brush; break;
+            case 11: Lvicc11PgBackground = brush; break;
+            case 12: Lvicc12PgBackground = brush; break;
+            case 13: Lvicc13PgBackground = brush; break;
+            case 14: Lvicc14PgBackground = brush; break;
+            case 15: Lvicc15PgBackground = brush; break;
+            case 16: Lvicc16PgBackground = brush; break;
+            case 17: Lvicc17PgBackground = brush; break;
+            case 18: Lvicc18PgBackground = brush; break;
+            case 19: Lvicc19PgBackground = brush; break;
+            case 20: Lvicc20PgBackground = brush; break;
+            case 21: Lvicc21PgBackground = brush; break;
+        }
+    }
+
+    /// <summary>
+    /// Demo state used for documentation screenshots while the simulator is still
+    /// under development. Drives the UI only - no commands are sent over the serial
+    /// port and no responses are parsed.
+    /// </summary>
+    [RelayCommand]
+    public void EnterTestMode()
+    {
+        // 2400ft configuration: LVICC 1-15
+        Ft3000Mode = false;
+        AlsfMode = true;
+
+        // CM Control: ON, LOW and ALSF lit
+        _mainViewModel?.enableButtons();
+        OffButton = new SolidColorBrush(Colors.LightGray);
+        OffForeground = new SolidColorBrush(Colors.Black);
+        OnButton = new SolidColorBrush(Colors.LightGreen);
+        OnForeground = new SolidColorBrush(Colors.Black);
+        LowButton = new SolidColorBrush(Colors.LightGreen);
+        LowForeground = new SolidColorBrush(Colors.Black);
+        MedButton = new SolidColorBrush(Colors.LightGray);
+        MedForeground = new SolidColorBrush(Colors.Black);
+        HighButton = new SolidColorBrush(Colors.LightGray);
+        HighForeground = new SolidColorBrush(Colors.Black);
+        AlsfButton = new SolidColorBrush(Colors.LightGreen);
+        SsalrButton = new SolidColorBrush(Colors.LightGray);
+
+        for (int i = 1; i <= Ft2400LviccCount; i++)
+        {
+            // Home page card: ON at LOW intensity
+            SetLviccPgBackground(i, new SolidColorBrush(Colors.Green));
+            _mainViewModel?.SetIccSideMenu(i, "LOW");
+
+            var page = _mainViewModel?.GetIccPage(i);
+            if (page == null)
+                continue;
+
+            // LVICC SWITCH: REM and LOW on, OFF no longer highlighted
+            page.RemButton = new SolidColorBrush(Colors.Green);
+            page.RemForeground = new SolidColorBrush(Colors.White);
+            page.LowButton = new SolidColorBrush(Colors.Green);
+            page.LowForeground = new SolidColorBrush(Colors.White);
+            page.OffButton = new SolidColorBrush(Colors.LightGray);
+            page.OffForeground = new SolidColorBrush(Colors.Black);
+            page.MedButton = new SolidColorBrush(Colors.LightGray);
+            page.MedForeground = new SolidColorBrush(Colors.Black);
+            page.HighButton = new SolidColorBrush(Colors.LightGray);
+            page.HighForeground = new SolidColorBrush(Colors.Black);
+
+            // CONFIGURATION: ALSF, Serial, In Pavement, Compatibility
+            page.ModeStatus = "ALSF";
+            page.ModeBackground = new SolidColorBrush(Colors.LightGreen);
+            page.ControlType = "Serial";
+            page.ControlBackground = new SolidColorBrush(Colors.LightGreen);
+            page.InPavementBackground = new SolidColorBrush(Colors.LightGreen);
+            page.ElevatedBackground = new SolidColorBrush(Colors.LightGray);
+            page.CompatBackground = new SolidColorBrush(Colors.LightGreen);
+            page.EnhancedBackground = new SolidColorBrush(Colors.LightGray);
+
+            // No faults while in test mode
+            page.IsCommandErrorVisible = false;
+            page.IsMisfireErrorVisible = false;
+            page.IsCommErrorVisible = false;
+            page.IsModeErrorVisible = false;
+        }
+
+        // Pull the new page state into the home page cards
+        RefreshVisibleLviccs();
+
+        LogText = TestModeLog;
+    }
+
+    private const string TestModeLog = @"Connected to COM6
+
+Sent: 01-26-21-B7-00-03
+Received: 01-21-26-78-00-03
+
+Sent: 01-26-21-87-00-03
+Received: 01-21-26-47-02-A0-00-03
+
+Sent: 01-26-21-83-00-03
+Received: 01-21-26-43-19-05-10-00-EA-00-01-87-00-EB-03-00-03-04-8E-00-00-00-71-01-5E-02-58-00-20-00-03
+
+Sent: 01-26-21-84-00-03
+Received: 01-21-26-44-33-05-10-00-EA-00-01-87-00-EB-03-00-03-04-8E-00-00-00-71-01-5E-02-58-00-20-00-05-10-00-EA-00-01-87-00-EB-03-00-03-04-8E-00-00-00-71-01-5E-02-58-00-20-00-31-03
+
+Sent: 01-26-21-81-00-03
+Received: 01-21-26-41-00-03
+Received: 01-21-26-C1-02-00-00-03
+
+
+Sent: 01-22-21-B1-00-03
+Received: 01-21-22-72-00-03
+
+Sent: 01-22-21-91-00-03
+Received: 01-21-22-51-00-03
+Received: 01-21-22-D0-00-03
+
+Sent: 01-22-21-93-00-03
+Received: 01-21-22-43-09-03-00-03-04-8E-00-00-00-71-03
+
+Sent: 01-27-21-B1-00-03
+Received: 01-21-27-72-00-03
+
+Sent: 01-27-21-91-00-03
+Received: 01-21-27-51-00-03
+Received: 01-21-27-D0-00-03
+
+Sent: 01-27-21-93-00-03
+Received: 01-21-27-43-09-03-00-03-04-8E-00-00-00-71-03";
+
     [RelayCommand]
     private void Ft2400Clicked()
     {

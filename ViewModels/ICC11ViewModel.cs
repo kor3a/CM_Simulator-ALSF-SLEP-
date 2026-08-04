@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CM_Simulator.ViewModels;
 
-public partial class ICC11ViewModel : ViewModelBase
+public partial class ICC11ViewModel : ViewModelBase, ILviccPage
 {
     private readonly MainViewModel _mainViewModel;
     private readonly HomeViewModel _homeViewModel;

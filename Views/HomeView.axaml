@@ -198,6 +198,12 @@
                                 HorizontalContentAlignment="Left"
                                 Padding="10,8"
                                 Click="ExportLog_Click"/>
+                        <Button Content="Test Mode"
+                                FontSize="16"
+                                Background="Transparent"
+                                HorizontalContentAlignment="Left"
+                                Padding="10,8"
+                                Click="TestMode_Click"/>
                       </StackPanel>
                     </Flyout>
                   </Button.Flyout>
