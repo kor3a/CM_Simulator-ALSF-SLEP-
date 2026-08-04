@@ -23,7 +23,10 @@ public partial class HomeViewModel : ViewModelBase
     // Forwarding properties to enable proper change notification for nested bindings
     public bool IsHomePageActive => _mainViewModel.HomePageIsActive;
     public ViewModelBase CurrentIccPage => _mainViewModel.CurrentPage;
-    public double WindowWidth => CurrentIccPage is ICC1ViewModel or ICC2ViewModel or ICC3ViewModel or ICC4ViewModel ? 1350.0 : 850.0;
+    public double WindowWidth => 1350.0;
+
+    // Cards for all 21 PLCK-LVICCs shown on the home page
+    public ObservableCollection<LviccCardViewModel> LviccCards { get; } = new();
 
     [ObservableProperty]
     private bool _alsfMode = true;
@@ -299,6 +302,10 @@ public partial class HomeViewModel : ViewModelBase
         if (Design.IsDesignMode)
         {
             _mainViewModel = null; // Or provide a mock MainViewModel if needed
+            for (int i = 1; i <= 21; i++)
+            {
+                LviccCards.Add(new LviccCardViewModel(this, i));
+            }
         }
         else
         {
@@ -309,6 +316,23 @@ public partial class HomeViewModel : ViewModelBase
     public HomeViewModel(MainViewModel mainViewModel)
     {
         _mainViewModel = mainViewModel;
+
+        for (int i = 1; i <= 21; i++)
+        {
+            LviccCards.Add(new LviccCardViewModel(this, i));
+        }
+
+        // Refresh the cards when one of the LviccXPgBackground properties changes
+        PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName?.StartsWith("Lvicc") == true)
+            {
+                foreach (var card in LviccCards)
+                {
+                    card.Refresh();
+                }
+            }
+        };
 
         // Subscribe to MainViewModel property changes to forward notifications
         _mainViewModel.PropertyChanged += (sender, e) =>
@@ -347,6 +371,11 @@ public partial class HomeViewModel : ViewModelBase
         OnPropertyChanged(nameof(VisibleLvicc1ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc2ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc3ButtonEnabled));
+
+        foreach (var card in LviccCards)
+        {
+            card.Refresh();
+        }
     }
 
     private void NotifyVisibleLviccPropertiesChanged()
@@ -381,10 +410,15 @@ public partial class HomeViewModel : ViewModelBase
         OnPropertyChanged(nameof(VisibleLvicc1ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc2ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc3ButtonEnabled));
+
+        foreach (var card in LviccCards)
+        {
+            card.Refresh();
+        }
     }
 
     // Helper methods to get data for any LVICC number
-    private IBrush GetLviccBackground(int lviccNumber)
+    public IBrush GetLviccBackground(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -413,7 +447,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private string GetLviccSideMenu(int lviccNumber)
+    public string GetLviccSideMenu(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -442,7 +476,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private IBrush GetLviccRemButton(int lviccNumber)
+    public IBrush GetLviccRemButton(int lviccNumber)
     {
         var defaultBrush = new SolidColorBrush(Colors.LightGray);
         return lviccNumber switch
@@ -472,7 +506,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private bool GetLviccCommandErrorVisible(int lviccNumber)
+    public bool GetLviccCommandErrorVisible(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -501,7 +535,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private bool GetLviccMisfireErrorVisible(int lviccNumber)
+    public bool GetLviccMisfireErrorVisible(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -530,7 +564,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private bool GetLviccCommErrorVisible(int lviccNumber)
+    public bool GetLviccCommErrorVisible(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -559,7 +593,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private bool GetLviccModeErrorVisible(int lviccNumber)
+    public bool GetLviccModeErrorVisible(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -626,7 +660,7 @@ public partial class HomeViewModel : ViewModelBase
         GoToIccByNumber(VisibleLvicc3Number);
     }
 
-    private void GoToIccByNumber(int iccNumber)
+    public void GoToIccByNumber(int iccNumber)
     {
         switch (iccNumber)
         {
@@ -1117,6 +1151,52 @@ public partial class HomeViewModel : ViewModelBase
             _mainViewModel.StopContinuousBeep();
         }
 
+    }
+}
+
+/// <summary>
+/// View model for a single PLCK-LVICC card shown on the home page grid.
+/// </summary>
+public partial class LviccCardViewModel : ViewModelBase
+{
+    private readonly HomeViewModel _homeViewModel;
+
+    public int Number { get; }
+
+    public LviccCardViewModel(HomeViewModel homeViewModel, int number)
+    {
+        _homeViewModel = homeViewModel;
+        Number = number;
+    }
+
+    public string Header => $"PLCK{Number}";
+    public IBrush Background => _homeViewModel.GetLviccBackground(Number);
+    public string SideMenu => _homeViewModel.GetLviccSideMenu(Number);
+    public IBrush RemButton => _homeViewModel.GetLviccRemButton(Number);
+    public bool CommandErrorVisible => _homeViewModel.GetLviccCommandErrorVisible(Number);
+    public bool MisfireErrorVisible => _homeViewModel.GetLviccMisfireErrorVisible(Number);
+    public bool CommErrorVisible => _homeViewModel.GetLviccCommErrorVisible(Number);
+    public bool ModeErrorVisible => _homeViewModel.GetLviccModeErrorVisible(Number);
+
+    // In SSALR mode only the odd-numbered LVICCs can be opened
+    public bool ButtonEnabled => _homeViewModel.AlsfMode || (Number % 2 == 1);
+
+    [RelayCommand]
+    private void Open()
+    {
+        _homeViewModel.GoToIccByNumber(Number);
+    }
+
+    public void Refresh()
+    {
+        OnPropertyChanged(nameof(Background));
+        OnPropertyChanged(nameof(SideMenu));
+        OnPropertyChanged(nameof(RemButton));
+        OnPropertyChanged(nameof(CommandErrorVisible));
+        OnPropertyChanged(nameof(MisfireErrorVisible));
+        OnPropertyChanged(nameof(CommErrorVisible));
+        OnPropertyChanged(nameof(ModeErrorVisible));
+        OnPropertyChanged(nameof(ButtonEnabled));
     }
 }
 

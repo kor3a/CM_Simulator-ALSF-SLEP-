@@ -2,13 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Interactivity;assembly=Avalonia.Interactivity"
              xmlns:vm="clr-namespace:CM_Simulator.ViewModels"
              x:DataType="vm:ICC16ViewModel"
-             mc:Ignorable="d" d:DesignWidth="1050" d:DesignHeight="750"
+             mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="750"
              x:Class="CM_Simulator.Views.ICC16View">
-  <Design.DataContext>
-    <vm:ICC16ViewModel/>
-  </Design.DataContext>
+  <Design.DataContext><vm:ICC16ViewModel/></Design.DataContext>
+
 
   <Grid>
     <Grid.ColumnDefinitions>
@@ -21,109 +21,217 @@
 
     <Border Grid.Column="1" Grid.ColumnSpan="4">
       <Grid RowDefinitions="*, Auto, Auto, Auto">
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" Margin="0,20,0,0">
-          <HeaderedContentControl Header="LVICC 16" Height="400" Width="600" Margin="10" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
+        <StackPanel Grid.Row="0" Grid.RowSpan="2" Margin="0,20,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+          <HeaderedContentControl Header="LVICC 16" Height="400" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-              <HeaderedContentControl Background="White" Height="340" Width="150" Margin="10">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,5">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="240VAC Voltage" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="240VAC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox TextAlignment="Center" Text="{Binding Vac240V}" Height="35" Width="45" Background="White" Margin="-10,0,0,0" FontSize="14" IsReadOnly="True"></TextBox>
+                    <TextBox TextAlignment="Center" Text="{Binding Vac240V}" Height="35" Width="45" Background="White" Margin="-5,0,0,0" FontSize="13" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="240VAC Current" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="240VAC Current" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding Vac240A}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding Vac240A}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,5">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="+3.3VDC Voltage" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+3.3VDC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding Vdc33V}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding Vdc33V}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="+5VDC Voltage" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+5VDC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding Vdc5V}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding Vdc5V}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,5">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="+8VDC Voltage" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+8VDC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding Vdc8V}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding Vdc8V}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                 </StackPanel>
               </HeaderedContentControl>
 
-              <HeaderedContentControl Background="White" Height="340" Width="150" Margin="10">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="+8VDC Current" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+8VDC Current" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding Vdc8A}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding Vdc8A}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="+18VDC Voltage" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+18VDC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding Vdc18V}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding Vdc18V}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,0">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="Trigger Pulse Width" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Trigger Pulse Width" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding TriggerPulseWidth}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding TriggerPulseWidth}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Label Margin="0,5" Width="60">
-                      <TextBlock Text="Trigger Pulse Delay" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="55">
+                      <TextBlock Text="Trigger Pulse Delay" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding TriggerPulseDelay}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="5,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding TriggerPulseDelay}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,5">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="Trigger Period" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Trigger Period" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding TriggerPeriod}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding TriggerPeriod}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                 </StackPanel>
               </HeaderedContentControl>
-              <HeaderedContentControl Background="White" Height="340" Width="150" Margin="10">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
                 <StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="Trigger Current" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Trigger Current" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding TriggerCurrent}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding TriggerCurrent}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,3,0,0">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="Anode Pulse Width" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Anode Pulse Width" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding AnodePulseWidth}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding AnodePulseWidth}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Label Margin="0,5" Width="70">
-                      <TextBlock Text="Anode Pulse Delay" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="60">
+                      <TextBlock Text="Anode Pulse Delay" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding AnodePulseDelay}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding AnodePulseDelay}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="0,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="Bleeder Voltage" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Bleeder Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox Text="{Binding BleederV}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="White" Margin="-10,0,0,0" IsReadOnly="True"></TextBox>
+                    <TextBox Text="{Binding BleederV}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,0">
-                    <Label Margin="0,5" Width="75">
-                      <TextBlock Text="Flasher Misfires" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Flasher Misfires" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
                     </Label>
-                    <TextBox x:Name="FlasherMisfiresTextBox" Classes="flasherMisfire" Text="{Binding FlasherMisfires}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="{Binding FlasherMisfireBackground}" Margin="-10,0,0,0" KeyDown="FlasherMisfire_KeyDown" LostFocus="FlasherMisfire_LostFocus"/>
+                    <TextBox x:Name="FlasherMisfiresTextBox" Classes="flasherMisfire" Text="{Binding FlasherMisfires}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="{Binding FlasherMisfireBackground}" Margin="-5,0,0,0" KeyDown="FlasherMisfire_KeyDown" LostFocus="FlasherMisfire_LostFocus"/>
+                  </StackPanel>
+                </StackPanel>
+              </HeaderedContentControl>
+            </StackPanel>
+          </HeaderedContentControl>
+
+          <HeaderedContentControl Header="PLCK 16" Height="400" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
+                <StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,5">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="240VAC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox TextAlignment="Center" Text="{Binding PlckVac240V}" Height="35" Width="45" Background="White" Margin="-5,0,0,0" FontSize="13" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="240VAC Current" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckVac240A}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,5">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+3.3VDC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckVdc33V}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+5VDC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckVdc5V}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,5">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+8VDC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckVdc8V}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                </StackPanel>
+              </HeaderedContentControl>
+
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
+                <StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+8VDC Current" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckVdc8A}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="+18VDC Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckVdc18V}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,0">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Trigger Pulse Width" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckTriggerPulseWidth}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Label Margin="0,5" Width="55">
+                      <TextBlock Text="Trigger Pulse Delay" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckTriggerPulseDelay}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,5">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Trigger Period" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckTriggerPeriod}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                </StackPanel>
+              </HeaderedContentControl>
+              <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
+                <StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Trigger Current" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckTriggerCurrent}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,3,0,0">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Anode Pulse Width" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckAnodePulseWidth}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Label Margin="0,5" Width="60">
+                      <TextBlock Text="Anode Pulse Delay" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckAnodePulseDelay}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="0,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Bleeder Voltage" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckBleederV}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="White" Margin="-5,0,0,0" IsReadOnly="True"></TextBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,0">
+                    <Label Margin="0,5" Width="65">
+                      <TextBlock Text="Flasher Misfires" FontSize="11" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Label>
+                    <TextBox Text="{Binding PlckFlasherMisfires}" TextAlignment="Center" FontSize="13" Height="35" Width="45" Background="{Binding PlckFlasherMisfireBackground}" Margin="-5,0,0,0" IsReadOnly="True"/>
                   </StackPanel>
                 </StackPanel>
               </HeaderedContentControl>
@@ -224,30 +332,29 @@
               </Border>
             </StackPanel>
           </HeaderedContentControl>
-
-
         </StackPanel>
+
         <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,30,8,0">
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-            <Label Margin="0,5" Width="75">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
+            <Label Margin="0,5" Width="37">
               <TextBlock Text="Start" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
             </Label>
             <TextBox x:Name="StartByteTextBox" Text="{Binding StartByte}" TextAlignment="Center" FontSize="14" MinHeight="35" Width="45" Background="{Binding StartByteBackground}" Margin="10,0,0,0" KeyDown="StartByte_KeyDown" LostFocus="StartByte_LostFocus"></TextBox>
           </StackPanel>
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-            <Label Margin="0,5" Width="75">
-              <TextBlock Text="Destination" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
+            <Label Margin="0,5" Width="37">
+              <TextBlock Text="Dest" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
             </Label>
             <TextBox x:Name="DestinationByteTextBox" Text="{Binding DestinationByte}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="{Binding DestinationByteBackground}" Margin="10,0,0,0" KeyDown="DestinationByte_KeyDown" LostFocus="DestinationByte_LostFocus"></TextBox>
           </StackPanel>
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-            <Label Margin="0,5" Width="75">
-              <TextBlock Text="Source" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
+            <Label Margin="0,5" Width="37">
+              <TextBlock Text="Src" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
             </Label>
             <TextBox x:Name="SourceByteTextBox" Text="{Binding SourceByte}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="{Binding SourceByteBackground}" Margin="10,0,0,0" KeyDown="SourceByte_KeyDown" LostFocus="SourceByte_LostFocus"></TextBox>
           </StackPanel>
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5">
-            <Label Margin="0,5" Width="75">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5">
+            <Label Margin="0,5" Width="37">
               <TextBlock Text="End" FontSize="12" FontWeight="Bold" TextWrapping="Wrap"/>
             </Label>
             <TextBox x:Name="EndByteTextBox" Text="{Binding EndByte}" TextAlignment="Center" FontSize="14" Height="35" Width="45" Background="{Binding EndByteBackground}" Margin="10,0,0,0" KeyDown="EndByte_KeyDown" LostFocus="EndByte_LostFocus"></TextBox>

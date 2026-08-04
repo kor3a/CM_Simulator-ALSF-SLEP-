@@ -2,8 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="380"
-        Width="300" Height="380"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="220"
+        Width="300" Height="220"
         x:Class="CM_Simulator.ConnectPopupView"
         xmlns:vm="clr-namespace:CM_Simulator.ViewModels;assembly=CM_Simulator"
         x:DataType="vm:MainViewModel"
@@ -36,6 +36,8 @@
       </StackPanel>
     </Button>
 
+    <!-- 2Hz Sync Port section hidden (logic kept in the view model) -->
+    <StackPanel IsVisible="False">
     <!-- Separator -->
     <Border Height="1" Background="LightGray" Margin="0,15,0,10"/>
 
@@ -68,6 +70,7 @@
       <Ellipse Width="12" Height="12" Stroke="Black" StrokeThickness="1" Margin="0,0,5,0" Fill="LightGray" IsVisible="{Binding !IsSyncPortConnected}"/>
       <TextBlock Text="Connected" Foreground="Green" FontSize="12" VerticalAlignment="Center" IsVisible="{Binding IsSyncPortConnected}"/>
       <TextBlock Text="Disconnected" Foreground="Gray" FontSize="12" VerticalAlignment="Center" IsVisible="{Binding !IsSyncPortConnected}"/>
+    </StackPanel>
     </StackPanel>
   </StackPanel>
 </Window>
