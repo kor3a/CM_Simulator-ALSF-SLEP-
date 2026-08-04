@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -32,6 +32,10 @@ public partial class HomeViewModel : ViewModelBase
     // Runway length mode: 2400ft uses PLCK 1-15, 3000ft uses PLCK 1-21
     public const int Ft2400LviccCount = 15;
     public const int Ft3000LviccCount = 21;
+
+    // In SSALR mode only the odd-numbered LVICCs light, up to these limits
+    public const int Ssalr2400LviccLimit = 9;
+    public const int Ssalr3000LviccLimit = 15;
 
     [ObservableProperty]
     private bool _ft3000Mode = false;
@@ -466,17 +470,50 @@ public partial class HomeViewModel : ViewModelBase
     /// <summary>
     /// Demo state used for documentation screenshots while the simulator is still
     /// under development. Drives the UI only - no commands are sent over the serial
-    /// port and no responses are parsed.
+    /// port and no responses are parsed. Stays active until a port is connected,
+    /// so the ALSF/SSALR and 2400ft/3000ft buttons keep re-arranging the demo.
     /// </summary>
+    [ObservableProperty]
+    private bool _testModeActive = false;
+
     [RelayCommand]
     public void EnterTestMode()
     {
-        // 2400ft configuration: LVICC 1-15
-        Ft3000Mode = false;
-        AlsfMode = true;
+        TestModeActive = true;
 
-        // CM Control: ON, LOW and ALSF lit
+        // Start from the 2400ft configuration, in whichever mode the CM is in
+        Ft3000Mode = false;
+        AlsfMode = _mainViewModel?.AlsfMode ?? true;
+
         _mainViewModel?.enableButtons();
+        ApplyTestModeState();
+
+        LogText = TestModeLog;
+    }
+
+    /// <summary>
+    /// True when a given LVICC is lit in test mode. ALSF drives every LVICC of the
+    /// current runway length; SSALR drives only the odd-numbered ones, up to LVICC 9
+    /// at 2400ft and up to LVICC 15 at 3000ft.
+    /// </summary>
+    private bool IsLitInTestMode(int lviccNumber)
+    {
+        if (AlsfMode)
+        {
+            return lviccNumber <= ActiveLviccCount;
+        }
+
+        int ssalrLimit = Ft3000Mode ? Ssalr3000LviccLimit : Ssalr2400LviccLimit;
+        return lviccNumber % 2 == 1 && lviccNumber <= ssalrLimit;
+    }
+
+    /// <summary>
+    /// Applies the test mode picture for the current mode and runway length: lit
+    /// LVICCs show LOW with REM on, everything else shows OFF.
+    /// </summary>
+    private void ApplyTestModeState()
+    {
+        // CM Control: ON and LOW lit, plus whichever of ALSF/SSALR is selected
         OffButton = new SolidColorBrush(Colors.LightGray);
         OffForeground = new SolidColorBrush(Colors.Black);
         OnButton = new SolidColorBrush(Colors.LightGreen);
@@ -487,32 +524,49 @@ public partial class HomeViewModel : ViewModelBase
         MedForeground = new SolidColorBrush(Colors.Black);
         HighButton = new SolidColorBrush(Colors.LightGray);
         HighForeground = new SolidColorBrush(Colors.Black);
-        AlsfButton = new SolidColorBrush(Colors.LightGreen);
-        SsalrButton = new SolidColorBrush(Colors.LightGray);
+        AlsfButton = new SolidColorBrush(AlsfMode ? Colors.LightGreen : Colors.LightGray);
+        SsalrButton = new SolidColorBrush(AlsfMode ? Colors.LightGray : Colors.LightGreen);
 
-        for (int i = 1; i <= Ft2400LviccCount; i++)
+        for (int i = 1; i <= Ft3000LviccCount; i++)
         {
-            // Home page card: ON at LOW intensity
-            SetLviccPgBackground(i, new SolidColorBrush(Colors.LightGreen));
-            _mainViewModel?.SetIccSideMenu(i, "LOW");
+            bool lit = IsLitInTestMode(i);
+
+            // Home page card: ON at LOW intensity, or OFF
+            SetLviccPgBackground(i, new SolidColorBrush(lit ? Colors.LightGreen : Colors.LightGray));
+            _mainViewModel?.SetIccSideMenu(i, lit ? "LOW" : "OFF");
 
             var page = _mainViewModel?.GetIccPage(i);
             if (page == null)
                 continue;
 
-            // LVICC SWITCH: REM and LOW on, OFF no longer highlighted
-            page.RemButton = new SolidColorBrush(Colors.Green);
-            page.RemForeground = new SolidColorBrush(Colors.White);
-            page.LowButton = new SolidColorBrush(Colors.Green);
-            page.LowForeground = new SolidColorBrush(Colors.White);
-            page.OffButton = new SolidColorBrush(Colors.LightGray);
-            page.OffForeground = new SolidColorBrush(Colors.Black);
+            if (lit)
+            {
+                // LVICC SWITCH: REM and LOW on, OFF no longer highlighted
+                page.RemButton = new SolidColorBrush(Colors.Green);
+                page.RemForeground = new SolidColorBrush(Colors.White);
+                page.LowButton = new SolidColorBrush(Colors.Green);
+                page.LowForeground = new SolidColorBrush(Colors.White);
+                page.OffButton = new SolidColorBrush(Colors.LightGray);
+                page.OffForeground = new SolidColorBrush(Colors.Black);
+            }
+            else
+            {
+                // LVICC SWITCH: OFF highlighted, REM and LOW cleared
+                page.RemButton = new SolidColorBrush(Colors.LightGray);
+                page.RemForeground = new SolidColorBrush(Colors.Black);
+                page.LowButton = new SolidColorBrush(Colors.LightGray);
+                page.LowForeground = new SolidColorBrush(Colors.Black);
+                page.OffButton = new SolidColorBrush(Colors.DarkGray);
+                page.OffForeground = new SolidColorBrush(Colors.White);
+            }
+
             page.MedButton = new SolidColorBrush(Colors.LightGray);
             page.MedForeground = new SolidColorBrush(Colors.Black);
             page.HighButton = new SolidColorBrush(Colors.LightGray);
             page.HighForeground = new SolidColorBrush(Colors.Black);
 
-            // CONFIGURATION: ALSF, Serial, In Pavement, Compatibility
+            // CONFIGURATION: ALSF, Serial, In Pavement, Compatibility. This describes
+            // how the LVICC is set up, so it stays lit whether or not it is on.
             page.ModeStatus = "ALSF";
             page.ModeBackground = new SolidColorBrush(Colors.LightGreen);
             page.ControlType = "Serial";
@@ -531,8 +585,6 @@ public partial class HomeViewModel : ViewModelBase
 
         // Pull the new page state into the home page cards
         RefreshVisibleLviccs();
-
-        LogText = TestModeLog;
     }
 
     private const string TestModeLog = @"Connected to COM6
@@ -578,12 +630,22 @@ Received: 01-21-27-43-09-03-00-03-04-8E-00-00-00-71-03";
     private void Ft2400Clicked()
     {
         Ft3000Mode = false;
+
+        if (TestModeActive)
+        {
+            ApplyTestModeState();
+        }
     }
 
     [RelayCommand]
     private void Ft3000Clicked()
     {
         Ft3000Mode = true;
+
+        if (TestModeActive)
+        {
+            ApplyTestModeState();
+        }
     }
 
     // Called when CurrentStartIndex changes - notify all computed properties
@@ -1061,6 +1123,15 @@ Received: 01-21-27-43-09-03-00-03-04-8E-00-00-00-71-03";
     [RelayCommand]
     private void AlsfModeChange()
     {
+        // In test mode the mode buttons only re-arrange the demo picture; they must
+        // not touch cmMessageData or try to send commands over a closed port.
+        if (TestModeActive)
+        {
+            AlsfMode = true;
+            ApplyTestModeState();
+            return;
+        }
+
         if (!_mainViewModel.AlsfMode)
         {
             AlsfMode = true;
@@ -1072,12 +1143,20 @@ Received: 01-21-27-43-09-03-00-03-04-8E-00-00-00-71-03";
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.ssalrModeByte);
             _mainViewModel.AlsfMode = true;
         }
-
     }
 
     [RelayCommand]
     private void SsalrModeChange()
     {
+        // In test mode the mode buttons only re-arrange the demo picture; they must
+        // not touch cmMessageData or try to send commands over a closed port.
+        if (TestModeActive)
+        {
+            AlsfMode = false;
+            ApplyTestModeState();
+            return;
+        }
+
         if (_mainViewModel.AlsfMode)
         {
             AlsfMode = false;
@@ -1089,7 +1168,6 @@ Received: 01-21-27-43-09-03-00-03-04-8E-00-00-00-71-03";
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.ssalrModeByte);
             _mainViewModel.AlsfMode = false;
         }
-
     }
 
     [RelayCommand]

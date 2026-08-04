@@ -1742,6 +1742,9 @@ public partial class MainViewModel : ViewModelBase
 
             Sp.Open();
 
+            // Real data from here on - stop test mode from redrawing the demo picture
+            _homePage.TestModeActive = false;
+
             _homePage.LogText = $"Connected to {SelectedPort}\n";
             popupWindow.Close(); // Close the pop-up
 
