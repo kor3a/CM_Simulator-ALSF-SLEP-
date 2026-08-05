@@ -22,6 +22,7 @@
     <Border Grid.Column="1" Grid.ColumnSpan="4">
       <Grid RowDefinitions="*, Auto, Auto, Auto">
         <StackPanel Grid.Row="0" Grid.RowSpan="2" Margin="0,20,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+          <StackPanel>
           <HeaderedContentControl Header="LVICC 12" Height="400" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
               <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
@@ -130,6 +131,28 @@
             </StackPanel>
           </HeaderedContentControl>
 
+          <HeaderedContentControl Header="LVICC Commands" Height="80" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="Reset" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="Short" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="Long" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="Config" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="Enquire" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
+            </StackPanel>
+          </HeaderedContentControl>
+          </StackPanel>
+
+          <StackPanel>
           <HeaderedContentControl Header="PLCK 12" Height="400" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
               <HeaderedContentControl Background="White" Height="340" Width="143" Margin="5">
@@ -237,6 +260,20 @@
               </HeaderedContentControl>
             </StackPanel>
           </HeaderedContentControl>
+          <HeaderedContentControl Header="PLCK12 Commands" Height="80" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="Reset" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="Short" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="Enquire" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
+            </StackPanel>
+          </HeaderedContentControl>
+          </StackPanel>
         </StackPanel>
 
         <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="20,40,0,0">

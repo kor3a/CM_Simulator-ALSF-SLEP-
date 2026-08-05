@@ -132,7 +132,7 @@
               </StackPanel>
 
               <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,0,0,0">
-                <HeaderedContentControl Header="COMMANDS" Height="100" Margin="10" HorizontalAlignment="Center" Background="White">
+                <HeaderedContentControl Header="PLCK (CM) Commands" Height="100" Margin="10" HorizontalAlignment="Center" Background="White">
                   <StackPanel Orientation="Horizontal">
                     <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
                       <Button IsEnabled="{Binding ResetEnabled}" x:Name="resetRequestBtn" Content="Reset" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Background="LightGray" Command="{Binding ResetResultRequested}"/>
@@ -141,7 +141,7 @@
                       <Button IsEnabled="{Binding ShortEnabled}" x:Name="shortDataBtn" Content="Short" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Background="{Binding ShortButton}" Command="{Binding ShortDataRequested}"/>
                     </Border>
                     <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                      <Button IsEnabled="{Binding ConfigEnabled}" x:Name="configRequestBtn" Content="Config" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding ConfigButton}" Command="{Binding ConfigDataRequested}"/>
+                      <Button IsEnabled="{Binding ConfigEnabled}" x:Name="configRequestBtn" Content="Enquire" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="85" Height="50" Background="{Binding ConfigButton}" Command="{Binding ConfigDataRequested}"/>
                     </Border>
                   </StackPanel>
                 </HeaderedContentControl>
