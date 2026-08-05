@@ -131,7 +131,7 @@
             </StackPanel>
           </HeaderedContentControl>
 
-          <HeaderedContentControl Header="LVICC Commands" Height="80" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
+          <HeaderedContentControl Header="LVICC2 Commands" Height="80" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
               <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
                 <Button Content="Reset" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
@@ -260,7 +260,7 @@
               </HeaderedContentControl>
             </StackPanel>
           </HeaderedContentControl>
-          <HeaderedContentControl Header="PLCK2 Commands" Height="80" Width="530" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
+          <HeaderedContentControl Header="PLCK2 Commands" Height="80" Margin="5" Background="White" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="3">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
               <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
                 <Button Content="Reset" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
