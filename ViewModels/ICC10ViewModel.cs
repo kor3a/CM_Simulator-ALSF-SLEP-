@@ -81,6 +81,12 @@ public partial class ICC10ViewModel : ViewModelBase, ILviccPage
     [ObservableProperty]
     public string _plckVdc24A;
     [ObservableProperty]
+    public string _plckCpuTemp;
+    [ObservableProperty]
+    public string _plckPercentBusy;
+    [ObservableProperty]
+    public string _plckMaxPercentBusy;
+    [ObservableProperty]
     public string _plckTriggerPulseWidth;
     [ObservableProperty]
     public string _plckTriggerPulseDelay;

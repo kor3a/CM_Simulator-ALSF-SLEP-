@@ -1616,6 +1616,9 @@ public partial class LviccCardViewModel : ViewModelBase
     }
 
     public string Header => $"PLCK{Number}";
+
+    // PLCK1 is 0x26 and they run consecutively through PLCK21 at 0x3A
+    public string Address => $"0x{0x25 + Number:X2}";
     public IBrush Background => _homeViewModel.GetLviccBackground(Number);
     public string SideMenu => _homeViewModel.GetLviccSideMenu(Number);
     public IBrush RemButton => _homeViewModel.GetLviccRemButton(Number);
