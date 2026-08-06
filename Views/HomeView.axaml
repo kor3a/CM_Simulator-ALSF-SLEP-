@@ -204,11 +204,14 @@
                                 HorizontalContentAlignment="Left"
                                 Padding="10,8"
                                 Click="ExportLog_Click"/>
+                        <!-- Hides itself once test mode is on, so the menu can be
+                             screenshotted the way it looks in production -->
                         <Button Content="Test Mode"
                                 FontSize="16"
                                 Background="Transparent"
                                 HorizontalContentAlignment="Left"
                                 Padding="10,8"
+                                IsVisible="{Binding !TestModeActive}"
                                 Click="TestMode_Click"/>
                       </StackPanel>
                     </Flyout>
