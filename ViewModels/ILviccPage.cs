@@ -34,6 +34,31 @@ public interface ILviccPage
     string ModeStatus { get; set; }
     string ControlType { get; set; }
 
+    // LVICC short data fields
+    string Vac240V { get; set; }
+    string Vac240A { get; set; }
+    string Vdc33V { get; set; }
+    string Vdc5V { get; set; }
+    string Vdc8V { get; set; }
+    string Vdc8A { get; set; }
+    string Vdc18V { get; set; }
+    string TriggerPulseWidth { get; set; }
+    string TriggerPulseDelay { get; set; }
+    string TriggerPeriod { get; set; }
+    string TriggerCurrent { get; set; }
+    string AnodePulseWidth { get; set; }
+    string AnodePulseDelay { get; set; }
+    string BleederV { get; set; }
+    string FlasherMisfires { get; set; }
+
+    // PLCK short data fields
+    string PlckVdc33V { get; set; }
+    string PlckVdc5V { get; set; }
+    string PlckVdc8V { get; set; }
+    string PlckCpuTemp { get; set; }
+    string PlckPercentBusy { get; set; }
+    string PlckMaxPercentBusy { get; set; }
+
     // Error indicators
     bool IsCommandErrorVisible { get; set; }
     bool IsMisfireErrorVisible { get; set; }

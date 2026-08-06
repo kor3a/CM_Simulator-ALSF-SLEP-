@@ -539,6 +539,9 @@ public partial class HomeViewModel : ViewModelBase
             if (page == null)
                 continue;
 
+            // Short data readings, matching the canned responses in the log
+            FillTestModeData(page);
+
             if (lit)
             {
                 // LVICC SWITCH: REM and LOW on, OFF no longer highlighted
@@ -591,6 +594,64 @@ public partial class HomeViewModel : ViewModelBase
 
         // Pull the new page state into the home page cards
         RefreshVisibleLviccs();
+    }
+
+    /// <summary>
+    /// Fills a page's data fields with the values encoded in the canned short data
+    /// responses in <see cref="TestModeLog"/>, so the pages and the log agree.
+    ///
+    /// LVICC SHORT DATA RESPONSE (0x43), payload from byte 7, big endian:
+    ///   [7..8]   240VAC Voltage      x1     00-EA -> 234
+    ///   [9]      240VAC Current      x0.1   0C    -> 1.2
+    ///   [10..11] +3.3VDC Voltage     x0.1   00-21 -> 3.3
+    ///   [12..13] +5VDC Voltage       x0.1   00-32 -> 5.0
+    ///   [14..15] +8VDC Voltage       x0.1   00-51 -> 8.1
+    ///   [16]     +8VDC Current       x0.1   03    -> 0.3
+    ///   [17..18] +18VDC Voltage      x0.1   00-B6 -> 18.2
+    ///   [19..20] Trigger Pulse Width x0.1   00-03 -> 0.3
+    ///   [21..22] Trigger Pulse Delay x0.1   04-8E -> 116.6
+    ///   [23..24] Trigger Period      x1     01-F4 -> 500
+    ///   [25..26] Trigger Current     x0.1   00-71 -> 11.3
+    ///   [27..28] Anode Pulse Width   x1     01-5E -> 350
+    ///   [29..30] Anode Pulse Delay   x1     02-58 -> 600
+    ///   [31..32] Bleeder Voltage     x0.1   00-20 -> 3.2
+    ///   [33]     Flasher Misfires    x1     00    -> 0
+    ///
+    /// PLCK SHORT DATA RESPONSE (0x53), payload from byte 7, big endian:
+    ///   [7..8]   +3.3VDC Voltage     x0.1   00-21 -> 3.3
+    ///   [9..10]  +5VDC Voltage       x0.1   00-32 -> 5.0
+    ///   [11..12] +8VDC Voltage       x0.1   00-50 -> 8.0
+    ///   [13..14] CPU Temp            x0.1   01-9F -> 41.5
+    ///   [15]     % Busy              x1     25    -> 37
+    ///   [16]     Max % Busy          x1     34    -> 52
+    ///
+    /// In both, byte 5 is the sub-length and byte 6 the status bits
+    /// (0x31 = ON + LOW + ALSF).
+    /// </summary>
+    private static void FillTestModeData(ILviccPage page)
+    {
+        page.Vac240V = "234V";
+        page.Vac240A = "1.2";
+        page.Vdc33V = "3.3";
+        page.Vdc5V = "5.0";
+        page.Vdc8V = "8.1";
+        page.Vdc8A = "0.3";
+        page.Vdc18V = "18.2";
+        page.TriggerPulseWidth = "0.3";
+        page.TriggerPulseDelay = "116.6";
+        page.TriggerPeriod = "500";
+        page.TriggerCurrent = "11.3";
+        page.AnodePulseWidth = "350";
+        page.AnodePulseDelay = "600";
+        page.BleederV = "3.2";
+        page.FlasherMisfires = "0";
+
+        page.PlckVdc33V = "3.3";
+        page.PlckVdc5V = "5.0";
+        page.PlckVdc8V = "8.0";
+        page.PlckCpuTemp = "41.5";
+        page.PlckPercentBusy = "37";
+        page.PlckMaxPercentBusy = "52";
     }
 
     private enum TestFault
@@ -663,7 +724,7 @@ Sent: 01-26-21-87-00-03
 Received: 01-21-26-47-02-A0-00-03
 
 Sent: 01-26-21-83-00-03
-Received: 01-21-26-43-19-05-10-00-EA-00-01-87-00-EB-03-00-03-04-8E-00-00-00-71-01-5E-02-58-00-20-00-03
+Received: 01-21-26-43-1D-05-31-00-EA-0C-00-21-00-32-00-51-03-00-B6-00-03-04-8E-01-F4-00-71-01-5E-02-58-00-20-00-03
 
 Sent: 01-26-21-84-00-03
 Received: 01-21-26-44-33-05-10-00-EA-00-01-87-00-EB-03-00-03-04-8E-00-00-00-71-01-5E-02-58-00-20-00-05-10-00-EA-00-01-87-00-EB-03-00-03-04-8E-00-00-00-71-01-5E-02-58-00-20-00-31-03
@@ -687,7 +748,7 @@ Received: 01-21-22-51-00-03
 Received: 01-21-22-D0-00-03
 
 Sent: 01-22-21-93-00-03
-Received: 01-21-22-43-09-03-00-03-04-8E-00-00-00-71-03
+Received: 01-21-22-53-0C-05-31-00-21-00-32-00-50-01-9F-25-34-03
 
 Sent: 01-27-21-B1-00-03
 Received: 01-21-27-72-00-03
@@ -697,7 +758,7 @@ Received: 01-21-27-51-00-03
 Received: 01-21-27-D0-00-03
 
 Sent: 01-27-21-93-00-03
-Received: 01-21-27-43-09-03-00-03-04-8E-00-00-00-71-03";
+Received: 01-21-27-53-0C-05-31-00-21-00-32-00-50-01-9F-25-34-03";
 
     [RelayCommand]
     private void Ft2400Clicked()
