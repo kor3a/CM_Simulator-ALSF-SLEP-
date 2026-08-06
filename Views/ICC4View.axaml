@@ -211,6 +211,9 @@
               <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
                 <Button Content="Enquire" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
               </Border>
+              <Border BorderThickness="4" BorderBrush="DarkGray" Margin="4,0" Height="42">
+                <Button Content="2Hz Sync" FontSize="13" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="75" Height="34" Background="LightGray"/>
+              </Border>
             </StackPanel>
           </HeaderedContentControl>
           </StackPanel>

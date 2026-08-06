@@ -745,7 +745,7 @@ Received: 01-21-22-72-00-03
 
 Sent: 01-22-21-91-00-03
 Received: 01-21-22-51-00-03
-Received: 01-21-22-D0-00-03
+Received: 01-21-22-D0-03-00-00-64-03
 
 Sent: 01-22-21-93-00-03
 Received: 01-21-22-53-0C-05-31-00-21-00-32-00-50-01-9F-25-34-03
@@ -755,10 +755,12 @@ Received: 01-21-27-72-00-03
 
 Sent: 01-27-21-91-00-03
 Received: 01-21-27-51-00-03
-Received: 01-21-27-D0-00-03
+Received: 01-21-27-D0-03-00-00-64-03
 
 Sent: 01-27-21-93-00-03
-Received: 01-21-27-53-0C-05-31-00-21-00-32-00-50-01-9F-25-34-03";
+Received: 01-21-27-53-0C-05-31-00-21-00-32-00-50-01-9F-25-34-03
+
+Sent: 01-3C-21-D5-00-03";
 
     [RelayCommand]
     private void Ft2400Clicked()
@@ -1676,7 +1678,7 @@ public partial class LviccCardViewModel : ViewModelBase
         Number = number;
     }
 
-    public string Header => $"PLCK{Number}";
+    public string Header => $"PLCK{Number}/LVICC{Number}";
 
     // PLCK1 is 0x26 and they run consecutively through PLCK21 at 0x3A
     public string Address => $"0x{0x25 + Number:X2}";
