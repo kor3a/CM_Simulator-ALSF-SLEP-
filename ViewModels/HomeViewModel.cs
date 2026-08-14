@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -23,7 +23,30 @@ public partial class HomeViewModel : ViewModelBase
     // Forwarding properties to enable proper change notification for nested bindings
     public bool IsHomePageActive => _mainViewModel.HomePageIsActive;
     public ViewModelBase CurrentIccPage => _mainViewModel.CurrentPage;
-    public double WindowWidth => CurrentIccPage is ICC1ViewModel or ICC2ViewModel or ICC3ViewModel or ICC4ViewModel ? 1350.0 : 850.0;
+    public double WindowWidth => 1350.0;
+
+    // Cards for all 21 PLCK-LVICCs, and the subset currently shown on the home page
+    public ObservableCollection<LviccCardViewModel> LviccCards { get; } = new();
+    public ObservableCollection<LviccCardViewModel> VisibleLviccCards { get; } = new();
+
+    // Runway length mode: 2400ft uses PLCK 1-15, 3000ft uses PLCK 1-21
+    public const int Ft2400LviccCount = 15;
+    public const int Ft3000LviccCount = 21;
+
+    // In SSALR mode only the odd-numbered LVICCs light, up to these limits
+    public const int Ssalr2400LviccLimit = 9;
+    public const int Ssalr3000LviccLimit = 15;
+
+    [ObservableProperty]
+    private bool _ft3000Mode = false;
+
+    public int ActiveLviccCount => Ft3000Mode ? Ft3000LviccCount : Ft2400LviccCount;
+
+    [ObservableProperty]
+    private IBrush _ft2400Background = new SolidColorBrush(Colors.LightGreen);
+
+    [ObservableProperty]
+    private IBrush _ft3000Background = new SolidColorBrush(Colors.LightGray);
 
     [ObservableProperty]
     private bool _alsfMode = true;
@@ -274,20 +297,51 @@ public partial class HomeViewModel : ViewModelBase
     [ObservableProperty]
     private bool _visibleLvicc3FlashActive = false;
 
-    [ObservableProperty]
-    private string _logText = "";
+    // Log lines shown in the log panel. Bound directly by the ListBox, so every
+    // mutation has to happen on the UI thread.
+    public ObservableCollection<string> LogLines { get; } = new();
 
     private const int MaxLogLines = 1000;
-    private readonly List<string> _logLines = new List<string>();
+
+    /// <summary>
+    /// The whole log as a single string. Reading it joins the lines (used by the
+    /// export command); assigning it replaces the log with the given text.
+    /// </summary>
+    public string LogText
+    {
+        get => string.Join(Environment.NewLine, LogLines);
+        set => OnUIThread(() =>
+        {
+            LogLines.Clear();
+            foreach (var line in (value ?? "").Split('\n'))
+            {
+                LogLines.Add(line.TrimEnd('\r'));
+            }
+        });
+    }
 
     public void AppendLog(string message)
     {
-        _logLines.Add(message);
-        if (_logLines.Count > MaxLogLines)
+        OnUIThread(() =>
         {
-            _logLines.RemoveRange(0, _logLines.Count - MaxLogLines);
+            LogLines.Add(message);
+            while (LogLines.Count > MaxLogLines)
+            {
+                LogLines.RemoveAt(0);
+            }
+        });
+    }
+
+    private static void OnUIThread(Action action)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            action();
         }
-        LogText = string.Join(Environment.NewLine, _logLines);
+        else
+        {
+            Dispatcher.UIThread.Post(action);
+        }
     }
 
     public bool stopCautionBeep = false;
@@ -299,6 +353,7 @@ public partial class HomeViewModel : ViewModelBase
         if (Design.IsDesignMode)
         {
             _mainViewModel = null; // Or provide a mock MainViewModel if needed
+            CreateLviccCards();
         }
         else
         {
@@ -309,6 +364,20 @@ public partial class HomeViewModel : ViewModelBase
     public HomeViewModel(MainViewModel mainViewModel)
     {
         _mainViewModel = mainViewModel;
+
+        CreateLviccCards();
+
+        // Refresh the cards when one of the LviccXPgBackground properties changes
+        PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName?.StartsWith("Lvicc") == true)
+            {
+                foreach (var card in LviccCards)
+                {
+                    card.Refresh();
+                }
+            }
+        };
 
         // Subscribe to MainViewModel property changes to forward notifications
         _mainViewModel.PropertyChanged += (sender, e) =>
@@ -330,6 +399,391 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
+    private void CreateLviccCards()
+    {
+        for (int i = 1; i <= Ft3000LviccCount; i++)
+        {
+            LviccCards.Add(new LviccCardViewModel(this, i));
+        }
+        UpdateVisibleLviccCards();
+    }
+
+    /// <summary>
+    /// Rebuilds the card list shown on the home page so it holds exactly the
+    /// LVICCs active for the current runway length (15 for 2400ft, 21 for 3000ft).
+    /// </summary>
+    private void UpdateVisibleLviccCards()
+    {
+        int count = ActiveLviccCount;
+
+        while (VisibleLviccCards.Count > count)
+        {
+            VisibleLviccCards.RemoveAt(VisibleLviccCards.Count - 1);
+        }
+        while (VisibleLviccCards.Count < count)
+        {
+            VisibleLviccCards.Add(LviccCards[VisibleLviccCards.Count]);
+        }
+    }
+
+    // Called when Ft3000Mode changes - update the visible cards and the polled addresses
+    partial void OnFt3000ModeChanged(bool value)
+    {
+        Ft2400Background = new SolidColorBrush(value ? Colors.LightGray : Colors.LightGreen);
+        Ft3000Background = new SolidColorBrush(value ? Colors.LightGreen : Colors.LightGray);
+
+        OnPropertyChanged(nameof(ActiveLviccCount));
+        UpdateVisibleLviccCards();
+
+        // Only poll the LVICCs that exist for this runway length
+        _mainViewModel?.SetActiveLviccCount(ActiveLviccCount);
+    }
+
+    private void SetLviccPgBackground(int lviccNumber, IBrush brush)
+    {
+        switch (lviccNumber)
+        {
+            case 1: Lvicc1PgBackground = brush; break;
+            case 2: Lvicc2PgBackground = brush; break;
+            case 3: Lvicc3PgBackground = brush; break;
+            case 4: Lvicc4PgBackground = brush; break;
+            case 5: Lvicc5PgBackground = brush; break;
+            case 6: Lvicc6PgBackground = brush; break;
+            case 7: Lvicc7PgBackground = brush; break;
+            case 8: Lvicc8PgBackground = brush; break;
+            case 9: Lvicc9PgBackground = brush; break;
+            case 10: Lvicc10PgBackground = brush; break;
+            case 11: Lvicc11PgBackground = brush; break;
+            case 12: Lvicc12PgBackground = brush; break;
+            case 13: Lvicc13PgBackground = brush; break;
+            case 14: Lvicc14PgBackground = brush; break;
+            case 15: Lvicc15PgBackground = brush; break;
+            case 16: Lvicc16PgBackground = brush; break;
+            case 17: Lvicc17PgBackground = brush; break;
+            case 18: Lvicc18PgBackground = brush; break;
+            case 19: Lvicc19PgBackground = brush; break;
+            case 20: Lvicc20PgBackground = brush; break;
+            case 21: Lvicc21PgBackground = brush; break;
+        }
+    }
+
+    /// <summary>
+    /// Demo state used for documentation screenshots while the simulator is still
+    /// under development. Drives the UI only - no commands are sent over the serial
+    /// port and no responses are parsed. Stays active until a port is connected,
+    /// so the ALSF/SSALR and 2400ft/3000ft buttons keep re-arranging the demo.
+    /// </summary>
+    [ObservableProperty]
+    private bool _testModeActive = false;
+
+    [RelayCommand]
+    public void EnterTestMode()
+    {
+        TestModeActive = true;
+
+        // Start from the 2400ft configuration, in whichever mode the CM is in
+        Ft3000Mode = false;
+        AlsfMode = _mainViewModel?.AlsfMode ?? true;
+
+        _mainViewModel?.enableButtons();
+        ApplyTestModeState();
+
+        LogText = TestModeLog;
+    }
+
+    /// <summary>
+    /// True when a given LVICC is lit in test mode. ALSF drives every LVICC of the
+    /// current runway length; SSALR drives only the odd-numbered ones, up to LVICC 9
+    /// at 2400ft and up to LVICC 15 at 3000ft.
+    /// </summary>
+    private bool IsLitInTestMode(int lviccNumber)
+    {
+        if (AlsfMode)
+        {
+            return lviccNumber <= ActiveLviccCount;
+        }
+
+        int ssalrLimit = Ft3000Mode ? Ssalr3000LviccLimit : Ssalr2400LviccLimit;
+        return lviccNumber % 2 == 1 && lviccNumber <= ssalrLimit;
+    }
+
+    /// <summary>
+    /// Applies the test mode picture for the current mode and runway length: lit
+    /// LVICCs show LOW with REM on, everything else shows OFF.
+    /// </summary>
+    private void ApplyTestModeState()
+    {
+        // CM Control: ON and LOW lit, plus whichever of ALSF/SSALR is selected
+        OffButton = new SolidColorBrush(Colors.LightGray);
+        OffForeground = new SolidColorBrush(Colors.Black);
+        OnButton = new SolidColorBrush(Colors.LightGreen);
+        OnForeground = new SolidColorBrush(Colors.Black);
+        LowButton = new SolidColorBrush(Colors.LightGreen);
+        LowForeground = new SolidColorBrush(Colors.Black);
+        MedButton = new SolidColorBrush(Colors.LightGray);
+        MedForeground = new SolidColorBrush(Colors.Black);
+        HighButton = new SolidColorBrush(Colors.LightGray);
+        HighForeground = new SolidColorBrush(Colors.Black);
+        AlsfButton = new SolidColorBrush(AlsfMode ? Colors.LightGreen : Colors.LightGray);
+        SsalrButton = new SolidColorBrush(AlsfMode ? Colors.LightGray : Colors.LightGreen);
+
+        for (int i = 1; i <= Ft3000LviccCount; i++)
+        {
+            bool lit = IsLitInTestMode(i);
+
+            // Home page card: ON at LOW intensity, or OFF
+            SetLviccPgBackground(i, new SolidColorBrush(lit ? Colors.LightGreen : Colors.LightGray));
+            _mainViewModel?.SetIccSideMenu(i, lit ? "LOW" : "OFF");
+
+            var page = _mainViewModel?.GetIccPage(i);
+            if (page == null)
+                continue;
+
+            // Short data readings, matching the canned responses in the log
+            FillTestModeData(page);
+
+            if (lit)
+            {
+                // LVICC SWITCH: REM and LOW on, OFF no longer highlighted
+                page.RemButton = new SolidColorBrush(Colors.Green);
+                page.RemForeground = new SolidColorBrush(Colors.White);
+                page.LowButton = new SolidColorBrush(Colors.Green);
+                page.LowForeground = new SolidColorBrush(Colors.White);
+                page.OffButton = new SolidColorBrush(Colors.LightGray);
+                page.OffForeground = new SolidColorBrush(Colors.Black);
+            }
+            else
+            {
+                // LVICC SWITCH: OFF highlighted, REM and LOW cleared
+                page.RemButton = new SolidColorBrush(Colors.LightGray);
+                page.RemForeground = new SolidColorBrush(Colors.Black);
+                page.LowButton = new SolidColorBrush(Colors.LightGray);
+                page.LowForeground = new SolidColorBrush(Colors.Black);
+                page.OffButton = new SolidColorBrush(Colors.DarkGray);
+                page.OffForeground = new SolidColorBrush(Colors.White);
+            }
+
+            page.MedButton = new SolidColorBrush(Colors.LightGray);
+            page.MedForeground = new SolidColorBrush(Colors.Black);
+            page.HighButton = new SolidColorBrush(Colors.LightGray);
+            page.HighForeground = new SolidColorBrush(Colors.Black);
+
+            // CONFIGURATION: ALSF, Serial, In Pavement, Compatibility. This describes
+            // how the LVICC is set up, so it stays lit whether or not it is on.
+            page.ModeStatus = "ALSF";
+            page.ModeBackground = new SolidColorBrush(Colors.LightGreen);
+            page.ControlType = "Serial";
+            page.ControlBackground = new SolidColorBrush(Colors.LightGreen);
+            page.InPavementBackground = new SolidColorBrush(Colors.LightGreen);
+            page.ElevatedBackground = new SolidColorBrush(Colors.LightGray);
+            page.CompatBackground = new SolidColorBrush(Colors.LightGreen);
+            page.EnhancedBackground = new SolidColorBrush(Colors.LightGray);
+
+            // No faults while in test mode
+            page.IsCommandErrorVisible = false;
+            page.IsMisfireErrorVisible = false;
+            page.IsCommErrorVisible = false;
+            page.IsModeErrorVisible = false;
+        }
+
+        // A fresh picture has no active alarm
+        Caution = new SolidColorBrush(Colors.LightGray);
+        CautionForeground = new SolidColorBrush(Colors.Black);
+        Failure = new SolidColorBrush(Colors.LightGray);
+        FailureForeground = new SolidColorBrush(Colors.Black);
+
+        // Pull the new page state into the home page cards
+        RefreshVisibleLviccs();
+    }
+
+    /// <summary>
+    /// Fills a page's data fields with the values encoded in the canned short data
+    /// responses in <see cref="TestModeLog"/>, so the pages and the log agree.
+    ///
+    /// LVICC SHORT DATA RESPONSE (0x43), payload from byte 7, big endian:
+    ///   [7..8]   240VAC Voltage      x1     00-EA -> 234
+    ///   [9]      240VAC Current      x0.1   0C    -> 1.2
+    ///   [10..11] +3.3VDC Voltage     x0.1   00-21 -> 3.3
+    ///   [12..13] +5VDC Voltage       x0.1   00-32 -> 5.0
+    ///   [14..15] +8VDC Voltage       x0.1   00-51 -> 8.1
+    ///   [16]     +8VDC Current       x0.1   03    -> 0.3
+    ///   [17..18] +18VDC Voltage      x0.1   00-B6 -> 18.2
+    ///   [19..20] Trigger Pulse Width x0.1   00-03 -> 0.3
+    ///   [21..22] Trigger Pulse Delay x0.1   04-8E -> 116.6
+    ///   [23..24] Trigger Period      x1     01-F4 -> 500
+    ///   [25..26] Trigger Current     x0.1   00-71 -> 11.3
+    ///   [27..28] Anode Pulse Width   x1     01-5E -> 350
+    ///   [29..30] Anode Pulse Delay   x1     02-58 -> 600
+    ///   [31..32] Bleeder Voltage     x0.1   00-20 -> 3.2
+    ///   [33]     Flasher Misfires    x1     00    -> 0
+    ///
+    /// PLCK SHORT DATA RESPONSE (0x53), payload from byte 7, big endian:
+    ///   [7..8]   +3.3VDC Voltage     x0.1   00-21 -> 3.3
+    ///   [9..10]  +5VDC Voltage       x0.1   00-32 -> 5.0
+    ///   [11..12] +8VDC Voltage       x0.1   00-50 -> 8.0
+    ///   [13..14] CPU Temp            x0.1   01-9F -> 41.5
+    ///   [15]     % Busy              x1     25    -> 37
+    ///   [16]     Max % Busy          x1     34    -> 52
+    ///
+    /// In both, byte 5 is the sub-length and byte 6 the status bits
+    /// (0x31 = ON + LOW + ALSF).
+    /// </summary>
+    private static void FillTestModeData(ILviccPage page)
+    {
+        page.Vac240V = "234V";
+        page.Vac240A = "1.2";
+        page.Vdc33V = "3.3";
+        page.Vdc5V = "5.0";
+        page.Vdc8V = "8.1";
+        page.Vdc8A = "0.3";
+        page.Vdc18V = "18.2";
+        page.TriggerPulseWidth = "0.3";
+        page.TriggerPulseDelay = "116.6";
+        page.TriggerPeriod = "500";
+        page.TriggerCurrent = "11.3";
+        page.AnodePulseWidth = "350";
+        page.AnodePulseDelay = "600";
+        page.BleederV = "3.2";
+        page.FlasherMisfires = "0";
+
+        page.PlckVdc33V = "3.3";
+        page.PlckVdc5V = "5.0";
+        page.PlckVdc8V = "8.0";
+        page.PlckCpuTemp = "41.5";
+        page.PlckPercentBusy = "37";
+        page.PlckMaxPercentBusy = "52";
+    }
+
+    private enum TestFault
+    {
+        ModeError,
+        MisfireError
+    }
+
+    private readonly Random _testFaultRandom = new Random();
+
+    /// <summary>
+    /// The LVICCs that are currently lit, i.e. the ones that can fault:
+    /// all of them in ALSF, only the odd-numbered ones in SSALR.
+    /// </summary>
+    private List<int> LitLviccs()
+    {
+        var lit = new List<int>();
+        for (int i = 1; i <= Ft3000LviccCount; i++)
+        {
+            if (IsLitInTestMode(i))
+            {
+                lit.Add(i);
+            }
+        }
+        return lit;
+    }
+
+    private List<int> PickRandom(List<int> pool, int count)
+    {
+        return pool.OrderBy(_ => _testFaultRandom.Next()).Take(Math.Min(count, pool.Count)).ToList();
+    }
+
+    /// <summary>
+    /// Repaints the demo with the given LVICCs knocked out. Starts from a healthy
+    /// picture each time, so repeated clicks show one fault set rather than piling up.
+    /// </summary>
+    private void ApplyTestModeFaults(List<(int Number, TestFault Fault)> faults)
+    {
+        ApplyTestModeState();
+
+        foreach (var (number, fault) in faults)
+        {
+            SetLviccPgBackground(number, new SolidColorBrush(Colors.LightGray));
+            _mainViewModel?.SetIccSideMenu(number, "OFF");
+
+            var page = _mainViewModel?.GetIccPage(number);
+            if (page == null)
+                continue;
+
+            page.RemButton = new SolidColorBrush(Colors.LightGray);
+            page.RemForeground = new SolidColorBrush(Colors.Black);
+            page.LowButton = new SolidColorBrush(Colors.LightGray);
+            page.LowForeground = new SolidColorBrush(Colors.Black);
+            page.OffButton = new SolidColorBrush(Colors.DarkGray);
+            page.OffForeground = new SolidColorBrush(Colors.White);
+
+            page.IsModeErrorVisible = fault == TestFault.ModeError;
+            page.IsMisfireErrorVisible = fault == TestFault.MisfireError;
+        }
+
+        RefreshVisibleLviccs();
+    }
+
+    private const string TestModeLog = @"Connected to COM6
+
+Sent: 01-26-21-B7-00-03
+Received: 01-21-26-78-00-03
+
+Sent: 01-26-21-87-00-03
+Received: 01-21-26-47-02-A0-00-03
+
+Sent: 01-26-21-83-00-03
+Received: 01-21-26-43-1D-05-31-00-EA-0C-00-21-00-32-00-51-03-00-B6-00-03-04-8E-01-F4-00-71-01-5E-02-58-00-20-00-03
+
+Sent: 01-26-21-84-00-03
+Received: 01-21-26-44-33-05-10-00-EA-00-01-87-00-EB-03-00-03-04-8E-00-00-00-71-01-5E-02-58-00-20-00-05-10-00-EA-00-01-87-00-EB-03-00-03-04-8E-00-00-00-71-01-5E-02-58-00-20-00-31-03
+
+Sent: 01-26-21-82-01-52-03
+Received: 01-21-26-42-01-52-03
+
+Sent: 01-26-21-82-01-54-03
+Received: 01-21-26-42-01-54-03
+
+Sent: 01-26-21-81-00-03
+Received: 01-21-26-41-00-03
+Received: 01-21-26-C1-02-00-00-03
+
+
+Sent: 01-22-21-B1-00-03
+Received: 01-21-22-72-00-03
+
+Sent: 01-22-21-91-00-03
+Received: 01-21-22-51-00-03
+Received: 01-21-22-D0-03-00-00-64-03
+
+Sent: 01-22-21-93-00-03
+Received: 01-21-22-53-0C-05-31-00-21-00-32-00-50-01-9F-25-34-03
+
+Sent: 01-27-21-B1-00-03
+Received: 01-21-27-72-00-03
+
+Sent: 01-27-21-91-00-03
+Received: 01-21-27-51-00-03
+Received: 01-21-27-D0-03-00-00-64-03
+
+Sent: 01-27-21-93-00-03
+Received: 01-21-27-53-0C-05-31-00-21-00-32-00-50-01-9F-25-34-03
+
+Sent: 01-3C-21-D5-00-03";
+
+    [RelayCommand]
+    private void Ft2400Clicked()
+    {
+        Ft3000Mode = false;
+
+        if (TestModeActive)
+        {
+            ApplyTestModeState();
+        }
+    }
+
+    [RelayCommand]
+    private void Ft3000Clicked()
+    {
+        Ft3000Mode = true;
+
+        if (TestModeActive)
+        {
+            ApplyTestModeState();
+        }
+    }
+
     // Called when CurrentStartIndex changes - notify all computed properties
     partial void OnCurrentStartIndexChanged(int value)
     {
@@ -347,6 +801,11 @@ public partial class HomeViewModel : ViewModelBase
         OnPropertyChanged(nameof(VisibleLvicc1ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc2ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc3ButtonEnabled));
+
+        foreach (var card in LviccCards)
+        {
+            card.Refresh();
+        }
     }
 
     private void NotifyVisibleLviccPropertiesChanged()
@@ -381,10 +840,15 @@ public partial class HomeViewModel : ViewModelBase
         OnPropertyChanged(nameof(VisibleLvicc1ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc2ButtonEnabled));
         OnPropertyChanged(nameof(VisibleLvicc3ButtonEnabled));
+
+        foreach (var card in LviccCards)
+        {
+            card.Refresh();
+        }
     }
 
     // Helper methods to get data for any LVICC number
-    private IBrush GetLviccBackground(int lviccNumber)
+    public IBrush GetLviccBackground(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -413,7 +877,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private string GetLviccSideMenu(int lviccNumber)
+    public string GetLviccSideMenu(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -442,7 +906,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private IBrush GetLviccRemButton(int lviccNumber)
+    public IBrush GetLviccRemButton(int lviccNumber)
     {
         var defaultBrush = new SolidColorBrush(Colors.LightGray);
         return lviccNumber switch
@@ -472,7 +936,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private bool GetLviccCommandErrorVisible(int lviccNumber)
+    public bool GetLviccCommandErrorVisible(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -501,7 +965,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private bool GetLviccMisfireErrorVisible(int lviccNumber)
+    public bool GetLviccMisfireErrorVisible(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -530,7 +994,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private bool GetLviccCommErrorVisible(int lviccNumber)
+    public bool GetLviccCommErrorVisible(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -559,7 +1023,7 @@ public partial class HomeViewModel : ViewModelBase
         };
     }
 
-    private bool GetLviccModeErrorVisible(int lviccNumber)
+    public bool GetLviccModeErrorVisible(int lviccNumber)
     {
         return lviccNumber switch
         {
@@ -626,7 +1090,7 @@ public partial class HomeViewModel : ViewModelBase
         GoToIccByNumber(VisibleLvicc3Number);
     }
 
-    private void GoToIccByNumber(int iccNumber)
+    public void GoToIccByNumber(int iccNumber)
     {
         switch (iccNumber)
         {
@@ -795,6 +1259,15 @@ public partial class HomeViewModel : ViewModelBase
     [RelayCommand]
     private void AlsfModeChange()
     {
+        // In test mode the mode buttons only re-arrange the demo picture; they must
+        // not touch cmMessageData or try to send commands over a closed port.
+        if (TestModeActive)
+        {
+            AlsfMode = true;
+            ApplyTestModeState();
+            return;
+        }
+
         if (!_mainViewModel.AlsfMode)
         {
             AlsfMode = true;
@@ -806,12 +1279,20 @@ public partial class HomeViewModel : ViewModelBase
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.ssalrModeByte);
             _mainViewModel.AlsfMode = true;
         }
-
     }
 
     [RelayCommand]
     private void SsalrModeChange()
     {
+        // In test mode the mode buttons only re-arrange the demo picture; they must
+        // not touch cmMessageData or try to send commands over a closed port.
+        if (TestModeActive)
+        {
+            AlsfMode = false;
+            ApplyTestModeState();
+            return;
+        }
+
         if (_mainViewModel.AlsfMode)
         {
             AlsfMode = false;
@@ -823,7 +1304,6 @@ public partial class HomeViewModel : ViewModelBase
             _mainViewModel.cmMessageData = (byte)(_mainViewModel.cmMessageData ^ _mainViewModel.ssalrModeByte);
             _mainViewModel.AlsfMode = false;
         }
-
     }
 
     [RelayCommand]
@@ -1107,9 +1587,72 @@ public partial class HomeViewModel : ViewModelBase
         failureBtnPressed = false;
     }
 
+    /// <summary>
+    /// In test mode, knocks out LVICCs to mimic a CAUTION condition:
+    /// two of them in ALSF, one of the odd-numbered ones in SSALR, each showing
+    /// a mode error. Outside test mode the indicator is driven by the polling loop.
+    /// </summary>
+    [RelayCommand]
+    public void CautionClicked()
+    {
+        if (!TestModeActive)
+            return;
+
+        int count = AlsfMode ? 2 : 1;
+        var faults = PickRandom(LitLviccs(), count)
+            .Select(n => (n, TestFault.ModeError))
+            .ToList();
+
+        ApplyTestModeFaults(faults);
+
+        Caution = new SolidColorBrush(Color.Parse("#FFBF00"));
+        CautionForeground = new SolidColorBrush(Colors.White);
+    }
+
+    /// <summary>
+    /// In test mode, knocks out LVICCs to mimic a FAILURE condition. In ALSF that is
+    /// either two consecutive LVICCs with misfire errors or three scattered ones with
+    /// a mix of misfire and mode errors; in SSALR it is two of the odd-numbered LVICCs.
+    /// </summary>
+    private void SimulateFailure()
+    {
+        var pool = LitLviccs();
+        var faults = new List<(int, TestFault)>();
+
+        if (AlsfMode && pool.Count >= 2 && _testFaultRandom.Next(2) == 0)
+        {
+            // Two consecutive LVICCs out, both misfiring
+            int first = _testFaultRandom.Next(pool.Count - 1);
+            faults.Add((pool[first], TestFault.MisfireError));
+            faults.Add((pool[first + 1], TestFault.MisfireError));
+        }
+        else if (AlsfMode)
+        {
+            // Three scattered LVICCs out, each misfiring or in mode error
+            faults.AddRange(PickRandom(pool, 3)
+                .Select(n => (n, _testFaultRandom.Next(2) == 0 ? TestFault.MisfireError : TestFault.ModeError)));
+        }
+        else
+        {
+            // SSALR: two of the odd-numbered LVICCs out
+            faults.AddRange(PickRandom(pool, 2).Select(n => (n, TestFault.MisfireError)));
+        }
+
+        ApplyTestModeFaults(faults);
+
+        Failure = new SolidColorBrush(Colors.Red);
+        FailureForeground = new SolidColorBrush(Colors.White);
+    }
+
     [RelayCommand]
     public void FailureClicked()
     {
+        if (TestModeActive)
+        {
+            SimulateFailure();
+            return;
+        }
+
         failureBtnPressed = true;
         _mainViewModel.StopContinuousBeep();
         if (!_mainViewModel.commFault)
@@ -1117,6 +1660,55 @@ public partial class HomeViewModel : ViewModelBase
             _mainViewModel.StopContinuousBeep();
         }
 
+    }
+}
+
+/// <summary>
+/// View model for a single PLCK-LVICC card shown on the home page grid.
+/// </summary>
+public partial class LviccCardViewModel : ViewModelBase
+{
+    private readonly HomeViewModel _homeViewModel;
+
+    public int Number { get; }
+
+    public LviccCardViewModel(HomeViewModel homeViewModel, int number)
+    {
+        _homeViewModel = homeViewModel;
+        Number = number;
+    }
+
+    public string Header => $"PLCK{Number}/LVICC{Number}";
+
+    // PLCK1 is 0x26 and they run consecutively through PLCK21 at 0x3A
+    public string Address => $"0x{0x25 + Number:X2}";
+    public IBrush Background => _homeViewModel.GetLviccBackground(Number);
+    public string SideMenu => _homeViewModel.GetLviccSideMenu(Number);
+    public IBrush RemButton => _homeViewModel.GetLviccRemButton(Number);
+    public bool CommandErrorVisible => _homeViewModel.GetLviccCommandErrorVisible(Number);
+    public bool MisfireErrorVisible => _homeViewModel.GetLviccMisfireErrorVisible(Number);
+    public bool CommErrorVisible => _homeViewModel.GetLviccCommErrorVisible(Number);
+    public bool ModeErrorVisible => _homeViewModel.GetLviccModeErrorVisible(Number);
+
+    // In SSALR mode only the odd-numbered LVICCs can be opened
+    public bool ButtonEnabled => _homeViewModel.AlsfMode || (Number % 2 == 1);
+
+    [RelayCommand]
+    private void Open()
+    {
+        _homeViewModel.GoToIccByNumber(Number);
+    }
+
+    public void Refresh()
+    {
+        OnPropertyChanged(nameof(Background));
+        OnPropertyChanged(nameof(SideMenu));
+        OnPropertyChanged(nameof(RemButton));
+        OnPropertyChanged(nameof(CommandErrorVisible));
+        OnPropertyChanged(nameof(MisfireErrorVisible));
+        OnPropertyChanged(nameof(CommErrorVisible));
+        OnPropertyChanged(nameof(ModeErrorVisible));
+        OnPropertyChanged(nameof(ButtonEnabled));
     }
 }
 

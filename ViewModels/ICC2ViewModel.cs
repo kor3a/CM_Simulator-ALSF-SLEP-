@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CM_Simulator.ViewModels;
 
-public partial class ICC2ViewModel : ViewModelBase
+public partial class ICC2ViewModel : ViewModelBase, ILviccPage
 {
     private readonly MainViewModel _mainViewModel;
     private readonly HomeViewModel _homeViewModel;
@@ -80,6 +80,12 @@ public partial class ICC2ViewModel : ViewModelBase
     public string _plckVdc24V;
     [ObservableProperty]
     public string _plckVdc24A;
+    [ObservableProperty]
+    public string _plckCpuTemp;
+    [ObservableProperty]
+    public string _plckPercentBusy;
+    [ObservableProperty]
+    public string _plckMaxPercentBusy;
     [ObservableProperty]
     public string _plckTriggerPulseWidth;
     [ObservableProperty]

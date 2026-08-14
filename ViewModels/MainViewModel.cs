@@ -1019,6 +1019,78 @@ public partial class MainViewModel : ViewModelBase
     /// Called when navigating through LVICCs in the home view carousel.
     /// </summary>
     /// <param name="startIndex">1-based index of the first visible LVICC (1-2)</param>
+    /// <summary>
+    /// Gets the page view model for a given LVICC number (1-21).
+    /// </summary>
+    public ILviccPage? GetIccPage(int iccNumber)
+    {
+        return iccNumber switch
+        {
+            1 => _icc1Page,
+            2 => _icc2Page,
+            3 => _icc3Page,
+            4 => _icc4Page,
+            5 => _icc5Page,
+            6 => _icc6Page,
+            7 => _icc7Page,
+            8 => _icc8Page,
+            9 => _icc9Page,
+            10 => _icc10Page,
+            11 => _icc11Page,
+            12 => _icc12Page,
+            13 => _icc13Page,
+            14 => _icc14Page,
+            15 => _icc15Page,
+            16 => _icc16Page,
+            17 => _icc17Page,
+            18 => _icc18Page,
+            19 => _icc19Page,
+            20 => _icc20Page,
+            21 => _icc21Page,
+            _ => null
+        };
+    }
+
+    /// <summary>
+    /// Sets the side menu status text ("OFF"/"LOW"/"MED"/"HIGH") for a given LVICC number (1-21).
+    /// </summary>
+    public void SetIccSideMenu(int iccNumber, string status)
+    {
+        switch (iccNumber)
+        {
+            case 1: Icc1SideMenu = status; break;
+            case 2: Icc2SideMenu = status; break;
+            case 3: Icc3SideMenu = status; break;
+            case 4: Icc4SideMenu = status; break;
+            case 5: Icc5SideMenu = status; break;
+            case 6: Icc6SideMenu = status; break;
+            case 7: Icc7SideMenu = status; break;
+            case 8: Icc8SideMenu = status; break;
+            case 9: Icc9SideMenu = status; break;
+            case 10: Icc10SideMenu = status; break;
+            case 11: Icc11SideMenu = status; break;
+            case 12: Icc12SideMenu = status; break;
+            case 13: Icc13SideMenu = status; break;
+            case 14: Icc14SideMenu = status; break;
+            case 15: Icc15SideMenu = status; break;
+            case 16: Icc16SideMenu = status; break;
+            case 17: Icc17SideMenu = status; break;
+            case 18: Icc18SideMenu = status; break;
+            case 19: Icc19SideMenu = status; break;
+            case 20: Icc20SideMenu = status; break;
+            case 21: Icc21SideMenu = status; break;
+        }
+    }
+
+    /// <summary>
+    /// Sets the addresses array to LVICC 1..count, matching the runway length
+    /// selected on the home page (15 for 2400ft, 21 for 3000ft).
+    /// </summary>
+    public void SetActiveLviccCount(int count)
+    {
+        addresses = Enumerable.Range(1, count).Select(GetIccAddress).ToArray();
+    }
+
     public void UpdateVisibleAddresses(int startIndex)
     {
         addresses = new byte[]
@@ -1412,7 +1484,9 @@ public partial class MainViewModel : ViewModelBase
         CurrentPage = _homePage;
         AvailablePorts = new ObservableCollection<string>(SerialPort.GetPortNames().OrderBy(p => p));
         SelectedPort = AvailablePorts.FirstOrDefault();
-        addresses = new byte[] {icc1, icc2, icc3};
+        // Default to the 2400ft configuration (LVICC 1-15); the home page
+        // switches this to 21 addresses in 3000ft mode.
+        SetActiveLviccCount(HomeViewModel.Ft2400LviccCount);
 
         // disable all the buttons
         disableButtons();
@@ -1667,6 +1741,9 @@ public partial class MainViewModel : ViewModelBase
             Sp.DataReceived += SerialDataReceivedEventHandler; // Hook up event handler
 
             Sp.Open();
+
+            // Real data from here on - stop test mode from redrawing the demo picture
+            _homePage.TestModeActive = false;
 
             _homePage.LogText = $"Connected to {SelectedPort}\n";
             popupWindow.Close(); // Close the pop-up
@@ -7910,6 +7987,703 @@ public partial class MainViewModel : ViewModelBase
                                 SendCmCommand(icc21);
                             }
                             break;
+                        case byte s when s == plck5:
+                            {
+                                // PLCK-LVICC5 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc5Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc5Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc5Page.PlckVac240V = plckVac240V;
+                                _icc5Page.PlckVac240A = plckVac240A;
+                                _icc5Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc5Page.PlckVdc24V = plckVdc24V;
+                                _icc5Page.PlckVdc24A = plckVdc24A;
+                                _icc5Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc5Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc5Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc5Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc5Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc5Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc5Page.PlckBleederV = plckBleederV;
+                                _icc5Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck6:
+                            {
+                                // PLCK-LVICC6 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc6Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc6Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc6Page.PlckVac240V = plckVac240V;
+                                _icc6Page.PlckVac240A = plckVac240A;
+                                _icc6Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc6Page.PlckVdc24V = plckVdc24V;
+                                _icc6Page.PlckVdc24A = plckVdc24A;
+                                _icc6Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc6Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc6Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc6Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc6Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc6Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc6Page.PlckBleederV = plckBleederV;
+                                _icc6Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck7:
+                            {
+                                // PLCK-LVICC7 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc7Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc7Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc7Page.PlckVac240V = plckVac240V;
+                                _icc7Page.PlckVac240A = plckVac240A;
+                                _icc7Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc7Page.PlckVdc24V = plckVdc24V;
+                                _icc7Page.PlckVdc24A = plckVdc24A;
+                                _icc7Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc7Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc7Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc7Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc7Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc7Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc7Page.PlckBleederV = plckBleederV;
+                                _icc7Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck8:
+                            {
+                                // PLCK-LVICC8 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc8Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc8Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc8Page.PlckVac240V = plckVac240V;
+                                _icc8Page.PlckVac240A = plckVac240A;
+                                _icc8Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc8Page.PlckVdc24V = plckVdc24V;
+                                _icc8Page.PlckVdc24A = plckVdc24A;
+                                _icc8Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc8Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc8Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc8Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc8Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc8Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc8Page.PlckBleederV = plckBleederV;
+                                _icc8Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck9:
+                            {
+                                // PLCK-LVICC9 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc9Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc9Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc9Page.PlckVac240V = plckVac240V;
+                                _icc9Page.PlckVac240A = plckVac240A;
+                                _icc9Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc9Page.PlckVdc24V = plckVdc24V;
+                                _icc9Page.PlckVdc24A = plckVdc24A;
+                                _icc9Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc9Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc9Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc9Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc9Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc9Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc9Page.PlckBleederV = plckBleederV;
+                                _icc9Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck10:
+                            {
+                                // PLCK-LVICC10 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc10Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc10Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc10Page.PlckVac240V = plckVac240V;
+                                _icc10Page.PlckVac240A = plckVac240A;
+                                _icc10Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc10Page.PlckVdc24V = plckVdc24V;
+                                _icc10Page.PlckVdc24A = plckVdc24A;
+                                _icc10Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc10Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc10Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc10Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc10Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc10Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc10Page.PlckBleederV = plckBleederV;
+                                _icc10Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck11:
+                            {
+                                // PLCK-LVICC11 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc11Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc11Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc11Page.PlckVac240V = plckVac240V;
+                                _icc11Page.PlckVac240A = plckVac240A;
+                                _icc11Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc11Page.PlckVdc24V = plckVdc24V;
+                                _icc11Page.PlckVdc24A = plckVdc24A;
+                                _icc11Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc11Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc11Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc11Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc11Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc11Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc11Page.PlckBleederV = plckBleederV;
+                                _icc11Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck12:
+                            {
+                                // PLCK-LVICC12 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc12Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc12Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc12Page.PlckVac240V = plckVac240V;
+                                _icc12Page.PlckVac240A = plckVac240A;
+                                _icc12Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc12Page.PlckVdc24V = plckVdc24V;
+                                _icc12Page.PlckVdc24A = plckVdc24A;
+                                _icc12Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc12Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc12Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc12Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc12Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc12Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc12Page.PlckBleederV = plckBleederV;
+                                _icc12Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck13:
+                            {
+                                // PLCK-LVICC13 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc13Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc13Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc13Page.PlckVac240V = plckVac240V;
+                                _icc13Page.PlckVac240A = plckVac240A;
+                                _icc13Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc13Page.PlckVdc24V = plckVdc24V;
+                                _icc13Page.PlckVdc24A = plckVdc24A;
+                                _icc13Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc13Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc13Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc13Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc13Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc13Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc13Page.PlckBleederV = plckBleederV;
+                                _icc13Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck14:
+                            {
+                                // PLCK-LVICC14 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc14Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc14Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc14Page.PlckVac240V = plckVac240V;
+                                _icc14Page.PlckVac240A = plckVac240A;
+                                _icc14Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc14Page.PlckVdc24V = plckVdc24V;
+                                _icc14Page.PlckVdc24A = plckVdc24A;
+                                _icc14Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc14Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc14Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc14Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc14Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc14Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc14Page.PlckBleederV = plckBleederV;
+                                _icc14Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck15:
+                            {
+                                // PLCK-LVICC15 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc15Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc15Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc15Page.PlckVac240V = plckVac240V;
+                                _icc15Page.PlckVac240A = plckVac240A;
+                                _icc15Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc15Page.PlckVdc24V = plckVdc24V;
+                                _icc15Page.PlckVdc24A = plckVdc24A;
+                                _icc15Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc15Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc15Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc15Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc15Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc15Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc15Page.PlckBleederV = plckBleederV;
+                                _icc15Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck16:
+                            {
+                                // PLCK-LVICC16 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc16Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc16Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc16Page.PlckVac240V = plckVac240V;
+                                _icc16Page.PlckVac240A = plckVac240A;
+                                _icc16Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc16Page.PlckVdc24V = plckVdc24V;
+                                _icc16Page.PlckVdc24A = plckVdc24A;
+                                _icc16Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc16Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc16Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc16Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc16Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc16Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc16Page.PlckBleederV = plckBleederV;
+                                _icc16Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck17:
+                            {
+                                // PLCK-LVICC17 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc17Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc17Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc17Page.PlckVac240V = plckVac240V;
+                                _icc17Page.PlckVac240A = plckVac240A;
+                                _icc17Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc17Page.PlckVdc24V = plckVdc24V;
+                                _icc17Page.PlckVdc24A = plckVdc24A;
+                                _icc17Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc17Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc17Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc17Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc17Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc17Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc17Page.PlckBleederV = plckBleederV;
+                                _icc17Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck18:
+                            {
+                                // PLCK-LVICC18 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc18Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc18Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc18Page.PlckVac240V = plckVac240V;
+                                _icc18Page.PlckVac240A = plckVac240A;
+                                _icc18Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc18Page.PlckVdc24V = plckVdc24V;
+                                _icc18Page.PlckVdc24A = plckVdc24A;
+                                _icc18Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc18Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc18Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc18Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc18Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc18Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc18Page.PlckBleederV = plckBleederV;
+                                _icc18Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck19:
+                            {
+                                // PLCK-LVICC19 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc19Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc19Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc19Page.PlckVac240V = plckVac240V;
+                                _icc19Page.PlckVac240A = plckVac240A;
+                                _icc19Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc19Page.PlckVdc24V = plckVdc24V;
+                                _icc19Page.PlckVdc24A = plckVdc24A;
+                                _icc19Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc19Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc19Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc19Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc19Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc19Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc19Page.PlckBleederV = plckBleederV;
+                                _icc19Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck20:
+                            {
+                                // PLCK-LVICC20 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc20Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc20Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc20Page.PlckVac240V = plckVac240V;
+                                _icc20Page.PlckVac240A = plckVac240A;
+                                _icc20Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc20Page.PlckVdc24V = plckVdc24V;
+                                _icc20Page.PlckVdc24A = plckVdc24A;
+                                _icc20Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc20Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc20Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc20Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc20Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc20Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc20Page.PlckBleederV = plckBleederV;
+                                _icc20Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
+                        case byte s when s == plck21:
+                            {
+                                // PLCK-LVICC21 Short Data Response - parse data fields
+                                string plckVac240V = ((message[7] << 8) | message[8]).ToString() + "V";
+                                string plckVac240A = (message[9] * 0.1).ToString();
+                                string plckFlashTriggerV = ((message[10] << 8) | message[11]).ToString();
+                                string plckVdc24V = (((message[12] << 8) | message[13]) * 0.1).ToString();
+                                string plckVdc24A = (message[14] * 0.1).ToString();
+                                string plckTriggerPulseWidth = (((message[15] << 8) | message[16]) * 0.1).ToString();
+                                string plckTriggerPulseDelay = (((message[17] << 8) | message[18]) * 0.1).ToString();
+                                string plckTriggerPeriod = ((message[19] << 8) | message[20]).ToString();
+                                string plckTriggerCurrent = (((message[21] << 8) | message[22]) * 0.1).ToString();
+                                string plckAnodePulseWidth = ((message[23] << 8) | message[24]).ToString();
+                                string plckAnodePulseDelay = ((message[25] << 8) | message[26]).ToString();
+                                string plckBleederV = (((message[27] << 8) | message[28]) * 0.1).ToString();
+                                string plckMisfires = message[29].ToString();
+
+                                if (message[29] > 7)
+                                {
+                                    _icc21Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.Red);
+                                }
+                                else
+                                {
+                                    _icc21Page.PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+                                }
+
+                                _icc21Page.PlckVac240V = plckVac240V;
+                                _icc21Page.PlckVac240A = plckVac240A;
+                                _icc21Page.PlckFlashTriggerV = plckFlashTriggerV;
+                                _icc21Page.PlckVdc24V = plckVdc24V;
+                                _icc21Page.PlckVdc24A = plckVdc24A;
+                                _icc21Page.PlckTriggerPulseWidth = plckTriggerPulseWidth;
+                                _icc21Page.PlckTriggerPulseDelay = plckTriggerPulseDelay;
+                                _icc21Page.PlckTriggerPeriod = plckTriggerPeriod;
+                                _icc21Page.PlckTriggerCurrent = plckTriggerCurrent;
+                                _icc21Page.PlckAnodePulseWidth = plckAnodePulseWidth;
+                                _icc21Page.PlckAnodePulseDelay = plckAnodePulseDelay;
+                                _icc21Page.PlckBleederV = plckBleederV;
+                                _icc21Page.PlckFlasherMisfires = plckMisfires;
+                            }
+                            break;
                         default:
                             _homePage.ShortButton = new SolidColorBrush(Colors.Red);
                             break;
@@ -11824,7 +12598,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc1SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc1BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc1BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc1PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc1Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc1Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -12088,7 +12862,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc2SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc2BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc2BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc2PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc2Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc2Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -12358,7 +13132,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc3SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc3BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc3BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc3PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc3Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc3Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -12627,7 +13401,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc4SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc4BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc4BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc4PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc4Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc4Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -12878,7 +13652,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc5SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc5BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc5BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc5PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc5PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc5Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc5Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -13127,7 +13901,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc6SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc6BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc6BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc6PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc6PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc6Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc6Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -13376,7 +14150,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc7SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc7BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc7BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc7PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc7PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc7Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc7Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -13626,7 +14400,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc8SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc8BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc8BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc8PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc8PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc8Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc8Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -13875,7 +14649,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc9SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc9BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc9BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc9PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc9PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc9Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc9Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -14124,7 +14898,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc10SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc10BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc10BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc10PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc10PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc10Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc10Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -14373,7 +15147,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc11SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc11BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc11BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc11PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc11PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc11Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc11Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -14622,7 +15396,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc12SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc12BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc12BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc12PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc12PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc12Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc12Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -14871,7 +15645,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc13SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc13BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc13BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc13PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc13PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc13Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc13Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -15120,7 +15894,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc14SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc14BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc14BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc14PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc14PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc14Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc14Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -15369,7 +16143,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc15SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc15BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc15BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc15PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc15PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc15Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc15Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -15618,7 +16392,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc16SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc16BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc16BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc16PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc16PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc16Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc16Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -15867,7 +16641,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc17SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc17BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc17BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc17PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc17PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc17Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc17Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -16116,7 +16890,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc18SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc18BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc18BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc18PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc18PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc18Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc18Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -16365,7 +17139,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc19SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc19BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc19BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc19PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc19PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc19Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc19Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -16617,7 +17391,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc20SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc20BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc20BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc20PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc20PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc20Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc20Page.LowForeground = new SolidColorBrush(Colors.White);
@@ -16866,7 +17640,7 @@ public partial class MainViewModel : ViewModelBase
                 Icc21SideBackground = new SolidColorBrush(Colors.LightGreen);
                 Icc21BorderBrush = new SolidColorBrush(Colors.Green);
                 Icc21BorderBackground = new SolidColorBrush(Colors.Green);
-                _homePage.Lvicc21PgBackground = new SolidColorBrush(Colors.Green);
+                _homePage.Lvicc21PgBackground = new SolidColorBrush(Colors.LightGreen);
 
                 _icc21Page.LowButton = new SolidColorBrush(Colors.Green);
                 _icc21Page.LowForeground = new SolidColorBrush(Colors.White);

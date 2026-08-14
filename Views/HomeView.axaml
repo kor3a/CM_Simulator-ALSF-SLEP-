@@ -6,11 +6,11 @@
         xmlns:av="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
         x:Name="HomeViewRoot"
         x:DataType="vm:HomeViewModel"
-        mc:Ignorable="d" d:DesignWidth="850" d:DesignHeight="720"
-        Width="{Binding WindowWidth}" Height="720"
+        mc:Ignorable="d" d:DesignWidth="1350" d:DesignHeight="900"
+        Width="{Binding WindowWidth}" Height="900"
         x:Class="CM_Simulator.Views.HomeView"
         WindowStartupLocation="CenterScreen"
-        CanResize="False"
+        CanResize="True"
         Title="ALSF-2 SLEP CM_Simulator"
         >
 
@@ -32,295 +32,241 @@
       </Grid.ColumnDefinitions>
 
       <Border Grid.Column="1" Grid.ColumnSpan="4">
-        <Grid RowDefinitions="Auto, Auto, Auto, *">
-          <StackPanel Grid.Row="0" HorizontalAlignment="Center">
-          <!--LVICC Cards with Navigation Arrows-->
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <!-- Left Navigation Arrow -->
-            <Button Content="&lt;" Command="{Binding NavigateLeftCommand}"
-                    IsVisible="{Binding CanNavigateLeft}"
-                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Width="40" Height="50" FontSize="24" FontWeight="Bold"
-                    Background="LightGray" Margin="5,0"/>
-            <!-- Invisible placeholder when left arrow is hidden to maintain layout -->
-            <Border Width="40" Margin="5,0" IsVisible="{Binding !CanNavigateLeft}"/>
+        <Grid ColumnDefinitions="*">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*" MinHeight="120" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="200" MinHeight="80" />
+          </Grid.RowDefinitions>
 
-            <!-- LVICC 1 Card (Dynamic) -->
-            <HeaderedContentControl Header="{Binding VisibleLvicc1Header}" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
-              <Grid Margin="10">
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+          <!-- Upper content: PLCK cards, CM Control, commands/status, menu, TX/RX -->
+          <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Disabled">
+            <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*">
 
-                <!-- Status Display -->
-                <Border Grid.Row="0" Background="{Binding VisibleLvicc1Background}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Text="{Binding VisibleLvicc1SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </Border>
+              <!-- PLCK cards: 6 per row (PLCK1-15 in 2400ft mode, PLCK1-21 in 3000ft mode) -->
+              <ItemsControl Grid.Row="0" ItemsSource="{Binding VisibleLviccCards}"
+                            HorizontalAlignment="Center" MaxWidth="1290" Margin="0,5,0,0">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Columns="6"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:LviccCardViewModel">
+                    <HeaderedContentControl Header="{Binding Header}" Width="200" Height="125" Margin="5" Background="White" BorderBrush="Black" BorderThickness="2">
+                      <Grid>
+                        <Grid.RowDefinitions>
+                          <RowDefinition Height="Auto"/>
+                          <RowDefinition Height="Auto"/>
+                          <RowDefinition Height="*"/>
+                          <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                <!-- Indicators Row -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-                  <!-- Remote Indicator -->
-                  <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
-                    <StackPanel Orientation="Horizontal">
-                      <Ellipse Width="12" Height="12" Fill="{Binding VisibleLvicc1RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
-                      <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
+                        <!-- Status Display and Remote Indicator -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                          <Border Background="{Binding Background}" CornerRadius="5" Width="75" Height="26"
+                                  BorderBrush="Black" BorderThickness="1" Margin="0,0,6,0">
+                            <TextBlock Text="{Binding SideMenu}" FontSize="13" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                          </Border>
+                          <Border BorderThickness="1" BorderBrush="DarkGray" CornerRadius="5" Height="26" Padding="6,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                              <Ellipse Width="11" Height="11" Fill="{Binding RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
+                              <TextBlock Text="REM" FontSize="11" Margin="4,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                          </Border>
+                        </StackPanel>
 
-                <!-- Error Indicators -->
-                <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Classes="commError" Text="COMM ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc1CommErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="commandError" Text="SETTING ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc1CommandErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="modeError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc1ModeErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc1MisfireErrorVisible}" Margin="0,2"/>
-                </StackPanel>
+                        <!-- Address -->
+                        <TextBlock Grid.Row="1" Text="{Binding Address}" FontSize="11" FontWeight="Bold"
+                                   HorizontalAlignment="Center" Margin="0,3,0,0" Foreground="Black"/>
 
-                <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToVisibleIcc1Command}"
-                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                        IsEnabled="{Binding VisibleLvicc1ButtonEnabled}"
-                        HorizontalContentAlignment="Center"
-                        Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
-              </Grid>
-            </HeaderedContentControl>
+                        <!-- Error Indicators -->
+                        <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                          <TextBlock Classes="commError" Text="COMM ERROR" FontSize="10" FontWeight="Bold" Foreground="Red" TextAlignment="Center" IsVisible="{Binding CommErrorVisible}"/>
+                          <TextBlock Classes="commandError" Text="SETTING ERROR" FontSize="10" FontWeight="Bold" Foreground="Red" TextAlignment="Center" IsVisible="{Binding CommandErrorVisible}"/>
+                          <TextBlock Classes="modeError" Text="MODE ERROR" FontSize="10" FontWeight="Bold" Foreground="Red" TextAlignment="Center" IsVisible="{Binding ModeErrorVisible}"/>
+                          <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="10" FontWeight="Bold" Foreground="Red" TextAlignment="Center" IsVisible="{Binding MisfireErrorVisible}"/>
+                        </StackPanel>
 
-            <!-- LVICC 2 Card (Dynamic) -->
-            <HeaderedContentControl Header="{Binding VisibleLvicc2Header}" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
-              <Grid Margin="10">
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                        <!-- Navigation Button -->
+                        <Button Grid.Row="3" Content="Open Page" Command="{Binding OpenCommand}" IsEnabled="{Binding ButtonEnabled}"
+                                HorizontalAlignment="Center" VerticalAlignment="Bottom" HorizontalContentAlignment="Center"
+                                Width="120" Height="26" FontSize="12" Background="LightGray"/>
+                      </Grid>
+                    </HeaderedContentControl>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
 
-                <!-- Status Display -->
-                <Border Grid.Row="0" Background="{Binding VisibleLvicc2Background}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Text="{Binding VisibleLvicc2SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </Border>
+              <StackPanel Grid.Row="1" HorizontalAlignment="Center">
+                <HeaderedContentControl Header="CM Control" Height="100" Margin="10" HorizontalAlignment="Center" Background="White">
+                  <StackPanel Orientation="Horizontal">
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding CmOffEnabled}" Content="OFF" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding OffForeground}" Background="{Binding OffButton}" Command="{Binding MainOffControlClicked}"/>
+                    </Border>
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding CmOnEnabled}" Content="ON" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding OnForeground}" Background="{Binding OnButton}" Command="{Binding MainOnControlClicked}"/>
+                    </Border>
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding CmLowEnabled}" Content="LOW" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding LowForeground}" Background="{Binding LowButton}" Command="{Binding MainLowControlClicked}"/>
+                    </Border>
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding CmMedEnabled}" Content="MED" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding MedForeground}" Background="{Binding MedButton}" Command="{Binding MainMedControlClicked}"/>
+                    </Border>
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding CmHighEnabled}" Content="HI" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding HighForeground}" Background="{Binding HighButton}" Command="{Binding MainHighControlClicked}"/>
+                    </Border>
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding CmAlsfEnabled}" Content="ALSF" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding AlsfButton}" Command="{Binding AlsfModeChangeCommand}"/>
+                    </Border>
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding CmSsalrEnabled}" Content="SSALR" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding SsalrButton}" Command="{Binding SsalrModeChangeCommand}"/>
+                    </Border>
+                  </StackPanel>
+                </HeaderedContentControl>
+              </StackPanel>
 
-                <!-- Indicators Row -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-                  <!-- Remote Indicator -->
-                  <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
-                    <StackPanel Orientation="Horizontal">
-                      <Ellipse Width="12" Height="12" Fill="{Binding VisibleLvicc2RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
-                      <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
+              <!-- Runway length selection: 2400ft shows PLCK1-15, 3000ft shows PLCK1-21 -->
+              <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Margin="0,0,10,0">
+                <Button Content="2400ft" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                        Width="65" Height="50" Margin="5,0" Background="{Binding Ft2400Background}" Command="{Binding Ft2400ClickedCommand}"/>
+                <Button Content="3000ft" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                        Width="65" Height="50" Margin="5,0" Background="{Binding Ft3000Background}" Command="{Binding Ft3000ClickedCommand}"/>
+              </StackPanel>
 
-                <!-- Error Indicators -->
-                <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Classes="commError" Text="COMM ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc2CommErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="commandError" Text="SETTING ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc2CommandErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="modeError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc2ModeErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc2MisfireErrorVisible}" Margin="0,2"/>
-                </StackPanel>
+              <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,0,0,0">
+                <HeaderedContentControl Header="PLCK (CM) Commands" Height="100" Margin="10" HorizontalAlignment="Center" Background="White">
+                  <StackPanel Orientation="Horizontal">
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding ResetEnabled}" x:Name="resetRequestBtn" Content="Reset" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Background="LightGray" Command="{Binding ResetResultRequested}"/>
+                    </Border>
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding ShortEnabled}" x:Name="shortDataBtn" Content="Short" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Background="{Binding ShortButton}" Command="{Binding ShortDataRequested}"/>
+                    </Border>
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button IsEnabled="{Binding ConfigEnabled}" x:Name="configRequestBtn" Content="Enquire" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="85" Height="50" Background="{Binding ConfigButton}" Command="{Binding ConfigDataRequested}"/>
+                    </Border>
+                  </StackPanel>
+                </HeaderedContentControl>
+                <HeaderedContentControl Header="STATUS" Height="100" Margin="50,0" HorizontalAlignment="Center" Background="White">
+                  <StackPanel Orientation="Horizontal">
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button Width="80" Height="50" Background="{Binding Caution}" Command="{Binding CautionClickedCommand}">
+                        <Grid Width="80" Height="50">
+                          <TextBlock Text="CAUTION" FontSize="16" TextWrapping="Wrap" Foreground="{Binding CautionForeground}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                      </Button>
+                    </Border>
+                      <!--
+                    <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button Width="70" Height="50" Background="{Binding CommFault}" Command="{Binding CommFaultClickedCommand}">
+                          <Grid Width="70" Height="50">
+                              <TextBlock Text="COMM FAULT" FontSize="16" TextWrapping="Wrap" Foreground="{Binding CommFaultForeground}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                          </Grid>
+                      </Button>
+                    </Border>
+                    -->
+                  <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
+                      <Button Width="80" Height="50" Background="{Binding Failure}" Command="{Binding FailureClickedCommand}">
+                          <Grid Width="80" Height="50">
+                              <TextBlock Text="FAILURE" FontSize="16" TextWrapping="Wrap" Foreground="{Binding FailureForeground}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                          </Grid>
+                      </Button>
+                    </Border>
+                  </StackPanel>
+                </HeaderedContentControl>
+              </StackPanel>
 
-                <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToVisibleIcc2Command}"
-                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                        IsEnabled="{Binding VisibleLvicc2ButtonEnabled}"
-                        HorizontalContentAlignment="Center"
-                        Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
-              </Grid>
-            </HeaderedContentControl>
+              <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                <!-- Use a Button that contains your Image (SVG). The Flyout is attached to the Button -->
+                <Button Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Right" Name="MenuButton">
+                  <Button.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedRight">
+                      <StackPanel Background="White" Width="180">
+                        <!-- NOTE: no CommandParameter bindings here -->
+                        <!--  <Button Content="Scan ICCs"
+                                  FontSize="16"
+                                  Background="Transparent"
+                                  HorizontalAlignment="Left"
+                                  Padding="10,8"
+                                  Click="Scan_Click"/> -->
+                        <Button Content="Change Port"
+                                FontSize="16"
+                                Background="Transparent"
+                                HorizontalContentAlignment="Left"
+                                Padding="10,8"
+                                Click="ChangePort_Click"/>
+                        <Button Content="Export Log"
+                                FontSize="16"
+                                Background="Transparent"
+                                HorizontalContentAlignment="Left"
+                                Padding="10,8"
+                                Click="ExportLog_Click"/>
+                        <!-- Hides itself once test mode is on, so the menu can be
+                             screenshotted the way it looks in production -->
+                        <Button Content="Test Mode"
+                                FontSize="16"
+                                Background="Transparent"
+                                HorizontalContentAlignment="Left"
+                                Padding="10,8"
+                                IsVisible="{Binding !TestModeActive}"
+                                Click="TestMode_Click"/>
+                      </StackPanel>
+                    </Flyout>
+                  </Button.Flyout>
 
-            <!-- LVICC 3 Card (Dynamic) -->
-            <HeaderedContentControl Header="{Binding VisibleLvicc3Header}" Width="200" Height="230" Margin="10" Background="White" BorderBrush="Black" BorderThickness="2">
-              <Grid Margin="10">
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <!-- Status Display -->
-                <Border Grid.Row="0" Background="{Binding VisibleLvicc3Background}" CornerRadius="5" Padding="10,5" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Text="{Binding VisibleLvicc3SideMenu}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                </Border>
-
-                <!-- Indicators Row -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
-                  <!-- Remote Indicator -->
-                  <Border BorderThickness="2" BorderBrush="DarkGray" CornerRadius="3" Margin="5,0" Padding="5,3">
-                    <StackPanel Orientation="Horizontal">
-                      <Ellipse Width="12" Height="12" Fill="{Binding VisibleLvicc3RemButton}" Stroke="Black" StrokeThickness="1" VerticalAlignment="Center"/>
-                      <TextBlock Text="REM" FontSize="12" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
-
-                <!-- Error Indicators -->
-                <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
-                  <TextBlock Classes="commError" Text="COMM ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc3CommErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="commandError" Text="SETTING ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc3CommandErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="modeError" Text="MODE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc3ModeErrorVisible}" Margin="0,2"/>
-                  <TextBlock Classes="misfireError" Text="MISFIRE ERROR" FontSize="11" FontWeight="Bold" Foreground="Red"
-                             TextAlignment="Center" IsVisible="{Binding VisibleLvicc3MisfireErrorVisible}" Margin="0,2"/>
-                </StackPanel>
-
-                <!-- Navigation Button -->
-                <Button Grid.Row="3" Content="Open Page" Command="{Binding GoToVisibleIcc3Command}"
-                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                        IsEnabled="{Binding VisibleLvicc3ButtonEnabled}"
-                        HorizontalContentAlignment="Center"
-                        Width="120" Height="35" FontSize="14" Background="LightGray" Margin="0,5"/>
-              </Grid>
-            </HeaderedContentControl>
-
-            <!-- Right Navigation Arrow -->
-            <Button Content="&gt;" Command="{Binding NavigateRightCommand}"
-                    IsVisible="{Binding CanNavigateRight}"
-                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Width="40" Height="50" FontSize="24" FontWeight="Bold"
-                    Background="LightGray" Margin="5,0"/>
-            <!-- Invisible placeholder when right arrow is hidden to maintain layout -->
-            <Border Width="40" Margin="5,0" IsVisible="{Binding !CanNavigateRight}"/>
-          </StackPanel>
-        </StackPanel>
-        
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center">
-          <HeaderedContentControl Header="CM Control" Height="100" Margin="10" HorizontalAlignment="Center" Background="White">
-            <StackPanel Orientation="Horizontal">
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding CmOffEnabled}" Content="OFF" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding OffForeground}" Background="{Binding OffButton}" Command="{Binding MainOffControlClicked}"/>
-              </Border>
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding CmOnEnabled}" Content="ON" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding OnForeground}" Background="{Binding OnButton}" Command="{Binding MainOnControlClicked}"/>
-              </Border>
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding CmLowEnabled}" Content="LOW" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding LowForeground}" Background="{Binding LowButton}" Command="{Binding MainLowControlClicked}"/>
-              </Border>
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding CmMedEnabled}" Content="MED" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding MedForeground}" Background="{Binding MedButton}" Command="{Binding MainMedControlClicked}"/>
-              </Border>
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding CmHighEnabled}" Content="HI" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Foreground="{Binding HighForeground}" Background="{Binding HighButton}" Command="{Binding MainHighControlClicked}"/>
-              </Border>
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding CmAlsfEnabled}" Content="ALSF" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding AlsfButton}" Command="{Binding AlsfModeChangeCommand}"/>
-              </Border>
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding CmSsalrEnabled}" Content="SSALR" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding SsalrButton}" Command="{Binding SsalrModeChangeCommand}"/>
-              </Border>
-            </StackPanel>
-          </HeaderedContentControl>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,0,0,0">
-          <HeaderedContentControl Header="COMMANDS" Height="100" Margin="10" HorizontalAlignment="Center" Background="White">
-            <StackPanel Orientation="Horizontal">
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding ResetEnabled}" x:Name="resetRequestBtn" Content="Reset" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Background="LightGray" Command="{Binding ResetResultRequested}"/>
-              </Border>
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding ShortEnabled}" x:Name="shortDataBtn" Content="Short" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="60" Height="50" Background="{Binding ShortButton}" Command="{Binding ShortDataRequested}"/>
-              </Border>
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button IsEnabled="{Binding ConfigEnabled}" x:Name="configRequestBtn" Content="Config" FontSize="16" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="70" Height="50" Background="{Binding ConfigButton}" Command="{Binding ConfigDataRequested}"/>
-              </Border>
-            </StackPanel>
-          </HeaderedContentControl>
-          <HeaderedContentControl Header="STATUS" Height="100" Margin="50,0" HorizontalAlignment="Center" Background="White">
-            <StackPanel Orientation="Horizontal">
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Grid Width="80" Height="50">
-                  <Rectangle Width="80" Height="50" Fill="{Binding Caution}" />
-                  <TextBlock Text="CAUTION" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="{Binding CautionForeground}"/>
-                </Grid>
-              </Border>
-                <!--
-              <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button Width="70" Height="50" Background="{Binding CommFault}" Command="{Binding CommFaultClickedCommand}">
-                    <Grid Width="70" Height="50">
-                        <TextBlock Text="COMM FAULT" FontSize="16" TextWrapping="Wrap" Foreground="{Binding CommFaultForeground}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Grid>
+                  <!-- Your SVG Image inside the button (same pattern you used earlier) -->
+                  <Image Source="{SvgImage /Assets/Images/list.svg}"
+                         Width="37"
+                         Height="37"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Center"/>
                 </Button>
-              </Border>
-              -->
-            <Border BorderThickness="5" BorderBrush="DarkGray" Margin="5,0" Height="60">
-                <Button Width="80" Height="50" Background="{Binding Failure}" Command="{Binding FailureClickedCommand}">
-                    <Grid Width="80" Height="50">
-                        <TextBlock Text="FAILURE" FontSize="16" TextWrapping="Wrap" Foreground="{Binding FailureForeground}" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Grid>
-                </Button>
-              </Border>
-            </StackPanel>
-          </HeaderedContentControl>
-        </StackPanel>
-          
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
-          <!-- Use a Button that contains your Image (SVG). The Flyout is attached to the Button -->
-          <Button Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Right" Name="MenuButton">
-            <Button.Flyout>
-              <Flyout Placement="BottomEdgeAlignedRight">
-                <StackPanel Background="White" Width="180">
-                  <!-- NOTE: no CommandParameter bindings here -->
-                  <!--  <Button Content="Scan ICCs"
-                            FontSize="16"
-                            Background="Transparent"
-                            HorizontalAlignment="Left"
-                            Padding="10,8"
-                            Click="Scan_Click"/> -->
-                  <Button Content="Change Port"
-                          FontSize="16"
-                          Background="Transparent"
-                          HorizontalContentAlignment="Left"
-                          Padding="10,8"
-                          Click="ChangePort_Click"/>
-                  <Button Content="Export Log"
-                          FontSize="16"
-                          Background="Transparent"
-                          HorizontalContentAlignment="Left"
-                          Padding="10,8"
-                          Click="ExportLog_Click"/>
+              </StackPanel>
+              <StackPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                  <Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TxStatus}" Margin="10,0"/>
+                  <TextBlock Text="TX" VerticalAlignment="Center" FontSize="16" />
                 </StackPanel>
-              </Flyout>
-            </Button.Flyout>
+                <StackPanel Orientation="Horizontal" Margin="0,5,10,0">
+                  <Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding RxStatus}" Margin="10,0"/>
+                  <TextBlock Text="RX" VerticalAlignment="Center" FontSize="16" />
+                </StackPanel>
+                <!-- 2Hz indicator hidden (logic kept in the view model) -->
+                <StackPanel Orientation="Horizontal" Margin="0,5,10,0" IsVisible="False">
+                  <Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TwoHzSyncStatus}" Margin="10,0"/>
+                  <TextBlock Text="2Hz" VerticalAlignment="Center" FontSize="16" />
+                </StackPanel>
+              </StackPanel>
+            </Grid>
+          </ScrollViewer>
 
-            <!-- Your SVG Image inside the button (same pattern you used earlier) -->
-            <Image Source="{SvgImage /Assets/Images/list.svg}"
-                   Width="37"
-                   Height="37"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Center"/>
-          </Button>
-        </StackPanel>
-        <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-			<StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TxStatus}" Margin="10,0"/>
-                <TextBlock Text="TX" VerticalAlignment="Center" FontSize="16" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,10,0">
-				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding RxStatus}" Margin="10,0"/>
-                <TextBlock Text="RX" VerticalAlignment="Center" FontSize="16" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,5,10,20">
-				<Ellipse Width="30" Height="30" Stroke="Black" StrokeThickness="2" Fill="{Binding TwoHzSyncStatus}" Margin="10,0"/>
-                <TextBlock Text="2Hz" VerticalAlignment="Center" FontSize="16" />
-            </StackPanel>
-        </StackPanel>
+          <!-- Draggable splitter -->
+          <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center" Background="#CCCCCC"
+                        ResizeDirection="Rows" Cursor="SizeNorthSouth" />
 
-        
-        <TextBox x:Name="LogTextBox" Text="{Binding LogText, Mode=OneWay}" Grid.Row="4" Background="White" Margin="10,0,5,10" IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True" av:ScrollViewer.VerticalScrollBarVisibility="Auto" ></TextBox>
+          <!-- Log panel -->
+          <Border Grid.Row="2" Background="White" Margin="10,4,5,5"
+                  BorderBrush="#AAAAAA" BorderThickness="1" CornerRadius="3">
+            <ListBox Name="LogListBox" ItemsSource="{Binding LogLines}"
+                     Background="Transparent" BorderThickness="0" Padding="6"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                  <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+              <ListBox.ItemContainerTheme>
+                <ControlTheme TargetType="ListBoxItem">
+                  <Setter Property="Padding" Value="0" />
+                  <Setter Property="Background" Value="Transparent" />
+                </ControlTheme>
+              </ListBox.ItemContainerTheme>
+            </ListBox>
+          </Border>
         </Grid>
       </Border>
     </Grid>

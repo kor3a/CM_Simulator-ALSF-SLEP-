@@ -1,4 +1,4 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CM_Simulator.ViewModels;
 
-public partial class ICC15ViewModel : ViewModelBase
+public partial class ICC15ViewModel : ViewModelBase, ILviccPage
 {
     private readonly MainViewModel _mainViewModel;
     private readonly HomeViewModel _homeViewModel;
@@ -58,6 +58,52 @@ public partial class ICC15ViewModel : ViewModelBase
 
     [ObservableProperty]
     public IBrush _flasherMisfireBackground;
+
+    // PLCK Short Data Response fields
+    [ObservableProperty]
+    public string _plckVac240V;
+    [ObservableProperty]
+    public string _plckVac240A;
+    [ObservableProperty]
+    public string _plckFlashTriggerV;
+    [ObservableProperty]
+    public string _plckVdc33V;
+    [ObservableProperty]
+    public string _plckVdc5V;
+    [ObservableProperty]
+    public string _plckVdc8V;
+    [ObservableProperty]
+    public string _plckVdc8A;
+    [ObservableProperty]
+    public string _plckVdc18V;
+    [ObservableProperty]
+    public string _plckVdc24V;
+    [ObservableProperty]
+    public string _plckVdc24A;
+    [ObservableProperty]
+    public string _plckCpuTemp;
+    [ObservableProperty]
+    public string _plckPercentBusy;
+    [ObservableProperty]
+    public string _plckMaxPercentBusy;
+    [ObservableProperty]
+    public string _plckTriggerPulseWidth;
+    [ObservableProperty]
+    public string _plckTriggerPulseDelay;
+    [ObservableProperty]
+    public string _plckTriggerPeriod;
+    [ObservableProperty]
+    public string _plckTriggerCurrent;
+    [ObservableProperty]
+    public string _plckAnodePulseWidth;
+    [ObservableProperty]
+    public string _plckAnodePulseDelay;
+    [ObservableProperty]
+    public string _plckBleederV;
+    [ObservableProperty]
+    public string _plckFlasherMisfires;
+    [ObservableProperty]
+    public IBrush _plckFlasherMisfireBackground;
 
     [ObservableProperty]
     private IBrush _offButton = new SolidColorBrush(Colors.DarkGray);
@@ -194,6 +240,8 @@ public partial class ICC15ViewModel : ViewModelBase
         IsEndByteErrorVisible = false;
         FlasherMisfireBackground = new SolidColorBrush(Colors.White);
         FlasherMisfires = "0";
+        PlckFlasherMisfireBackground = new SolidColorBrush(Colors.White);
+        PlckFlasherMisfires = "0";
     }
 
     [RelayCommand]
