@@ -1859,7 +1859,7 @@ public partial class MainViewModel : ViewModelBase
                             // single 0.2 second beep for Caution
                             Console.Beep(2000, 200);
                         }
-                        // FAILURE
+                        // FAILURE - triggers when 2 consecutive LVICCs are out
                         for (int i = 0; i < 2; i++)
                         {
                             if ((!iccs[i] && !iccs[i + 1]) || (flashersConnected == 0))
